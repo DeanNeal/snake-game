@@ -57,6 +57,12 @@ class Levels {
                 scores: 0,
                 maxScores: 7,
                 speed: 340
+            },
+            {
+                id: 5,
+                scores: 0,
+                maxScores: 10,
+                speed: 300
             }
         ]
     }
@@ -86,15 +92,16 @@ class Game {
         this.scoreBoard = document.createElement('div');
         this.grid = document.createElement('div');
 
-        this.init();
+    
 
         this.container.classList = 'container';
         this.root.appendChild(this.container);
+        this.startCoords = this.generateSnakePosition();
+
+        this.init();
     }
 
     init() {
-        this.startCoords = this.generateSnakePosition();
-
         this.drawScoreBoard();
         this.drawGrid();
 
@@ -146,6 +153,7 @@ class Game {
         <div class="top-panel__scores">
             ${this.getCurrentLevel.scores} of ${this.getCurrentLevel.maxScores}
         </div>
+        <div class="top-panel__speed"> speed: ${this.getCurrentLevel.speed}</div>
         `;
     }
 
@@ -173,22 +181,22 @@ class Game {
     }
     generateSnake() {
         this.generateSnakeHead();
-        this.generateSnakeBody();
+        // this.generateSnakeBody();
     }
     generateSnakeHead() {
         let snakeHead = this.getCellByCoords(this.startCoords);
         snakeHead.root.classList.add('snake-head');
         this.snakeCollection.push(snakeHead);
     }
-    generateSnakeBody() {
-        let el1 = this.getCellByCoords([this.startCoords[0] - 1, this.startCoords[1]]);
-        let el2 = this.getCellByCoords([this.startCoords[0] - 2, this.startCoords[1]]);
-        el1.root.classList.add('snake-body');
-        el2.root.classList.add('snake-body');
+    // generateSnakeBody() {
+    //     let el1 = this.getCellByCoords([this.startCoords[0] - 1, this.startCoords[1]]);
+    //     let el2 = this.getCellByCoords([this.startCoords[0] - 2, this.startCoords[1]]);
+    //     el1.root.classList.add('snake-body');
+    //     el2.root.classList.add('snake-body');
 
-        this.snakeCollection.push(el1);
-        this.snakeCollection.push(el2);
-    }
+    //     this.snakeCollection.push(el1);
+    //     this.snakeCollection.push(el2);
+    // }
     generateSnakePosition(): [number, number] {
         return [this.random(3, 10), this.random(3, 10)];
     }
@@ -233,12 +241,7 @@ class Game {
                         clearInterval(this.interval);
                     }
                 } else {
-                    let conf = confirm("Вы победили :) Го дальше?");
-                    if (conf) {
-                        this.nextLevel();
-                    } else {
-                        clearInterval(this.interval);
-                    }
+                    this.nextLevel();
                 }
             }
         }
@@ -320,9 +323,8 @@ class Game {
         this.grid.innerHTML = '';
         this.cells = [];
         this.snakeCollection = [];
-        this.startCoords = undefined;
         this.foodCoords = undefined;
-        this.direction = 'right';
+        // this.direction = 'right';
         this.level++;
         clearInterval(this.interval);
         this.init();
@@ -332,7 +334,7 @@ class Game {
         this.grid.innerHTML = '';
         this.cells = [];
         this.snakeCollection = [];
-        this.startCoords = undefined;
+        this.startCoords = this.generateSnakePosition();
         this.foodCoords = undefined;
         this.direction = 'right';
         this.level = 1;

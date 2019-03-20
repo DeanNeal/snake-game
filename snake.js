@@ -59,6 +59,12 @@ var Levels = /** @class */ (function () {
                 scores: 0,
                 maxScores: 7,
                 speed: 340
+            },
+            {
+                id: 5,
+                scores: 0,
+                maxScores: 10,
+                speed: 300
             }
         ];
     }
@@ -76,13 +82,13 @@ var Game = /** @class */ (function () {
         this.container = document.createElement('div');
         this.scoreBoard = document.createElement('div');
         this.grid = document.createElement('div');
-        this.init();
         this.container.classList = 'container';
         this.root.appendChild(this.container);
+        this.startCoords = this.generateSnakePosition();
+        this.init();
     }
     Game.prototype.init = function () {
         var _this = this;
-        this.startCoords = this.generateSnakePosition();
         this.drawScoreBoard();
         this.drawGrid();
         this.generateSnake();
@@ -124,7 +130,7 @@ var Game = /** @class */ (function () {
         this.updateScores();
     };
     Game.prototype.updateScores = function () {
-        this.scoreBoard.innerHTML = "\n        <div class=\"top-panel__level\">Level: " + this.getCurrentLevel.id + "</div>\n        <div class=\"top-panel__scores\">\n            " + this.getCurrentLevel.scores + " of " + this.getCurrentLevel.maxScores + "\n        </div>\n        ";
+        this.scoreBoard.innerHTML = "\n        <div class=\"top-panel__level\">Level: " + this.getCurrentLevel.id + "</div>\n        <div class=\"top-panel__scores\">\n            " + this.getCurrentLevel.scores + " of " + this.getCurrentLevel.maxScores + "\n        </div>\n        <div class=\"top-panel__speed\"> speed: " + this.getCurrentLevel.speed + "</div>\n        ";
     };
     Game.prototype.drawGrid = function () {
         this.grid.classList = 'grid';
@@ -148,21 +154,21 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.generateSnake = function () {
         this.generateSnakeHead();
-        this.generateSnakeBody();
+        // this.generateSnakeBody();
     };
     Game.prototype.generateSnakeHead = function () {
         var snakeHead = this.getCellByCoords(this.startCoords);
         snakeHead.root.classList.add('snake-head');
         this.snakeCollection.push(snakeHead);
     };
-    Game.prototype.generateSnakeBody = function () {
-        var el1 = this.getCellByCoords([this.startCoords[0] - 1, this.startCoords[1]]);
-        var el2 = this.getCellByCoords([this.startCoords[0] - 2, this.startCoords[1]]);
-        el1.root.classList.add('snake-body');
-        el2.root.classList.add('snake-body');
-        this.snakeCollection.push(el1);
-        this.snakeCollection.push(el2);
-    };
+    // generateSnakeBody() {
+    //     let el1 = this.getCellByCoords([this.startCoords[0] - 1, this.startCoords[1]]);
+    //     let el2 = this.getCellByCoords([this.startCoords[0] - 2, this.startCoords[1]]);
+    //     el1.root.classList.add('snake-body');
+    //     el2.root.classList.add('snake-body');
+    //     this.snakeCollection.push(el1);
+    //     this.snakeCollection.push(el2);
+    // }
     Game.prototype.generateSnakePosition = function () {
         return [this.random(3, 10), this.random(3, 10)];
     };
@@ -203,13 +209,7 @@ var Game = /** @class */ (function () {
                     }
                 }
                 else {
-                    var conf = confirm("Вы победили :) Го дальше?");
-                    if (conf) {
-                        this.nextLevel();
-                    }
-                    else {
-                        clearInterval(this.interval);
-                    }
+                    this.nextLevel();
                 }
             }
         }
@@ -282,9 +282,8 @@ var Game = /** @class */ (function () {
         this.grid.innerHTML = '';
         this.cells = [];
         this.snakeCollection = [];
-        this.startCoords = undefined;
         this.foodCoords = undefined;
-        this.direction = 'right';
+        // this.direction = 'right';
         this.level++;
         clearInterval(this.interval);
         this.init();
@@ -293,7 +292,7 @@ var Game = /** @class */ (function () {
         this.grid.innerHTML = '';
         this.cells = [];
         this.snakeCollection = [];
-        this.startCoords = undefined;
+        this.startCoords = this.generateSnakePosition();
         this.foodCoords = undefined;
         this.direction = 'right';
         this.level = 1;

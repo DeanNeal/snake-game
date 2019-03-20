@@ -9,109 +9,120 @@
 <body>
     <script src="snake.js"></script>
     <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    html {
-        height: 100%;
-    }
+        html {
+            height: 100%;
+        }
 
-    body {
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+        body {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    /* .container {
+        /* .container {
 
     } */
 
 
-    .top-panel {
-        text-align: center;
-        font-family: arial;
-        padding: 5px;
-        font-size: 22px;
-        font-weight: 600;
-    }
+        .top-panel {
+            text-align: center;
+            font-family: arial;
+            padding: 5px;
 
-    .top-panel__level{
+        }
 
-}
-    .top-panel__scores{
+        .top-panel__level {
+            font-size: 22px;
+            font-weight: 600;
+        }
 
-    }
+        .top-panel__scores {
+            font-size: 22px;
+            font-weight: 600;
+        }
 
 
-    .grid {
-        height: 500px;
-        width: 500px;
-        display: flex;
-        flex-wrap: wrap;
-        box-shadow: 0 0 0 2px #888;
-    }
+        .top-panel__speed {
+            font-size: 16px;
+            font-weight: 600;
+        }
 
-    .cell {
-        width: 10%;
-        height: 10%;
-        border: 1px solid #888;
-        /* transition: 0.3s; */
-    }
 
-    .cell.snake-head {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .cell.snake-head:after{
-        content: '';
-        background: #000;
-        width: 30px;
-        border-radius: 100%;
-        position: absolute;
-        height: 30px;
-    }
+        .grid {
+            height: 500px;
+            width: 500px;
+            display: flex;
+            flex-wrap: wrap;
+            box-shadow: 0 0 0 2px #888;
+        }
 
-    .cell.snake-head[direction="right"]{
-        transform: rotate(0deg);
-    }
+        .cell {
+            width: 10%;
+            height: 10%;
+            border: 1px solid #888;
+            /* transition: 0.3s; */
+        }
 
-    
-    .cell.snake-head[direction="up"]{
-        transform: rotate(-90deg);
-    }
+        .cell.snake-head {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    .cell.snake-head[direction="left"]{
-        transform: rotate(-180deg);
-    }
+        .cell.snake-head:after {
+            content: '';
+            background: #000;
+            width: 30px;
+            border-radius: 100%;
+            position: absolute;
+            height: 30px;
+        }
 
-    .cell.snake-head[direction="down"]{
-        transform: rotate(90deg);
-    }
+        .cell.snake-head[direction="right"] {
+            transform: rotate(0deg);
+        }
 
-    .cell.snake-body {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .cell.snake-body:after{
-        content: '';
-        background: #666;
-        width: 30px;
-        border-radius: 100%;
-        position: absolute;
-        height: 30px;
-    }
-    .cell.food {
-    	background: url(mouse.jpg);
-        background-size: cover;
-    }
+
+        .cell.snake-head[direction="up"] {
+            transform: rotate(-90deg);
+        }
+
+        .cell.snake-head[direction="left"] {
+            transform: rotate(-180deg);
+        }
+
+        .cell.snake-head[direction="down"] {
+            transform: rotate(90deg);
+        }
+
+        .cell.snake-body {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cell.snake-body:after {
+            content: '';
+            background: #666;
+            width: 30px;
+            border-radius: 100%;
+            position: absolute;
+            height: 30px;
+        }
+
+        .cell.food {
+            background: url(mouse.jpg);
+            background-size: cover;
+        }
     </style>
 </body>
 

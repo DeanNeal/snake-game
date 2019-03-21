@@ -32,7 +32,7 @@ class Cell {
     setSize(gridSize, size) {
         const cellSize = gridSize / size + 'px';
         this.root.style.width = cellSize;
-        this.root.style.height = cellSize; 
+        this.root.style.height = cellSize;
     }
 }
 
@@ -45,21 +45,24 @@ class Levels {
                 scores: 0,
                 maxScores: 4,
                 speed: 600,
-                size: 8
+                size: 8,
+                barrier: 2,
             },
             {
                 id: 2,
                 scores: 0,
                 maxScores: 6,
                 speed: 500,
-                size: 9
+                size: 9,
+                barrier: 3
             },
             {
                 id: 3,
                 scores: 0,
                 maxScores: 8,
                 speed: 400,
-                size: 10
+                size: 10,
+                barrier: 4
             },
             {
                 id: 4,
@@ -67,20 +70,23 @@ class Levels {
                 maxScores: 10,
                 speed: 250,
                 size: 11,
+                barrier: 5
             },
             {
                 id: 5,
                 scores: 0,
                 maxScores: 15,
                 speed: 200,
-                size: 12
+                size: 12,
+                barrier: 6
             },
             {
                 id: 6,
                 scores: 0,
                 maxScores: 20,
                 speed: 150,
-                size: 13
+                size: 13,
+                barrier: 7
             }
         ]
     }
@@ -95,7 +101,7 @@ class Game {
     public cells: Cell[] = [];
     public snakeCollection: Cell[] = [];
     public startCoords: [number, number];
-    public foodCoords: [number, number];
+    // public foodCoords: [number, number];
     public direction: string = 'right';
     public interval: number;
     public steps: boolean = false;
@@ -111,11 +117,9 @@ class Game {
         this.scoreBoard = document.createElement('div');
         this.grid = document.createElement('div');
 
-
-
         this.container.classList = 'container';
         this.root.appendChild(this.container);
-        this.startCoords = this.generateSnakePosition();
+        this.startCoords = this.generateRandomPosition();
 
         this.init();
     }
@@ -126,6 +130,7 @@ class Game {
 
         this.generateSnake();
         this.generateFood();
+        this.generateBarrier();
 
 
         window.addEventListener('keydown', (e) => {
@@ -244,10 +249,10 @@ class Game {
         this.snakeCollection.push(el1);
         this.snakeCollection.push(el2);
     }
-    generateSnakePosition(): [number, number] {
-        return [this.random(3, this.getCurrentLevel.size), this.random(3, this.getCurrentLevel.size)];
-    }
-    generateFoodPosition(): [number, number] {
+    // generateSnakePosition(): [number, number] {
+    //     return [this.random(3, this.getCurrentLevel.size), this.random(3, this.getCurrentLevel.size)];
+    // }
+    generateRandomPosition(): [number, number] {
         return [this.random(1, this.getCurrentLevel.size), this.random(1, this.getCurrentLevel.size)];
     }
 
@@ -255,22 +260,38 @@ class Game {
         return Math.round(Math.random() * (max - min) + min);
     }
 
+    generateBarrier() {
+        for (let i = 0; i <= this.getCurrentLevel.barrier; i++) {
+            let coords = this.generateRandomPosition();
+            let barrier = this.getCellByCoords(coords);
+
+            //exclude case when food appears over the snake
+            while (barrier.root.classList.contains('snake-head') || barrier.root.classList.contains('snake-body') || barrier.root.classList.contains('food')) {
+                coords = this.generateRandomPosition();
+                barrier = this.getCellByCoords(coords);
+            }
+            // this.foodCoords = coords;
+            barrier.root.classList.add('barrier');
+
+        }
+    }
+
     generateFood() {
-        let coords = this.generateFoodPosition();
+        let coords = this.generateRandomPosition();
         let food = this.getCellByCoords(coords);
 
         //exclude case when food appears over the snake
-        while (food.root.classList.contains('snake-head') || food.root.classList.contains('snake-body')){// || food.root.classList.contains('snake-body')) {
-            coords = this.generateFoodPosition();
+        while (food.root.classList.contains('snake-head') || food.root.classList.contains('snake-body') || food.root.classList.contains('barrier') ) {
+            coords = this.generateRandomPosition();
             food = this.getCellByCoords(coords);
         }
-        this.foodCoords = coords;
+
         food.root.classList.add('food');
     }
 
     eatFood() {
-        if (this.startCoords[0] === this.foodCoords[0] && this.startCoords[1] === this.foodCoords[1]) {
-            let food = this.getCellByCoords(this.foodCoords);
+        if (this.snakeCollection[0].root.classList.contains('food')) {
+            let food = this.snakeCollection[0];
             food.removeFood();
             let lastElem = this.snakeCollection[this.snakeCollection.length - 1];
             this.snakeCollection.push(this.getCellByCoords([lastElem.x, lastElem.y]));
@@ -297,6 +318,17 @@ class Game {
     eatSelf() {
         if (this.snakeCollection[0].root.classList.contains('snake-body')) {
             let conf = confirm("Съели себя :( Начать сначала?");
+            if (conf) {
+                this.restart();
+            } else {
+                clearInterval(this.interval);
+            }
+        }
+    }
+
+    collision() {
+        if (this.snakeCollection[0].root.classList.contains('barrier')) {
+            let conf = confirm("Змея сломала голову :( Начать сначала?");
             if (conf) {
                 this.restart();
             } else {
@@ -358,9 +390,10 @@ class Game {
             this.snakeCollection[i].addBody();
         }
 
-        
+
         this.eatFood();
         this.eatSelf();
+        this.collision();
 
         this.steps = true;
     }
@@ -369,7 +402,7 @@ class Game {
         this.grid.innerHTML = '';
         this.cells = [];
         this.snakeCollection = [];
-        this.foodCoords = undefined;
+        // this.foodCoords = undefined;
         // this.direction = 'right';
         this.level++;
         clearInterval(this.interval);
@@ -380,8 +413,8 @@ class Game {
         this.grid.innerHTML = '';
         this.cells = [];
         this.snakeCollection = [];
-        this.startCoords = this.generateSnakePosition();
-        this.foodCoords = undefined;
+        this.startCoords = this.generateRandomPosition();
+        // this.foodCoords = undefined;
         this.direction = 'right';
         this.level = 1;
 

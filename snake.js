@@ -46,42 +46,48 @@ var Levels = /** @class */ (function () {
                 scores: 0,
                 maxScores: 4,
                 speed: 600,
-                size: 8
+                size: 8,
+                barrier: 2
             },
             {
                 id: 2,
                 scores: 0,
                 maxScores: 6,
                 speed: 500,
-                size: 9
+                size: 9,
+                barrier: 3
             },
             {
                 id: 3,
                 scores: 0,
                 maxScores: 8,
                 speed: 400,
-                size: 10
+                size: 10,
+                barrier: 4
             },
             {
                 id: 4,
                 scores: 0,
                 maxScores: 10,
                 speed: 250,
-                size: 11
+                size: 11,
+                barrier: 5
             },
             {
                 id: 5,
                 scores: 0,
                 maxScores: 15,
                 speed: 200,
-                size: 12
+                size: 12,
+                barrier: 6
             },
             {
                 id: 6,
                 scores: 0,
                 maxScores: 20,
                 speed: 150,
-                size: 13
+                size: 13,
+                barrier: 7
             }
         ];
     }
@@ -91,6 +97,7 @@ var Game = /** @class */ (function () {
     function Game(props) {
         this.cells = [];
         this.snakeCollection = [];
+        // public foodCoords: [number, number];
         this.direction = 'right';
         this.steps = false;
         this.level = 1;
@@ -102,7 +109,7 @@ var Game = /** @class */ (function () {
         this.grid = document.createElement('div');
         this.container.classList = 'container';
         this.root.appendChild(this.container);
-        this.startCoords = this.generateSnakePosition();
+        this.startCoords = this.generateRandomPosition();
         this.init();
     }
     Game.prototype.init = function () {
@@ -111,6 +118,7 @@ var Game = /** @class */ (function () {
         this.drawGrid();
         this.generateSnake();
         this.generateFood();
+        this.generateBarrier();
         window.addEventListener('keydown', function (e) {
             if (_this.steps === true) {
                 if (e.keyCode === 37 && _this.direction !== 'right') {
@@ -210,29 +218,41 @@ var Game = /** @class */ (function () {
         this.snakeCollection.push(el1);
         this.snakeCollection.push(el2);
     };
-    Game.prototype.generateSnakePosition = function () {
-        return [this.random(3, this.getCurrentLevel.size), this.random(3, this.getCurrentLevel.size)];
-    };
-    Game.prototype.generateFoodPosition = function () {
+    // generateSnakePosition(): [number, number] {
+    //     return [this.random(3, this.getCurrentLevel.size), this.random(3, this.getCurrentLevel.size)];
+    // }
+    Game.prototype.generateRandomPosition = function () {
         return [this.random(1, this.getCurrentLevel.size), this.random(1, this.getCurrentLevel.size)];
     };
     Game.prototype.random = function (min, max) {
         return Math.round(Math.random() * (max - min) + min);
     };
+    Game.prototype.generateBarrier = function () {
+        for (var i = 0; i <= this.getCurrentLevel.barrier; i++) {
+            var coords = this.generateRandomPosition();
+            var barrier = this.getCellByCoords(coords);
+            //exclude case when food appears over the snake
+            while (barrier.root.classList.contains('snake-head') || barrier.root.classList.contains('snake-body') || barrier.root.classList.contains('food')) {
+                coords = this.generateRandomPosition();
+                barrier = this.getCellByCoords(coords);
+            }
+            // this.foodCoords = coords;
+            barrier.root.classList.add('barrier');
+        }
+    };
     Game.prototype.generateFood = function () {
-        var coords = this.generateFoodPosition();
+        var coords = this.generateRandomPosition();
         var food = this.getCellByCoords(coords);
         //exclude case when food appears over the snake
-        while (food.root.classList.contains('snake-head') || food.root.classList.contains('snake-body')) { // || food.root.classList.contains('snake-body')) {
-            coords = this.generateFoodPosition();
+        while (food.root.classList.contains('snake-head') || food.root.classList.contains('snake-body') || food.root.classList.contains('barrier')) {
+            coords = this.generateRandomPosition();
             food = this.getCellByCoords(coords);
         }
-        this.foodCoords = coords;
         food.root.classList.add('food');
     };
     Game.prototype.eatFood = function () {
-        if (this.startCoords[0] === this.foodCoords[0] && this.startCoords[1] === this.foodCoords[1]) {
-            var food = this.getCellByCoords(this.foodCoords);
+        if (this.snakeCollection[0].root.classList.contains('food')) {
+            var food = this.snakeCollection[0];
             food.removeFood();
             var lastElem = this.snakeCollection[this.snakeCollection.length - 1];
             this.snakeCollection.push(this.getCellByCoords([lastElem.x, lastElem.y]));
@@ -258,6 +278,17 @@ var Game = /** @class */ (function () {
     Game.prototype.eatSelf = function () {
         if (this.snakeCollection[0].root.classList.contains('snake-body')) {
             var conf = confirm("Съели себя :( Начать сначала?");
+            if (conf) {
+                this.restart();
+            }
+            else {
+                clearInterval(this.interval);
+            }
+        }
+    };
+    Game.prototype.collision = function () {
+        if (this.snakeCollection[0].root.classList.contains('barrier')) {
+            var conf = confirm("Змея сломала голову :( Начать сначала?");
             if (conf) {
                 this.restart();
             }
@@ -316,13 +347,14 @@ var Game = /** @class */ (function () {
         }
         this.eatFood();
         this.eatSelf();
+        this.collision();
         this.steps = true;
     };
     Game.prototype.nextLevel = function () {
         this.grid.innerHTML = '';
         this.cells = [];
         this.snakeCollection = [];
-        this.foodCoords = undefined;
+        // this.foodCoords = undefined;
         // this.direction = 'right';
         this.level++;
         clearInterval(this.interval);
@@ -332,8 +364,8 @@ var Game = /** @class */ (function () {
         this.grid.innerHTML = '';
         this.cells = [];
         this.snakeCollection = [];
-        this.startCoords = this.generateSnakePosition();
-        this.foodCoords = undefined;
+        this.startCoords = this.generateRandomPosition();
+        // this.foodCoords = undefined;
         this.direction = 'right';
         this.level = 1;
         this.state = __assign({}, new Levels());

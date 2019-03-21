@@ -56,13 +56,19 @@ class Levels {
                 id: 4,
                 scores: 0,
                 maxScores: 10,
-                speed: 300
+                speed: 250
             },
             {
                 id: 5,
                 scores: 0,
                 maxScores: 15,
                 speed: 200
+            },
+            {
+                id: 6,
+                scores: 0,
+                maxScores: 20,
+                speed: 150
             }
         ]
     }

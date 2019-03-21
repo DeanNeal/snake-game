@@ -130,7 +130,7 @@ var Game = /** @class */ (function () {
         this.updateScores();
     };
     Game.prototype.updateScores = function () {
-        this.scoreBoard.innerHTML = "\n        <div class=\"top-panel__level\">Level: " + this.getCurrentLevel.id + "</div>\n        <div class=\"top-panel__scores\">\n            " + this.getCurrentLevel.scores + " of " + this.getCurrentLevel.maxScores + "\n        </div>\n        <div class=\"top-panel__speed\"> speed: " + this.getCurrentLevel.speed + "</div>\n        ";
+        this.scoreBoard.innerHTML = "\n        <div class=\"top-panel__level\">Level: " + this.getCurrentLevel.id + " of " + this.state.levels.length + "</div>\n        <div class=\"top-panel__scores\">\n            Mice: " + this.getCurrentLevel.scores + " of " + this.getCurrentLevel.maxScores + "\n        </div>\n        <div class=\"top-panel__speed\"> speed: " + this.getCurrentLevel.speed + "ms</div>\n        ";
     };
     Game.prototype.drawGrid = function () {
         this.grid.classList = 'grid';

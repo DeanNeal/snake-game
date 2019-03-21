@@ -148,11 +148,11 @@ class Game {
 
     updateScores() {
         this.scoreBoard.innerHTML = `
-        <div class="top-panel__level">Level: ${this.getCurrentLevel.id}</div>
+        <div class="top-panel__level">Level: ${this.getCurrentLevel.id} of ${this.state.levels.length}</div>
         <div class="top-panel__scores">
-            ${this.getCurrentLevel.scores} of ${this.getCurrentLevel.maxScores}
+            Mice: ${this.getCurrentLevel.scores} of ${this.getCurrentLevel.maxScores}
         </div>
-        <div class="top-panel__speed"> speed: ${this.getCurrentLevel.speed}</div>
+        <div class="top-panel__speed"> speed: ${this.getCurrentLevel.speed}ms</div>
         `;
     }
 

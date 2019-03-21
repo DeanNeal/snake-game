@@ -1,4 +1,5 @@
-import { levels } from './levels';
+import { Levels } from './levels';
+import { Cell } from './cell';
 
 class AudioController {
     play(url: string) {
@@ -8,105 +9,12 @@ class AudioController {
     }
 }
 
-class Cell {
-    public root;
-    public y;
-    public x;
-    constructor(x, y) {
-        this.root = document.createElement('div');
-        this.root.classList = 'cell';
-        this.x = x;
-        this.y = y;
-    }
-
-    removeBody() {
-        this.root.classList.remove('snake-body');
-    }
-
-    addBody() {
-        this.root.classList.add('snake-body');
-    }
-
-    addHead() {
-        this.root.classList.add('snake-head');
-    }
-
-    removeHead() {
-        this.root.classList.remove('snake-head')
-    }
-
-    removeFood() {
-        this.root.classList.remove('food');
-    }
-
-    setSize(gridSize, size) {
-        const cellSize = gridSize / size + 'px';
-        this.root.style.width = cellSize;
-        this.root.style.height = cellSize;
-    }
-}
-
-class Levels {
-    public levels;
-    constructor() {
-        this.levels = [
-            {
-                id: 1,
-                scores: 0,
-                maxScores: 4,
-                speed: 600,
-                size: 8,
-                barrier: 2,
-            },
-            {
-                id: 2,
-                scores: 0,
-                maxScores: 6,
-                speed: 500,
-                size: 9,
-                barrier: 3
-            },
-            {
-                id: 3,
-                scores: 0,
-                maxScores: 8,
-                speed: 400,
-                size: 10,
-                barrier: 4
-            },
-            {
-                id: 4,
-                scores: 0,
-                maxScores: 10,
-                speed: 250,
-                size: 11,
-                barrier: 5
-            },
-            {
-                id: 5,
-                scores: 0,
-                maxScores: 15,
-                speed: 200,
-                size: 12,
-                barrier: 6
-            },
-            {
-                id: 6,
-                scores: 0,
-                maxScores: 20,
-                speed: 150,
-                size: 13,
-                barrier: 7
-            }
-        ]
-    }
-}
 
 class Game {
-    public root;
+    public root: HTMLElement;
     public state;
-    public container;
-    public scoreBoard;
+    public container: HTMLElement;
+    public scoreBoard: HTMLElement;
     public grid;
     public cells: Cell[] = [];
     public snakeCollection: Cell[] = [];
@@ -131,7 +39,7 @@ class Game {
         this.scoreBoard = document.createElement('div');
         this.grid = document.createElement('div');
 
-        this.container.classList = 'container';
+        this.container.classList.add('container');
         this.root.appendChild(this.container);
         this.startCoords = this.generateRandomPosition();
 
@@ -139,6 +47,8 @@ class Game {
         this.showTooltip('Готовы?', 'Начать', () => {
             this.startGame();
         });
+
+        this.drawScoreBoard();
 
         this.init();
     }
@@ -169,7 +79,6 @@ class Game {
     }
 
     init() {
-        this.drawScoreBoard();
         this.drawGrid();
 
         this.generateSnake();
@@ -205,7 +114,7 @@ class Game {
     }
 
     drawScoreBoard() {
-        this.scoreBoard.classList = 'top-panel';
+        this.scoreBoard.classList.add('top-panel');
         this.container.appendChild(this.scoreBoard);
     }
 
@@ -292,14 +201,12 @@ class Game {
         this.snakeCollection.push(el1);
         this.snakeCollection.push(el2);
     }
-    // generateSnakePosition(): [number, number] {
-    //     return [this.random(3, this.getCurrentLevel.size), this.random(3, this.getCurrentLevel.size)];
-    // }
+
     generateRandomPosition(): [number, number] {
-        return [this.random(1, this.getCurrentLevel.size), this.random(1, this.getCurrentLevel.size)];
+        return [Game.random(1, this.getCurrentLevel.size), Game.random(1, this.getCurrentLevel.size)];
     }
 
-    random(min, max): number {
+    static random(min, max): number {
         return Math.round(Math.random() * (max - min) + min);
     }
 
@@ -371,6 +278,7 @@ class Game {
     collision() {
         if (this.snakeCollection[0].root.classList.contains('barrier')) {
             this.stopGame();
+            
             this.audioController.play('zvuk-udar.mp3');
             this.showTooltip('Змея сломала голову :(', 'Начать сначала?', () => {
                 this.restart();

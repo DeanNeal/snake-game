@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './snake.ts',
+  entry: './src/snake.ts',
   module: {
     rules: [
       {

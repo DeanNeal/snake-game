@@ -31,6 +31,11 @@ var Cell = /** @class */ (function () {
     Cell.prototype.removeFood = function () {
         this.root.classList.remove('food');
     };
+    Cell.prototype.setSize = function (gridSize, size) {
+        var cellSize = gridSize / size + 'px';
+        this.root.style.width = cellSize;
+        this.root.style.height = cellSize;
+    };
     return Cell;
 }());
 var Levels = /** @class */ (function () {
@@ -40,37 +45,43 @@ var Levels = /** @class */ (function () {
                 id: 1,
                 scores: 0,
                 maxScores: 4,
-                speed: 600
+                speed: 600,
+                size: 8
             },
             {
                 id: 2,
                 scores: 0,
                 maxScores: 6,
-                speed: 500
+                speed: 500,
+                size: 10
             },
             {
                 id: 3,
                 scores: 0,
                 maxScores: 8,
-                speed: 400
+                speed: 400,
+                size: 12
             },
             {
                 id: 4,
                 scores: 0,
                 maxScores: 10,
-                speed: 250
+                speed: 250,
+                size: 14
             },
             {
                 id: 5,
                 scores: 0,
                 maxScores: 15,
-                speed: 200
+                speed: 200,
+                size: 16
             },
             {
                 id: 6,
                 scores: 0,
                 maxScores: 20,
-                speed: 150
+                speed: 150,
+                size: 20
             }
         ];
     }
@@ -83,6 +94,7 @@ var Game = /** @class */ (function () {
         this.direction = 'right';
         this.steps = false;
         this.level = 1;
+        this.gridSize = 500;
         this.root = props.el;
         this.state = __assign({}, new Levels());
         this.container = document.createElement('div');
@@ -140,15 +152,18 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.drawGrid = function () {
         this.grid.classList = 'grid';
+        this.grid.style.width = this.gridSize + 'px';
+        this.grid.style.height = this.gridSize + 'px';
         var y = 1;
         var x = 1;
-        for (var i = 1; i < 101; i++) {
+        for (var i = 1; i < this.getCurrentLevel.size * this.getCurrentLevel.size + 1; i++) {
             var cell = new Cell(x, y);
+            cell.setSize(this.gridSize, this.getCurrentLevel.size);
             this.grid.appendChild(cell.root);
             this.cells.push(cell);
             x++;
-            //start again after every 10 iteration
-            if (i % 10 === 0) {
+            //start again after every this.getCurrentLevel.size iteration
+            if (i % this.getCurrentLevel.size === 0) {
                 x = 1;
                 y++;
             }
@@ -171,9 +186,9 @@ var Game = /** @class */ (function () {
         var el1;
         var el2;
         if (this.direction === 'right') {
-            el1 = this.getCellByCoords([this.startCoords[0] - 1, this.startCoords[1]]) || this.getCellByCoords([10, this.startCoords[1]]);
+            el1 = this.getCellByCoords([this.startCoords[0] - 1, this.startCoords[1]]) || this.getCellByCoords([this.getCurrentLevel.size, this.startCoords[1]]);
             var startIndex = el1.x;
-            el2 = this.getCellByCoords([startIndex - 1, this.startCoords[1]]) || this.getCellByCoords([10, this.startCoords[1]]);
+            el2 = this.getCellByCoords([startIndex - 1, this.startCoords[1]]) || this.getCellByCoords([this.getCurrentLevel.size, this.startCoords[1]]);
         }
         if (this.direction === 'left') {
             el1 = this.getCellByCoords([this.startCoords[0] + 1, this.startCoords[1]]) || this.getCellByCoords([1, this.startCoords[1]]);
@@ -186,9 +201,9 @@ var Game = /** @class */ (function () {
             el2 = this.getCellByCoords([this.startCoords[0], startIndex + 1]) || this.getCellByCoords([this.startCoords[0], 1]);
         }
         if (this.direction === 'down') {
-            el1 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] - 1]) || this.getCellByCoords([this.startCoords[0], 10]);
+            el1 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] - 1]) || this.getCellByCoords([this.startCoords[0], this.getCurrentLevel.size]);
             var startIndex = el1.y;
-            el2 = this.getCellByCoords([this.startCoords[0], startIndex - 1]) || this.getCellByCoords([this.startCoords[0], 10]);
+            el2 = this.getCellByCoords([this.startCoords[0], startIndex - 1]) || this.getCellByCoords([this.startCoords[0], this.getCurrentLevel.size]);
         }
         el1.root.classList.add('snake-body');
         el2.root.classList.add('snake-body');
@@ -196,10 +211,10 @@ var Game = /** @class */ (function () {
         this.snakeCollection.push(el2);
     };
     Game.prototype.generateSnakePosition = function () {
-        return [this.random(3, 10), this.random(3, 10)];
+        return [this.random(3, this.getCurrentLevel.size), this.random(3, this.getCurrentLevel.size)];
     };
     Game.prototype.generateFoodPosition = function () {
-        return [this.random(1, 10), this.random(1, 10)];
+        return [this.random(1, this.getCurrentLevel.size), this.random(1, this.getCurrentLevel.size)];
     };
     Game.prototype.random = function (min, max) {
         return Math.round(Math.random() * (max - min) + min);
@@ -256,7 +271,7 @@ var Game = /** @class */ (function () {
         this.snakeCollection[this.snakeCollection.length - 1].removeBody();
         this.snakeCollection.pop();
         if (this.direction === 'right') {
-            if (this.startCoords[0] < 10) {
+            if (this.startCoords[0] < this.getCurrentLevel.size) {
                 this.startCoords = [this.startCoords[0] + 1, this.startCoords[1]];
                 this.snakeCollection.unshift(this.getCellByCoords(this.startCoords));
             }
@@ -271,7 +286,7 @@ var Game = /** @class */ (function () {
                 this.snakeCollection.unshift(this.getCellByCoords(this.startCoords));
             }
             else {
-                this.startCoords = [10, this.startCoords[1]];
+                this.startCoords = [this.getCurrentLevel.size, this.startCoords[1]];
                 this.snakeCollection.unshift(this.getCellByCoords(this.startCoords));
             }
         }
@@ -281,12 +296,12 @@ var Game = /** @class */ (function () {
                 this.snakeCollection.unshift(this.getCellByCoords(this.startCoords));
             }
             else {
-                this.startCoords = [this.startCoords[0], 10];
+                this.startCoords = [this.startCoords[0], this.getCurrentLevel.size];
                 this.snakeCollection.unshift(this.getCellByCoords(this.startCoords));
             }
         }
         else if (this.direction === 'down') {
-            if (this.startCoords[1] < 10) {
+            if (this.startCoords[1] < this.getCurrentLevel.size) {
                 this.startCoords = [this.startCoords[0], this.startCoords[1] + 1];
                 this.snakeCollection.unshift(this.getCellByCoords(this.startCoords));
             }

@@ -56,16 +56,16 @@
 
 
         .grid {
-            height: 500px;
-            width: 500px;
+            /* height: 500px;
+            width: 500px; */
             display: flex;
             flex-wrap: wrap;
             box-shadow: 0 0 0 2px #888;
         }
 
         .cell {
-            width: 10%;
-            height: 10%;
+            /* width: 10%;
+            height: 10%; */
             border: 1px solid #888;
             /* transition: 0.3s; */
         }
@@ -80,10 +80,10 @@
         .cell.snake-head:after {
             content: '';
             background: #000;
-            width: 30px;
+            width: 80%;
             border-radius: 100%;
             position: absolute;
-            height: 30px;
+            height: 80%;
         }
 
         .cell.snake-head[direction="right"] {
@@ -113,10 +113,10 @@
         .cell.snake-body:after {
             content: '';
             background: #666;
-            width: 30px;
+            width: 80%;
             border-radius: 100%;
             position: absolute;
-            height: 30px;
+            height: 80%;
         }
 
         .cell.food {

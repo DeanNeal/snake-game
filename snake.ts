@@ -28,6 +28,12 @@ class Cell {
     removeFood() {
         this.root.classList.remove('food');
     }
+
+    setSize(gridSize, size) {
+        const cellSize = gridSize / size + 'px';
+        this.root.style.width = cellSize;
+        this.root.style.height = cellSize; 
+    }
 }
 
 class Levels {
@@ -38,37 +44,43 @@ class Levels {
                 id: 1,
                 scores: 0,
                 maxScores: 4,
-                speed: 600
+                speed: 600,
+                size: 8
             },
             {
                 id: 2,
                 scores: 0,
                 maxScores: 6,
-                speed: 500
+                speed: 500,
+                size: 10
             },
             {
                 id: 3,
                 scores: 0,
                 maxScores: 8,
-                speed: 400
+                speed: 400,
+                size: 12
             },
             {
                 id: 4,
                 scores: 0,
                 maxScores: 10,
-                speed: 250
+                speed: 250,
+                size: 14,
             },
             {
                 id: 5,
                 scores: 0,
                 maxScores: 15,
-                speed: 200
+                speed: 200,
+                size: 16
             },
             {
                 id: 6,
                 scores: 0,
                 maxScores: 20,
-                speed: 150
+                speed: 150,
+                size: 20
             }
         ]
     }
@@ -88,6 +100,7 @@ class Game {
     public interval: number;
     public steps: boolean = false;
     public level: number = 1;
+    readonly gridSize: number = 500;
 
     constructor(props) {
         this.root = props.el;
@@ -164,16 +177,20 @@ class Game {
 
     drawGrid() {
         this.grid.classList = 'grid';
+        this.grid.style.width = this.gridSize + 'px';
+        this.grid.style.height = this.gridSize + 'px';
+
         let y = 1;
         let x = 1;
-        for (let i = 1; i < 101; i++) {
+        for (let i = 1; i < this.getCurrentLevel.size * this.getCurrentLevel.size + 1; i++) {
             let cell = new Cell(x, y);
+            cell.setSize(this.gridSize, this.getCurrentLevel.size);
             this.grid.appendChild(cell.root);
             this.cells.push(cell);
             x++;
 
-            //start again after every 10 iteration
-            if (i % 10 === 0) {
+            //start again after every this.getCurrentLevel.size iteration
+            if (i % this.getCurrentLevel.size === 0) {
                 x = 1;
                 y++;
             }
@@ -198,9 +215,9 @@ class Game {
         let el2;
 
         if (this.direction === 'right') {
-            el1 = this.getCellByCoords([this.startCoords[0] - 1, this.startCoords[1]]) || this.getCellByCoords([10, this.startCoords[1]]);
+            el1 = this.getCellByCoords([this.startCoords[0] - 1, this.startCoords[1]]) || this.getCellByCoords([this.getCurrentLevel.size, this.startCoords[1]]);
             let startIndex = el1.x;
-            el2 = this.getCellByCoords([startIndex - 1, this.startCoords[1]]) || this.getCellByCoords([10, this.startCoords[1]])
+            el2 = this.getCellByCoords([startIndex - 1, this.startCoords[1]]) || this.getCellByCoords([this.getCurrentLevel.size, this.startCoords[1]])
         }
 
         if (this.direction === 'left') {
@@ -216,9 +233,9 @@ class Game {
         }
 
         if (this.direction === 'down') {
-            el1 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] - 1]) || this.getCellByCoords([this.startCoords[0], 10]);
+            el1 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] - 1]) || this.getCellByCoords([this.startCoords[0], this.getCurrentLevel.size]);
             let startIndex = el1.y;
-            el2 = this.getCellByCoords([this.startCoords[0], startIndex - 1]) || this.getCellByCoords([this.startCoords[0], 10]);
+            el2 = this.getCellByCoords([this.startCoords[0], startIndex - 1]) || this.getCellByCoords([this.startCoords[0], this.getCurrentLevel.size]);
         }
 
         el1.root.classList.add('snake-body');
@@ -228,10 +245,10 @@ class Game {
         this.snakeCollection.push(el2);
     }
     generateSnakePosition(): [number, number] {
-        return [this.random(3, 10), this.random(3, 10)];
+        return [this.random(3, this.getCurrentLevel.size), this.random(3, this.getCurrentLevel.size)];
     }
     generateFoodPosition(): [number, number] {
-        return [this.random(1, 10), this.random(1, 10)];
+        return [this.random(1, this.getCurrentLevel.size), this.random(1, this.getCurrentLevel.size)];
     }
 
     random(min, max): number {
@@ -296,7 +313,7 @@ class Game {
         this.snakeCollection.pop();
 
         if (this.direction === 'right') {
-            if (this.startCoords[0] < 10) {
+            if (this.startCoords[0] < this.getCurrentLevel.size) {
                 this.startCoords = [this.startCoords[0] + 1, this.startCoords[1]];
                 this.snakeCollection.unshift(this.getCellByCoords(this.startCoords));
             } else {
@@ -310,7 +327,7 @@ class Game {
                 this.startCoords = [this.startCoords[0] - 1, this.startCoords[1]];
                 this.snakeCollection.unshift(this.getCellByCoords(this.startCoords));
             } else {
-                this.startCoords = [10, this.startCoords[1]];
+                this.startCoords = [this.getCurrentLevel.size, this.startCoords[1]];
                 this.snakeCollection.unshift(this.getCellByCoords(this.startCoords));
             }
         }
@@ -320,13 +337,13 @@ class Game {
                 this.startCoords = [this.startCoords[0], this.startCoords[1] - 1];
                 this.snakeCollection.unshift(this.getCellByCoords(this.startCoords));
             } else {
-                this.startCoords = [this.startCoords[0], 10];
+                this.startCoords = [this.startCoords[0], this.getCurrentLevel.size];
                 this.snakeCollection.unshift(this.getCellByCoords(this.startCoords));
             }
         }
 
         else if (this.direction === 'down') {
-            if (this.startCoords[1] < 10) {
+            if (this.startCoords[1] < this.getCurrentLevel.size) {
                 this.startCoords = [this.startCoords[0], this.startCoords[1] + 1];
                 this.snakeCollection.unshift(this.getCellByCoords(this.startCoords));
             } else {

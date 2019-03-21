@@ -40,31 +40,31 @@ var Levels = /** @class */ (function () {
                 id: 1,
                 scores: 0,
                 maxScores: 4,
-                speed: 400
+                speed: 600
             },
             {
                 id: 2,
                 scores: 0,
-                maxScores: 5,
-                speed: 380
+                maxScores: 6,
+                speed: 500
             },
             {
                 id: 3,
                 scores: 0,
-                maxScores: 6,
-                speed: 360
+                maxScores: 8,
+                speed: 400
             },
             {
                 id: 4,
                 scores: 0,
-                maxScores: 7,
-                speed: 340
+                maxScores: 10,
+                speed: 300
             },
             {
                 id: 5,
                 scores: 0,
-                maxScores: 10,
-                speed: 300
+                maxScores: 15,
+                speed: 200
             }
         ];
     }
@@ -165,20 +165,24 @@ var Game = /** @class */ (function () {
         var el1;
         var el2;
         if (this.direction === 'right') {
-            el1 = this.getCellByCoords([this.startCoords[0] - 1, this.startCoords[1]]);
-            el2 = this.getCellByCoords([this.startCoords[0] - 2, this.startCoords[1]]);
+            el1 = this.getCellByCoords([this.startCoords[0] - 1, this.startCoords[1]]) || this.getCellByCoords([10, this.startCoords[1]]);
+            var startIndex = el1.x;
+            el2 = this.getCellByCoords([startIndex - 1, this.startCoords[1]]) || this.getCellByCoords([10, this.startCoords[1]]);
         }
         if (this.direction === 'left') {
-            el1 = this.getCellByCoords([this.startCoords[0] + 1, this.startCoords[1]]);
-            el2 = this.getCellByCoords([this.startCoords[0] + 2, this.startCoords[1]]);
+            el1 = this.getCellByCoords([this.startCoords[0] + 1, this.startCoords[1]]) || this.getCellByCoords([1, this.startCoords[1]]);
+            var startIndex = el1.x;
+            el2 = this.getCellByCoords([startIndex + 1, this.startCoords[1]]) || this.getCellByCoords([1, this.startCoords[1]]);
         }
         if (this.direction === 'up') {
-            el1 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] + 1]);
-            el2 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] + 2]);
+            el1 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] + 1]) || this.getCellByCoords([this.startCoords[0], 1]);
+            var startIndex = el1.y;
+            el2 = this.getCellByCoords([this.startCoords[0], startIndex + 1]) || this.getCellByCoords([this.startCoords[0], 1]);
         }
         if (this.direction === 'down') {
-            el1 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] - 1]);
-            el2 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] - 2]);
+            el1 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] - 1]) || this.getCellByCoords([this.startCoords[0], 10]);
+            var startIndex = el1.y;
+            el2 = this.getCellByCoords([this.startCoords[0], startIndex - 1]) || this.getCellByCoords([this.startCoords[0], 10]);
         }
         el1.root.classList.add('snake-body');
         el2.root.classList.add('snake-body');
@@ -198,7 +202,7 @@ var Game = /** @class */ (function () {
         var coords = this.generateFoodPosition();
         var food = this.getCellByCoords(coords);
         //exclude case when food appears over the snake
-        while (food.root.classList.contains('snake-head') || food.root.classList.contains('snake-body')) {
+        while (food.root.classList.contains('snake-head') || food.root.classList.contains('snake-body')) { // || food.root.classList.contains('snake-body')) {
             coords = this.generateFoodPosition();
             food = this.getCellByCoords(coords);
         }
@@ -285,13 +289,12 @@ var Game = /** @class */ (function () {
                 this.snakeCollection.unshift(this.getCellByCoords(this.startCoords));
             }
         }
-        // this.snakeCollection[0].root.setAttribute('direction', this.direction);
-        this.eatFood();
-        this.eatSelf();
         this.snakeCollection[0].addHead();
         for (var i = 1; i < this.snakeCollection.length; i++) {
             this.snakeCollection[i].addBody();
         }
+        this.eatFood();
+        this.eatSelf();
         this.steps = true;
     };
     Game.prototype.nextLevel = function () {

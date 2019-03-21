@@ -1,3 +1,11 @@
+class AudioController {
+    play(url: string) {
+        var audio = new Audio(url);
+        audio.volume = 0.2;
+        audio.play();
+    }
+}
+
 class Cell {
     public root;
     public y;
@@ -107,6 +115,7 @@ class Game {
     public steps: boolean = false;
     public level: number = 1;
     readonly gridSize: number = 500;
+    public audioController = new AudioController();
 
     constructor(props) {
         this.root = props.el;
@@ -291,6 +300,7 @@ class Game {
 
     eatFood() {
         if (this.snakeCollection[0].root.classList.contains('food')) {
+            this.audioController.play('attack.mp3');
             let food = this.snakeCollection[0];
             food.removeFood();
             let lastElem = this.snakeCollection[this.snakeCollection.length - 1];
@@ -328,12 +338,18 @@ class Game {
 
     collision() {
         if (this.snakeCollection[0].root.classList.contains('barrier')) {
-            let conf = confirm("Змея сломала голову :( Начать сначала?");
-            if (conf) {
-                this.restart();
-            } else {
-                clearInterval(this.interval);
-            }
+            this.audioController.play('zvuk-udar.mp3');
+            clearInterval(this.interval);
+
+            setTimeout(()=>{
+                let conf = confirm("Змея сломала голову :( Начать сначала?");
+                if (conf) {
+                    this.restart();
+                } else {
+                    clearInterval(this.interval);
+                }
+            },100);
+  
         }
     }
 

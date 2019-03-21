@@ -9,6 +9,16 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var AudioController = /** @class */ (function () {
+    function AudioController() {
+    }
+    AudioController.prototype.play = function (url) {
+        var audio = new Audio(url);
+        audio.volume = 0.2;
+        audio.play();
+    };
+    return AudioController;
+}());
 var Cell = /** @class */ (function () {
     function Cell(x, y) {
         this.root = document.createElement('div');
@@ -102,6 +112,7 @@ var Game = /** @class */ (function () {
         this.steps = false;
         this.level = 1;
         this.gridSize = 500;
+        this.audioController = new AudioController();
         this.root = props.el;
         this.state = __assign({}, new Levels());
         this.container = document.createElement('div');
@@ -252,6 +263,7 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.eatFood = function () {
         if (this.snakeCollection[0].root.classList.contains('food')) {
+            this.audioController.play('attack.mp3');
             var food = this.snakeCollection[0];
             food.removeFood();
             var lastElem = this.snakeCollection[this.snakeCollection.length - 1];
@@ -287,14 +299,19 @@ var Game = /** @class */ (function () {
         }
     };
     Game.prototype.collision = function () {
+        var _this = this;
         if (this.snakeCollection[0].root.classList.contains('barrier')) {
-            var conf = confirm("Змея сломала голову :( Начать сначала?");
-            if (conf) {
-                this.restart();
-            }
-            else {
-                clearInterval(this.interval);
-            }
+            this.audioController.play('zvuk-udar.mp3');
+            clearInterval(this.interval);
+            setTimeout(function () {
+                var conf = confirm("Змея сломала голову :( Начать сначала?");
+                if (conf) {
+                    _this.restart();
+                }
+                else {
+                    clearInterval(_this.interval);
+                }
+            }, 100);
         }
     };
     Game.prototype.move = function () {

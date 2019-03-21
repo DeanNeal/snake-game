@@ -13,6 +13,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: 'Roboto', sans-serif;
 }
 
  .container {
@@ -21,7 +22,7 @@ body {
 
 .top-panel {
   text-align: center;
-  font-family: arial;
+  font-family: 'Roboto';
   padding: 5px;
 
 }
@@ -46,8 +47,8 @@ body {
     /*top: 0;*/
     position: absolute;
     width: 100%;
-    top: 91px;
-    height: calc(100% - 91px);
+    top: 94px;
+    height: calc(100% - 94px);
     z-index: 10;
     font-size: 32px;
     display: none;
@@ -62,12 +63,15 @@ body {
 }
 .top-panel__start  div {
   width: 100%;
+  font-size: 38px;
 }
 .top-panel__start  button {
-  padding: 5px;
-  margin-top: 10px;
+  padding: 10px 15px;
+  margin-top: 20px;
   border-radius: 4px;
   outline: none;
+  font-family: 'Roboto';
+  font-size: 16px;
 }
 .grid {
   /* height: 500px;

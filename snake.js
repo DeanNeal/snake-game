@@ -53,35 +53,35 @@ var Levels = /** @class */ (function () {
                 scores: 0,
                 maxScores: 6,
                 speed: 500,
-                size: 10
+                size: 9
             },
             {
                 id: 3,
                 scores: 0,
                 maxScores: 8,
                 speed: 400,
-                size: 12
+                size: 10
             },
             {
                 id: 4,
                 scores: 0,
                 maxScores: 10,
                 speed: 250,
-                size: 14
+                size: 11
             },
             {
                 id: 5,
                 scores: 0,
                 maxScores: 15,
                 speed: 200,
-                size: 16
+                size: 12
             },
             {
                 id: 6,
                 scores: 0,
                 maxScores: 20,
                 speed: 150,
-                size: 20
+                size: 13
             }
         ];
     }

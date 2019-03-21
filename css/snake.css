@@ -130,10 +130,10 @@ body {
 .cell.snake-body:after {
   content: "";
   background: #666;
-  width: 80%;
+  width: 50%;
   border-radius: 100%;
   position: absolute;
-  height: 80%;
+  height: 50%;
 }
 
 .cell.food {

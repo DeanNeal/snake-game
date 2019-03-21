@@ -116,7 +116,7 @@ class Game {
     public interval: any;
     public steps: boolean = false;
     public level: number = 1;
-    readonly gridSize: number = 500;
+    readonly gridSize: number = 600;
     public audioController = new AudioController();
     public pause: boolean = true;
     public infoMessage: string;

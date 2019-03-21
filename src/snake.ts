@@ -119,6 +119,7 @@ class Game {
     }
 
     updateScores() {
+        this.container.setAttribute('level', this.getCurrentLevel.id);
         this.scoreBoard.innerHTML = `
         <div class="top-panel__level">Level: ${this.getCurrentLevel.id} of ${this.state.levels.length}</div>
         <div class="top-panel__scores">
@@ -280,7 +281,7 @@ class Game {
             this.stopGame();
             
             this.audioController.play('zvuk-udar.mp3');
-            this.showTooltip('Змея сломала голову :(', 'Начать сначала?', () => {
+            this.showTooltip('Змея попала в неприятности :(', 'Начать сначала?', () => {
                 this.restart();
             });
         }

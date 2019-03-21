@@ -156,11 +156,22 @@ body {
 }
 
 .cell.barrier {
-
-  background: url(../img/rock.png);
-  background-size: cover;
+  background-size: cover!important;
+  background: black;
 }
 
+.container[level="1"] .cell.barrier{
+  background: url(../img/level-1.png);
+}
+.container[level="2"] .cell.barrier{
+  background: url(../img/level-2.png);
+}
+.container[level="3"] .cell.barrier{
+  background: url(../img/level-3.png);
+}
+.container[level="4"] .cell.barrier{
+  background: url(../img/level-4.png);
+}
 @keyframes shake {
   10%,
   90% {

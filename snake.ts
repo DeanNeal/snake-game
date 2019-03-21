@@ -1,6 +1,8 @@
+import { levels } from './levels';
+
 class AudioController {
     play(url: string) {
-        var audio = new Audio(url);
+        var audio = new Audio('audio/' + url);
         audio.volume = 0.2;
         audio.play();
     }
@@ -56,46 +58,46 @@ class Levels {
                 size: 8,
                 barrier: 2,
             },
-            {
-                id: 2,
-                scores: 0,
-                maxScores: 6,
-                speed: 500,
-                size: 9,
-                barrier: 3
-            },
-            {
-                id: 3,
-                scores: 0,
-                maxScores: 8,
-                speed: 400,
-                size: 10,
-                barrier: 4
-            },
-            {
-                id: 4,
-                scores: 0,
-                maxScores: 10,
-                speed: 250,
-                size: 11,
-                barrier: 5
-            },
-            {
-                id: 5,
-                scores: 0,
-                maxScores: 15,
-                speed: 200,
-                size: 12,
-                barrier: 6
-            },
-            {
-                id: 6,
-                scores: 0,
-                maxScores: 20,
-                speed: 150,
-                size: 13,
-                barrier: 7
-            }
+            // {
+            //     id: 2,
+            //     scores: 0,
+            //     maxScores: 6,
+            //     speed: 500,
+            //     size: 9,
+            //     barrier: 3
+            // },
+            // {
+            //     id: 3,
+            //     scores: 0,
+            //     maxScores: 8,
+            //     speed: 400,
+            //     size: 10,
+            //     barrier: 4
+            // },
+            // {
+            //     id: 4,
+            //     scores: 0,
+            //     maxScores: 10,
+            //     speed: 250,
+            //     size: 11,
+            //     barrier: 5
+            // },
+            // {
+            //     id: 5,
+            //     scores: 0,
+            //     maxScores: 15,
+            //     speed: 200,
+            //     size: 12,
+            //     barrier: 6
+            // },
+            // {
+            //     id: 6,
+            //     scores: 0,
+            //     maxScores: 20,
+            //     speed: 150,
+            //     size: 13,
+            //     barrier: 7
+            // }
         ]
     }
 }
@@ -111,11 +113,14 @@ class Game {
     public startCoords: [number, number];
     // public foodCoords: [number, number];
     public direction: string = 'right';
-    public interval: number;
+    public interval: any;
     public steps: boolean = false;
     public level: number = 1;
     readonly gridSize: number = 500;
     public audioController = new AudioController();
+    public pause: boolean = true;
+    public infoMessage: string;
+    public btnText: string;
 
     constructor(props) {
         this.root = props.el;
@@ -130,7 +135,37 @@ class Game {
         this.root.appendChild(this.container);
         this.startCoords = this.generateRandomPosition();
 
+
+        this.showTooltip('Готовы?', 'Начать', () => {
+            this.startGame();
+        });
+
         this.init();
+    }
+
+    startGame() {
+        if (this.interval) this.stopGame();
+
+        this.pause = false;
+        this.updateScores();
+        this.interval = setInterval(() => {
+            this.move();
+        }, this.getCurrentLevel.speed)
+    }
+
+    stopGame() {
+        clearInterval(this.interval);
+    }
+
+    showTooltip(msg, btnText, callback) {
+        this.infoMessage = msg;
+        this.btnText = btnText;
+        this.pause = true;
+        this.updateScores();
+
+        this.scoreBoard.querySelector('button').addEventListener('click', (e) => {
+            callback();
+        }, false);
     }
 
     init() {
@@ -163,10 +198,6 @@ class Game {
             }
         }, false);
 
-
-        this.interval = setInterval(() => {
-            this.move();
-        }, this.getCurrentLevel.speed)
     }
 
     get getCurrentLevel() {
@@ -176,7 +207,6 @@ class Game {
     drawScoreBoard() {
         this.scoreBoard.classList = 'top-panel';
         this.container.appendChild(this.scoreBoard);
-        this.updateScores();
     }
 
     updateScores() {
@@ -186,6 +216,10 @@ class Game {
             Mice: ${this.getCurrentLevel.scores} of ${this.getCurrentLevel.maxScores}
         </div>
         <div class="top-panel__speed"> speed: ${this.getCurrentLevel.speed}ms</div>
+        <div class="top-panel__start ${this.pause === true ? 'pause' : ''}"> 
+            <div>${this.infoMessage}</div>
+            <button>${this.btnText}</button>
+        </div>
         `;
     }
 
@@ -290,7 +324,7 @@ class Game {
         let food = this.getCellByCoords(coords);
 
         //exclude case when food appears over the snake
-        while (food.root.classList.contains('snake-head') || food.root.classList.contains('snake-body') || food.root.classList.contains('barrier') ) {
+        while (food.root.classList.contains('snake-head') || food.root.classList.contains('snake-body') || food.root.classList.contains('barrier')) {
             coords = this.generateRandomPosition();
             food = this.getCellByCoords(coords);
         }
@@ -312,12 +346,10 @@ class Game {
             this.generateFood();
             if (this.getCurrentLevel.scores >= this.getCurrentLevel.maxScores) {
                 if (this.state.levels.length === this.level) {
-                    let conf = confirm("Вы прошли игру=))) Начать сначала?");
-                    if (conf) {
+                    this.stopGame();
+                    this.showTooltip('Вы прошли игру=)))', 'Начать сначала?', () => {
                         this.restart();
-                    } else {
-                        clearInterval(this.interval);
-                    }
+                    });
                 } else {
                     this.nextLevel();
                 }
@@ -327,29 +359,22 @@ class Game {
 
     eatSelf() {
         if (this.snakeCollection[0].root.classList.contains('snake-body')) {
-            let conf = confirm("Съели себя :( Начать сначала?");
-            if (conf) {
+            this.stopGame();
+
+            this.audioController.play('zvuk-udar.mp3');
+            this.showTooltip('Съели себя :(', 'Начать сначала?', () => {
                 this.restart();
-            } else {
-                clearInterval(this.interval);
-            }
+            });
         }
     }
 
     collision() {
         if (this.snakeCollection[0].root.classList.contains('barrier')) {
+            this.stopGame();
             this.audioController.play('zvuk-udar.mp3');
-            clearInterval(this.interval);
-
-            setTimeout(()=>{
-                let conf = confirm("Змея сломала голову :( Начать сначала?");
-                if (conf) {
-                    this.restart();
-                } else {
-                    clearInterval(this.interval);
-                }
-            },100);
-  
+            this.showTooltip('Змея сломала голову :(', 'Начать сначала?', () => {
+                this.restart();
+            });
         }
     }
 
@@ -418,11 +443,12 @@ class Game {
         this.grid.innerHTML = '';
         this.cells = [];
         this.snakeCollection = [];
-        // this.foodCoords = undefined;
-        // this.direction = 'right';
         this.level++;
+        this.pause = true;
+
         clearInterval(this.interval);
         this.init();
+        this.startGame();
     }
 
     restart() {
@@ -430,7 +456,6 @@ class Game {
         this.cells = [];
         this.snakeCollection = [];
         this.startCoords = this.generateRandomPosition();
-        // this.foodCoords = undefined;
         this.direction = 'right';
         this.level = 1;
 
@@ -440,6 +465,7 @@ class Game {
 
         clearInterval(this.interval);
         this.init();
+        this.startGame();
     }
 }
 

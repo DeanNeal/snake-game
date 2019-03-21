@@ -92,7 +92,7 @@ class Game {
         this.scoreBoard = document.createElement('div');
         this.grid = document.createElement('div');
 
-    
+
 
         this.container.classList = 'container';
         this.root.appendChild(this.container);
@@ -181,22 +181,43 @@ class Game {
     }
     generateSnake() {
         this.generateSnakeHead();
-        // this.generateSnakeBody();
+        this.generateSnakeBody();
     }
     generateSnakeHead() {
         let snakeHead = this.getCellByCoords(this.startCoords);
         snakeHead.root.classList.add('snake-head');
         this.snakeCollection.push(snakeHead);
     }
-    // generateSnakeBody() {
-    //     let el1 = this.getCellByCoords([this.startCoords[0] - 1, this.startCoords[1]]);
-    //     let el2 = this.getCellByCoords([this.startCoords[0] - 2, this.startCoords[1]]);
-    //     el1.root.classList.add('snake-body');
-    //     el2.root.classList.add('snake-body');
+    generateSnakeBody() {
+        let el1;
+        let el2;
 
-    //     this.snakeCollection.push(el1);
-    //     this.snakeCollection.push(el2);
-    // }
+        if (this.direction === 'right') {
+            el1 = this.getCellByCoords([this.startCoords[0] - 1, this.startCoords[1]]);
+            el2 = this.getCellByCoords([this.startCoords[0] - 2, this.startCoords[1]]);
+        }
+
+        if (this.direction === 'left') {
+            el1 = this.getCellByCoords([this.startCoords[0] + 1, this.startCoords[1]]);
+            el2 = this.getCellByCoords([this.startCoords[0] + 2, this.startCoords[1]]);
+        }
+
+        if (this.direction === 'up') {
+            el1 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] + 1]);
+            el2 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] + 2]);
+        }
+
+        if (this.direction === 'down') {
+            el1 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] - 1]);
+            el2 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] - 2]);
+        }
+
+        el1.root.classList.add('snake-body');
+        el2.root.classList.add('snake-body');
+
+        this.snakeCollection.push(el1);
+        this.snakeCollection.push(el2);
+    }
     generateSnakePosition(): [number, number] {
         return [this.random(3, 10), this.random(3, 10)];
     }

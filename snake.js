@@ -154,21 +154,37 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.generateSnake = function () {
         this.generateSnakeHead();
-        // this.generateSnakeBody();
+        this.generateSnakeBody();
     };
     Game.prototype.generateSnakeHead = function () {
         var snakeHead = this.getCellByCoords(this.startCoords);
         snakeHead.root.classList.add('snake-head');
         this.snakeCollection.push(snakeHead);
     };
-    // generateSnakeBody() {
-    //     let el1 = this.getCellByCoords([this.startCoords[0] - 1, this.startCoords[1]]);
-    //     let el2 = this.getCellByCoords([this.startCoords[0] - 2, this.startCoords[1]]);
-    //     el1.root.classList.add('snake-body');
-    //     el2.root.classList.add('snake-body');
-    //     this.snakeCollection.push(el1);
-    //     this.snakeCollection.push(el2);
-    // }
+    Game.prototype.generateSnakeBody = function () {
+        var el1;
+        var el2;
+        if (this.direction === 'right') {
+            el1 = this.getCellByCoords([this.startCoords[0] - 1, this.startCoords[1]]);
+            el2 = this.getCellByCoords([this.startCoords[0] - 2, this.startCoords[1]]);
+        }
+        if (this.direction === 'left') {
+            el1 = this.getCellByCoords([this.startCoords[0] + 1, this.startCoords[1]]);
+            el2 = this.getCellByCoords([this.startCoords[0] + 2, this.startCoords[1]]);
+        }
+        if (this.direction === 'up') {
+            el1 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] + 1]);
+            el2 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] + 2]);
+        }
+        if (this.direction === 'down') {
+            el1 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] - 1]);
+            el2 = this.getCellByCoords([this.startCoords[0], this.startCoords[1] - 2]);
+        }
+        el1.root.classList.add('snake-body');
+        el2.root.classList.add('snake-body');
+        this.snakeCollection.push(el1);
+        this.snakeCollection.push(el2);
+    };
     Game.prototype.generateSnakePosition = function () {
         return [this.random(3, 10), this.random(3, 10)];
     };

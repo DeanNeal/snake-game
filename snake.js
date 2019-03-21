@@ -236,7 +236,7 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.eatSelf = function () {
         if (this.snakeCollection[0].root.classList.contains('snake-body')) {
-            var conf = confirm("Вы проиграли :( Начать сначала?");
+            var conf = confirm("Съели себя :( Начать сначала?");
             if (conf) {
                 this.restart();
             }

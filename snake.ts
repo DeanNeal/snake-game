@@ -273,7 +273,7 @@ class Game {
 
     eatSelf() {
         if (this.snakeCollection[0].root.classList.contains('snake-body')) {
-            let conf = confirm("Вы проиграли :( Начать сначала?");
+            let conf = confirm("Съели себя :( Начать сначала?");
             if (conf) {
                 this.restart();
             } else {

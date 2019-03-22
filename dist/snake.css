@@ -70,6 +70,11 @@ body {
   left: 0;
   top: 0;
 }
+@media (hover: none) and (pointer: coarse) {
+  .top-panel .speed div {
+    font-size: 14px;
+  }
+}
 .info-window {
   left: 0;
   position: absolute;
@@ -89,6 +94,11 @@ body {
   width: 100%;
   font-size: 38px;
 }
+@media (hover: none) and (pointer: coarse) {
+  .info-window div {
+    font-size: 44px;
+  }
+}
 .info-window button {
   padding: 10px 15px;
   margin-top: 20px;
@@ -96,6 +106,13 @@ body {
   outline: none;
   font-family: "Roboto";
   font-size: 16px;
+  /* smartphones, touchscreens */
+}
+@media (hover: none) and (pointer: coarse) {
+  .info-window button {
+    font-size: 22px;
+    padding: 20px 40px;
+  }
 }
 .info-window.pause {
   display: flex;

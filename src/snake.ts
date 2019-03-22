@@ -184,7 +184,7 @@ class Game {
         <div class="top-panel__speed"> 
             <div class="speed">
                 <div style="width: ${(this.state.levels[this.state.levels.length - 1].speed) / this.getCurrentLevel.speed * 100 + '%'}; background: ${this.getCurrentLevel.color};">
-                  speed: ${this.getCurrentLevel.speed}ms
+                  ${this.getCurrentLevel.speed}ms
                 </div>
             </div>
         </div>`;

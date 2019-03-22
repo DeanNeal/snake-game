@@ -60,7 +60,7 @@ body {
   font-size: 16px;
   font-weight: 600;
 }
-.top-panel__start {
+.info-window {
   left: 0;
   position: absolute;
   width: 100%;
@@ -75,11 +75,11 @@ body {
   text-align: center;
   background: rgba(255, 255, 255, 0.8);
 }
-.top-panel__start div {
+.info-window div {
   width: 100%;
   font-size: 38px;
 }
-.top-panel__start button {
+.info-window button {
   padding: 10px 15px;
   margin-top: 20px;
   border-radius: 4px;
@@ -87,7 +87,7 @@ body {
   font-family: "Roboto";
   font-size: 16px;
 }
-.top-panel__start.pause {
+.info-window.pause {
   display: flex;
 }
 .grid {
@@ -112,18 +112,6 @@ body {
   border-radius: 100%;
   position: absolute;
   height: 80%;
-}
-.cell.snake-head[direction="right"] {
-  transform: rotate(0deg);
-}
-.cell.snake-head[direction="up"] {
-  transform: rotate(-90deg);
-}
-.cell.snake-head[direction="left"] {
-  transform: rotate(-180deg);
-}
-.cell.snake-head[direction="down"] {
-  transform: rotate(90deg);
 }
 .cell.snake-body {
   position: relative;

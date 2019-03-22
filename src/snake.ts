@@ -128,7 +128,7 @@ class Game {
         <div class="top-panel__speed"> speed: ${this.getCurrentLevel.speed}ms</div>`;
 
         this.infoWindow.innerHTML = `
-        <div class="top-panel__start ${this.pause === true ? 'pause' : ''}"> 
+        <div class="info-window ${this.pause === true ? 'pause' : ''}"> 
             <div>${this.infoMessage}</div>
             <button>${this.btnText}</button>
         </div>

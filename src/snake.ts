@@ -41,15 +41,13 @@ class Game {
 
         this.container.classList.add('container');
         this.root.appendChild(this.container);
-        this.startCoords = this.generateRandomPosition();
-
-
+   
         this.showTooltip('Готовы?', 'Начать', () => {
             this.startGame();
         });
 
+        this.startCoords = this.generateRandomPosition();
         this.drawScoreBoard();
-
         this.init();
     }
 
@@ -364,10 +362,10 @@ class Game {
         this.grid.innerHTML = '';
         this.cells = [];
         this.snakeCollection = [];
-        this.startCoords = this.generateRandomPosition();
-        this.direction = 'right';
         this.level = 1;
-
+        this.direction = 'right';
+        this.startCoords = this.generateRandomPosition();
+        
         this.state = {
             ...new Levels()
         };

@@ -24,7 +24,7 @@ class Game {
     private direction: string = 'right';
     private interval: number;
     private steps: boolean = false;
-    readonly gridSize: number = ("ontouchstart" in document.documentElement) ?  window.innerWidth : 600; 
+    readonly gridSize: number = ("ontouchstart" in document.documentElement) ? window.innerWidth : 600;
     readonly audioController: AudioController = new AudioController();
     private pause: boolean = true;
     private infoMessage: string;
@@ -87,25 +87,28 @@ class Game {
 
         window.addEventListener('touchstart', (e: TouchEvent) => {
             if (this.steps === true) {
-                let x = e.touches[0].clientX;
-                let y = e.touches[0].clientY;
+                let x = e.touches[0].clientX - this.cells[0].root.clientHeight;
+                let y = e.touches[0].clientY - this.cells[0].root.clientHeight;
 
                 let snakeBody = this.snakeCollection[0].root.getBoundingClientRect();
 
-                if (y < snakeBody['y'] && this.direction !== 'down') {
-                    this.moveUp();
-                }
+                if (this.direction === 'right' || this.direction === 'left') {
+                    if (y < snakeBody['y']) {
+                        this.moveUp();
+                    }
 
-                else if (y > snakeBody['y'] && this.direction !== 'up') {
-                    this.moveDown();
-                }
+                    else if (y > snakeBody['y']) {
+                        this.moveDown();
+                    }
 
-                else if (x < snakeBody['x'] && this.direction !== 'right') {
-                    this.moveLeft();
-                }
+                } else if (this.direction === 'up' || this.direction === 'down') {
+                    if (x < snakeBody['x']) {
+                        this.moveLeft();
+                    }
 
-                else if (x > snakeBody['x']  && this.direction !== 'left') {
-                    this.moveRight();
+                    else if (x > snakeBody['x']) {
+                        this.moveRight();
+                    }
                 }
             }
 

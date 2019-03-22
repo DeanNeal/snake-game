@@ -1,5 +1,14 @@
+export interface ILevel {
+    id: number,
+    scores: number,
+    maxScores: number,
+    speed: number,
+    size: number,
+    barrier: number
+}
+
 export class Levels {
-    public levels;
+    public levels: ILevel[];
     constructor() {
         this.levels = [
             {

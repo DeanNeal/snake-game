@@ -1,10 +1,10 @@
 export class Cell {
-    public root;
-    public y;
-    public x;
+    readonly root: HTMLElement;
+    readonly y: number;
+    readonly x: number;
     constructor(x, y) {
         this.root = document.createElement('div');
-        this.root.classList = 'cell';
+        this.root.classList.add('cell');
         this.x = x;
         this.y = y;
     }

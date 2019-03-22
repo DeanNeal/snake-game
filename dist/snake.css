@@ -1,100 +1,110 @@
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(0px, 0, 0);
+  }
+  20%,
+  80% {
+    transform: translate3d(0, 0, 0);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-2px, 0, 0);
+  }
+  40%,
+  60% {
+    transform: translate3d(2px, 0, 0);
+  }
+  10%,
+  90% {
+    transform: translate3d(0px, 0, 0);
+  }
+  20%,
+  80% {
+    transform: translate3d(0, 0, 0);
+  }
+}
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-
 html {
   height: 100%;
 }
-
 body {
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
-
- .container {
+.container {
   position: relative;
-} 
-
+}
 .top-panel {
   text-align: center;
-  font-family: 'Roboto';
+  font-family: "Roboto";
   padding: 5px;
-
 }
-
 .top-panel__level {
   font-size: 32px;
   font-weight: 600;
 }
-
 .top-panel__scores {
   font-size: 22px;
   font-weight: 600;
 }
-
 .top-panel__speed {
   font-size: 16px;
   font-weight: 600;
 }
-
 .top-panel__start {
-    left: 0;
-    /*top: 0;*/
-    position: absolute;
-    width: 100%;
-    top: 94px;
-    height: calc(100% - 94px);
-    z-index: 10;
-    font-size: 32px;
-    display: none;
-    flex-wrap: wrap;
-    align-content:  center;
-    justify-content: center;
-    background: rgba(255,255,255,0.8);
+  left: 0;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  height: 100%;
+  z-index: 10;
+  font-size: 32px;
+  display: none;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.8);
 }
-
-.top-panel__start.pause {
-  display: flex;
-}
-.top-panel__start  div {
+.top-panel__start div {
   width: 100%;
   font-size: 38px;
 }
-.top-panel__start  button {
+.top-panel__start button {
   padding: 10px 15px;
   margin-top: 20px;
   border-radius: 4px;
   outline: none;
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-size: 16px;
 }
+.top-panel__start.pause {
+  display: flex;
+}
 .grid {
-  /* height: 500px;
-    width: 500px; */
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   box-shadow: 0 0 0 2px #888;
 }
-
 .cell {
-  /* width: 10%;
-    height: 10%; */
   border: 1px solid #888;
-  /* transition: 0.3s; */
 }
-
 .cell.snake-head {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
 .cell.snake-head:after {
   content: "";
   background: #000;
@@ -103,30 +113,24 @@ body {
   position: absolute;
   height: 80%;
 }
-
 .cell.snake-head[direction="right"] {
   transform: rotate(0deg);
 }
-
 .cell.snake-head[direction="up"] {
   transform: rotate(-90deg);
 }
-
 .cell.snake-head[direction="left"] {
   transform: rotate(-180deg);
 }
-
 .cell.snake-head[direction="down"] {
   transform: rotate(90deg);
 }
-
 .cell.snake-body {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
 .cell.snake-body:after {
   content: "";
   background: #666;
@@ -135,12 +139,10 @@ body {
   position: absolute;
   height: 50%;
 }
-
 .cell.food {
   position: relative;
   overflow: hidden;
 }
-
 .cell.food:after {
   content: "";
   background: url(../img/mouse.jpg);
@@ -154,58 +156,26 @@ body {
   left: 5px;
   top: 2px;
 }
-
 .cell.barrier {
-  background-size: cover!important;
+  background-size: cover !important;
   background: black;
 }
-
-.container[level="1"] .cell.barrier{
+.container[level="1"] .cell.barrier {
   background: url(../img/level-1.png);
 }
-.container[level="2"] .cell.barrier{
+.container[level="2"] .cell.barrier {
   background: url(../img/level-2.png);
 }
-.container[level="3"] .cell.barrier{
+.container[level="3"] .cell.barrier {
   background: url(../img/level-3.png);
 }
-.container[level="4"] .cell.barrier{
+.container[level="4"] .cell.barrier {
   background: url(../img/level-4.png);
 }
-.container[level="5"] .cell.barrier{
+.container[level="5"] .cell.barrier {
   background: url(../img/level-5.png);
 }
-.container[level="6"] .cell.barrier{
+.container[level="6"] .cell.barrier {
   background: url(../img/level-6.jpg);
 }
-@keyframes shake {
-  10%,
-  90% {
-    transform: translate3d(0px, 0, 0);
-  }
 
-  20%,
-  80% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  30%,
-  50%,
-  70% {
-    transform: translate3d(-2px, 0, 0);
-  }
-
-  40%,
-  60% {
-    transform: translate3d(2px, 0, 0);
-  }
-  10%,
-  90% {
-    transform: translate3d(0px, 0, 0);
-  }
-
-  20%,
-  80% {
-    transform: translate3d(0, 0, 0);
-  }
-}

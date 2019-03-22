@@ -1,47 +1,49 @@
-import { Levels } from './levels';
+import '../less/snake.less';
+import { Levels, ILevel } from './levels';
 import { Cell } from './cell';
+import { AudioController } from './audio';
 
-class AudioController {
-    play(url: string) {
-        var audio = new Audio('audio/' + url);
-        audio.volume = 0.2;
-        audio.play();
-    }
+interface IState {
+    level: number;
+    levels: ILevel[];
 }
+
+type TCoords = [number, number];
 
 
 class Game {
-    public root: HTMLElement;
-    public state;
-    public container: HTMLElement;
-    public scoreBoard: HTMLElement;
-    public grid;
-    public cells: Cell[] = [];
-    public snakeCollection: Cell[] = [];
-    public startCoords: [number, number];
-    // public foodCoords: [number, number];
-    public direction: string = 'right';
-    public interval: any;
-    public steps: boolean = false;
-    public level: number = 1;
+    private root: HTMLElement;
+    private state: IState;
+    private container: HTMLElement;
+    private scoreBoard: HTMLElement;
+    private grid: HTMLElement;
+    private infoWindow: HTMLElement;
+    private cells: Cell[] = [];
+    private snakeCollection: Cell[] = [];
+    private startCoords: TCoords;
+    private direction: string = 'right';
+    private interval: number;
+    private steps: boolean = false;
     readonly gridSize: number = 600;
-    public audioController = new AudioController();
-    public pause: boolean = true;
-    public infoMessage: string;
-    public btnText: string;
+    readonly audioController: AudioController = new AudioController();
+    private pause: boolean = true;
+    private infoMessage: string;
+    private btnText: string;
 
     constructor(props) {
         this.root = props.el;
         this.state = {
+            level: 1,
             ...new Levels()
         };
         this.container = document.createElement('div');
         this.scoreBoard = document.createElement('div');
         this.grid = document.createElement('div');
+        this.infoWindow = document.createElement('div');
 
         this.container.classList.add('container');
         this.root.appendChild(this.container);
-   
+
         this.showTooltip('Готовы?', 'Начать', () => {
             this.startGame();
         });
@@ -49,6 +51,10 @@ class Game {
         this.startCoords = this.generateRandomPosition();
         this.drawScoreBoard();
         this.init();
+    }
+
+    get getCurrentLevel(): ILevel {
+        return this.state.levels[this.state.level - 1];
     }
 
     startGame() {
@@ -65,13 +71,13 @@ class Game {
         clearInterval(this.interval);
     }
 
-    showTooltip(msg, btnText, callback) {
+    showTooltip(msg: string, btnText: string, callback: () => void) {
         this.infoMessage = msg;
         this.btnText = btnText;
         this.pause = true;
         this.updateScores();
 
-        this.scoreBoard.querySelector('button').addEventListener('click', (e) => {
+        this.infoWindow.querySelector('button').addEventListener('click', (e) => {
             callback();
         }, false);
     }
@@ -84,7 +90,7 @@ class Game {
         this.generateBarrier();
 
 
-        window.addEventListener('keydown', (e) => {
+        window.addEventListener('keydown', (e: KeyboardEvent) => {
             if (this.steps === true) {
                 if (e.keyCode === 37 && this.direction !== 'right') {
                     this.direction = 'left';
@@ -107,23 +113,21 @@ class Game {
 
     }
 
-    get getCurrentLevel() {
-        return this.state.levels[this.level - 1];
-    }
-
     drawScoreBoard() {
         this.scoreBoard.classList.add('top-panel');
         this.container.appendChild(this.scoreBoard);
     }
 
     updateScores() {
-        this.container.setAttribute('level', this.getCurrentLevel.id);
+        this.container.setAttribute('level', this.getCurrentLevel.id.toString());
         this.scoreBoard.innerHTML = `
         <div class="top-panel__level">Level: ${this.getCurrentLevel.id} of ${this.state.levels.length}</div>
         <div class="top-panel__scores">
             Mice: ${this.getCurrentLevel.scores} of ${this.getCurrentLevel.maxScores}
         </div>
-        <div class="top-panel__speed"> speed: ${this.getCurrentLevel.speed}ms</div>
+        <div class="top-panel__speed"> speed: ${this.getCurrentLevel.speed}ms</div>`;
+
+        this.infoWindow.innerHTML = `
         <div class="top-panel__start ${this.pause === true ? 'pause' : ''}"> 
             <div>${this.infoMessage}</div>
             <button>${this.btnText}</button>
@@ -132,7 +136,9 @@ class Game {
     }
 
     drawGrid() {
-        this.grid.classList = 'grid';
+        this.grid.appendChild(this.infoWindow);
+
+        this.grid.classList.add('grid');
         this.grid.style.width = this.gridSize + 'px';
         this.grid.style.height = this.gridSize + 'px';
 
@@ -154,7 +160,7 @@ class Game {
 
         this.container.appendChild(this.grid);
     }
-    getCellByCoords(coords): Cell {
+    getCellByCoords(coords: TCoords): Cell {
         return this.cells.filter(r => r.x === coords[0] && r.y === coords[1])[0];
     }
     generateSnake() {
@@ -201,7 +207,7 @@ class Game {
         this.snakeCollection.push(el2);
     }
 
-    generateRandomPosition(): [number, number] {
+    generateRandomPosition(): TCoords {
         return [Game.random(1, this.getCurrentLevel.size), Game.random(1, this.getCurrentLevel.size)];
     }
 
@@ -251,7 +257,7 @@ class Game {
             this.updateScores();
             this.generateFood();
             if (this.getCurrentLevel.scores >= this.getCurrentLevel.maxScores) {
-                if (this.state.levels.length === this.level) {
+                if (this.state.levels.length === this.state.level) {
                     this.stopGame();
                     this.showTooltip('Вы прошли игру=)))', 'Начать сначала?', () => {
                         this.restart();
@@ -277,7 +283,7 @@ class Game {
     collision() {
         if (this.snakeCollection[0].root.classList.contains('barrier')) {
             this.stopGame();
-            
+
             this.audioController.play('zvuk-udar.mp3');
             this.showTooltip('Змея попала в неприятности :(', 'Начать сначала?', () => {
                 this.restart();
@@ -350,10 +356,10 @@ class Game {
         this.grid.innerHTML = '';
         this.cells = [];
         this.snakeCollection = [];
-        this.level++;
+        this.state.level++;
         this.pause = true;
 
-        clearInterval(this.interval);
+        this.stopGame();
         this.init();
         this.startGame();
     }
@@ -362,15 +368,15 @@ class Game {
         this.grid.innerHTML = '';
         this.cells = [];
         this.snakeCollection = [];
-        this.level = 1;
         this.direction = 'right';
-        this.startCoords = this.generateRandomPosition();
-        
         this.state = {
+            level: 1,
             ...new Levels()
         };
 
-        clearInterval(this.interval);
+
+        this.startCoords = this.generateRandomPosition();
+
         this.init();
         this.startGame();
     }

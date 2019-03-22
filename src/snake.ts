@@ -51,10 +51,86 @@ class Game {
         this.startCoords = this.generateRandomPosition();
         this.drawScoreBoard();
         this.init();
+
+        this.addEventListeners();
     }
 
     get getCurrentLevel(): ILevel {
         return this.state.levels[this.state.level - 1];
+    }
+
+    addEventListeners() {
+        window.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (this.steps === true) {
+                if (e.keyCode === 37 && this.direction !== 'right') {
+                    // this.direction = 'left';
+                    // this.steps = false;
+                    this.moveLeft();
+                }
+                else if (e.keyCode === 38 && this.direction !== 'down') {
+                    // this.direction = 'up';
+                    // this.steps = false
+                    this.moveUp();
+                }
+                else if (e.keyCode === 39 && this.direction !== 'left') {
+                    // this.direction = 'right';
+                    // this.steps = false;
+                    this.moveRight();
+                }
+                else if (e.keyCode === 40 && this.direction !== 'up') {
+                    // this.direction = 'down';
+                    // this.steps = false;
+                    this.moveDown();
+                }
+            }
+        }, false);
+
+        window.addEventListener('touchstart', (e: TouchEvent) => {
+            if (this.steps === true) {
+                let x = e.touches[0].clientX;
+                let y = e.touches[0].clientY;
+
+                let snakeBody = this.snakeCollection[0].root.getBoundingClientRect();
+
+                if (y < snakeBody['y'] && this.direction !== 'down') {
+                    this.moveUp();
+                }
+
+                else if (y > snakeBody['y'] && this.direction !== 'up') {
+                    this.moveDown();
+                }
+
+                else if (x < snakeBody['x'] && this.direction !== 'right') {
+                    this.moveLeft();
+                }
+
+                else if (x > snakeBody['x']  && this.direction !== 'left') {
+                    this.moveRight();
+                }
+            }
+
+
+        }, false);
+    }
+
+    moveLeft() {
+        this.direction = 'left';
+        this.steps = false;
+    }
+
+    moveUp() {
+        this.direction = 'up';
+        this.steps = false
+    }
+
+    moveRight() {
+        this.direction = 'right';
+        this.steps = false;
+    }
+
+    moveDown() {
+        this.direction = 'down';
+        this.steps = false;
     }
 
     startGame() {
@@ -88,29 +164,6 @@ class Game {
         this.generateSnake();
         this.generateFood();
         this.generateBarrier();
-
-
-        window.addEventListener('keydown', (e: KeyboardEvent) => {
-            if (this.steps === true) {
-                if (e.keyCode === 37 && this.direction !== 'right') {
-                    this.direction = 'left';
-                    this.steps = false;
-                }
-                else if (e.keyCode === 38 && this.direction !== 'down') {
-                    this.direction = 'up';
-                    this.steps = false;
-                }
-                else if (e.keyCode === 39 && this.direction !== 'left') {
-                    this.direction = 'right';
-                    this.steps = false;
-                }
-                else if (e.keyCode === 40 && this.direction !== 'up') {
-                    this.direction = 'down';
-                    this.steps = false;
-                }
-            }
-        }, false);
-
     }
 
     drawScoreBoard() {
@@ -127,7 +180,7 @@ class Game {
         </div>
         <div class="top-panel__speed"> 
             <div class="speed">
-                <div style="width: ${(this.state.levels[this.state.levels.length-1].speed) / this.getCurrentLevel.speed * 100 + '%'}; background: ${this.getCurrentLevel.color};">
+                <div style="width: ${(this.state.levels[this.state.levels.length - 1].speed) / this.getCurrentLevel.speed * 100 + '%'}; background: ${this.getCurrentLevel.color};">
                   speed: ${this.getCurrentLevel.speed}ms
                 </div>
             </div>

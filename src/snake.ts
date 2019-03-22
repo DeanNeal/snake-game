@@ -63,23 +63,15 @@ class Game {
         window.addEventListener('keydown', (e: KeyboardEvent) => {
             if (this.steps === true) {
                 if (e.keyCode === 37 && this.direction !== 'right') {
-                    // this.direction = 'left';
-                    // this.steps = false;
                     this.moveLeft();
                 }
                 else if (e.keyCode === 38 && this.direction !== 'down') {
-                    // this.direction = 'up';
-                    // this.steps = false
                     this.moveUp();
                 }
                 else if (e.keyCode === 39 && this.direction !== 'left') {
-                    // this.direction = 'right';
-                    // this.steps = false;
                     this.moveRight();
                 }
                 else if (e.keyCode === 40 && this.direction !== 'up') {
-                    // this.direction = 'down';
-                    // this.steps = false;
                     this.moveDown();
                 }
             }

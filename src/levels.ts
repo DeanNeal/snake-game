@@ -52,7 +52,7 @@ export class Levels {
                 id: 5,
                 scores: 0,
                 maxScores: 15,
-                speed: 200,
+                speed: 250,
                 size: 12,
                 barrier: 6,
                 color: '#ff8d00'
@@ -61,7 +61,7 @@ export class Levels {
                 id: 6,
                 scores: 0,
                 maxScores: 20,
-                speed: 150,
+                speed: 200,
                 size: 13,
                 barrier: 7,
                 color: '#ff0000'

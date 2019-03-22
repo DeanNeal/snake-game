@@ -172,6 +172,12 @@ body {
 .container[level="4"] .cell.barrier{
   background: url(../img/level-4.png);
 }
+.container[level="5"] .cell.barrier{
+  background: url(../img/level-5.png);
+}
+.container[level="6"] .cell.barrier{
+  background: url(../img/level-6.jpg);
+}
 @keyframes shake {
   10%,
   90% {

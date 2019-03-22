@@ -24,7 +24,7 @@ class Game {
     private direction: string = 'right';
     private interval: number;
     private steps: boolean = false;
-    readonly gridSize: number = 600;
+    readonly gridSize: number = ("ontouchstart" in document.documentElement) ?  window.innerWidth : 600; 
     readonly audioController: AudioController = new AudioController();
     private pause: boolean = true;
     private infoMessage: string;

@@ -43,7 +43,7 @@ export class Levels {
                 id: 4,
                 scores: 0,
                 maxScores: 10,
-                speed: 250,
+                speed: 300,
                 size: 11,
                 barrier: 5,
                 color: '#ffc800'

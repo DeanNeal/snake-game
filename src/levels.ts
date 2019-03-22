@@ -4,7 +4,8 @@ export interface ILevel {
     maxScores: number,
     speed: number,
     size: number,
-    barrier: number
+    barrier: number,
+    color: string
 }
 
 export class Levels {
@@ -18,6 +19,7 @@ export class Levels {
                 speed: 600,
                 size: 8,
                 barrier: 2,
+                color: '#00ff37'
             },
             {
                 id: 2,
@@ -25,7 +27,8 @@ export class Levels {
                 maxScores: 6,
                 speed: 500,
                 size: 9,
-                barrier: 3
+                barrier: 3,
+                color: '#a9ff00'
             },
             {
                 id: 3,
@@ -33,7 +36,8 @@ export class Levels {
                 maxScores: 8,
                 speed: 400,
                 size: 10,
-                barrier: 4
+                barrier: 4,
+                color: '#e4ff00'
             },
             {
                 id: 4,
@@ -41,7 +45,8 @@ export class Levels {
                 maxScores: 10,
                 speed: 250,
                 size: 11,
-                barrier: 5
+                barrier: 5,
+                color: '#ffc800'
             },
             {
                 id: 5,
@@ -49,7 +54,8 @@ export class Levels {
                 maxScores: 15,
                 speed: 200,
                 size: 12,
-                barrier: 6
+                barrier: 6,
+                color: '#ff8d00'
             },
             {
                 id: 6,
@@ -57,7 +63,8 @@ export class Levels {
                 maxScores: 20,
                 speed: 150,
                 size: 13,
-                barrier: 7
+                barrier: 7,
+                color: '#ff0000'
             }
         ]
     }

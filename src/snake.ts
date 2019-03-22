@@ -125,7 +125,13 @@ class Game {
         <div class="top-panel__scores">
             Mice: ${this.getCurrentLevel.scores} of ${this.getCurrentLevel.maxScores}
         </div>
-        <div class="top-panel__speed"> speed: ${this.getCurrentLevel.speed}ms</div>`;
+        <div class="top-panel__speed"> 
+            <div class="speed">
+                <div style="width: ${(this.state.levels[this.state.levels.length-1].speed) / this.getCurrentLevel.speed * 100 + '%'}; background: ${this.getCurrentLevel.color};">
+                  speed: ${this.getCurrentLevel.speed}ms
+                </div>
+            </div>
+        </div>`;
 
         this.infoWindow.innerHTML = `
         <div class="info-window ${this.pause === true ? 'pause' : ''}"> 

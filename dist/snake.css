@@ -69,8 +69,13 @@ body {
   z-index: 100;
 }
 .top-panel__title {
-  margin-top: 30px;
+  margin-top: 25px;
   font-size: 32px;
+}
+@media (hover: none) and (pointer: coarse) {
+  .top-panel__title {
+    font-size: 24px;
+  }
 }
 .top-panel__progress {
   width: 100%;

@@ -46,6 +46,7 @@ body {
   font-family: "Roboto", sans-serif;
   background: #ccc;
   background-size: cover;
+  overflow: hidden;
 }
 .container {
   position: relative;

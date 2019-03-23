@@ -49,7 +49,7 @@ export class Levels {
                 maxScores: 10,
                 speed: 350,
                 size: 9,
-                barrier: 8,
+                barrier: 5,
                 color: '#ffc800',
                 title: 'Успеваете?'
             },
@@ -59,7 +59,7 @@ export class Levels {
                 maxScores: 15,
                 speed: 320,
                 size: 10,
-                barrier: 9,
+                barrier: 7,
                 color: '#ff8d00',
                 title: 'Совсем жарко'
             },
@@ -69,7 +69,7 @@ export class Levels {
                 maxScores: 20,
                 speed: 300,
                 size: 11,
-                barrier: 10,
+                barrier: 9,
                 color: '#ff0000',
                 title: 'Тлен'
             }

@@ -137,6 +137,9 @@ body {
   outline: none;
   font-family: "Roboto";
   font-size: 16px;
+  color: #fff;
+  border: 1px solid #888;
+  background: #0095ff;
   /* smartphones, touchscreens */
 }
 @media (hover: none) and (pointer: coarse) {

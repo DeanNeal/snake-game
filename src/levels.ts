@@ -17,9 +17,9 @@ export class Levels {
                 id: 1,
                 scores: 0,
                 maxScores: 4,
-                speed: 600,
+                speed: 500,
                 size: 8,
-                barrier: 2,
+                barrier: 5,
                 color: '#00ff37',
                 title: 'Все только начинается'
             },
@@ -27,9 +27,9 @@ export class Levels {
                 id: 2,
                 scores: 0,
                 maxScores: 6,
-                speed: 500,
+                speed: 450,
                 size: 8,
-                barrier: 3,
+                barrier: 6,
                 color: '#a9ff00',
                 title: 'Немного быстрее'
             },
@@ -39,7 +39,7 @@ export class Levels {
                 maxScores: 8,
                 speed: 400,
                 size: 9,
-                barrier: 4,
+                barrier: 7,
                 color: '#e4ff00',
                 title: 'Еще быстрее'
             },
@@ -49,7 +49,7 @@ export class Levels {
                 maxScores: 10,
                 speed: 350,
                 size: 9,
-                barrier: 5,
+                barrier: 8,
                 color: '#ffc800',
                 title: 'Успеваете?'
             },
@@ -59,7 +59,7 @@ export class Levels {
                 maxScores: 15,
                 speed: 320,
                 size: 10,
-                barrier: 6,
+                barrier: 9,
                 color: '#ff8d00',
                 title: 'Совсем жарко'
             },
@@ -67,9 +67,9 @@ export class Levels {
                 id: 6,
                 scores: 0,
                 maxScores: 20,
-                speed: 280,
+                speed: 300,
                 size: 11,
-                barrier: 7,
+                barrier: 10,
                 color: '#ff0000',
                 title: 'Тлен'
             }

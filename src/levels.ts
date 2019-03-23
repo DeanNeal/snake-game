@@ -5,7 +5,8 @@ export interface ILevel {
     speed: number,
     size: number,
     barrier: number,
-    color: string
+    color: string,
+    title: string
 }
 
 export class Levels {
@@ -19,7 +20,8 @@ export class Levels {
                 speed: 600,
                 size: 8,
                 barrier: 2,
-                color: '#00ff37'
+                color: '#00ff37',
+                title: 'Все только начинается'
             },
             {
                 id: 2,
@@ -28,7 +30,8 @@ export class Levels {
                 speed: 500,
                 size: 9,
                 barrier: 3,
-                color: '#a9ff00'
+                color: '#a9ff00',
+                title: 'Немного быстрее'
             },
             {
                 id: 3,
@@ -37,7 +40,8 @@ export class Levels {
                 speed: 400,
                 size: 10,
                 barrier: 4,
-                color: '#e4ff00'
+                color: '#e4ff00',
+                title: 'Еще быстрее'
             },
             {
                 id: 4,
@@ -46,7 +50,8 @@ export class Levels {
                 speed: 300,
                 size: 11,
                 barrier: 5,
-                color: '#ffc800'
+                color: '#ffc800',
+                title: 'Успеваете?'
             },
             {
                 id: 5,
@@ -55,7 +60,8 @@ export class Levels {
                 speed: 250,
                 size: 12,
                 barrier: 6,
-                color: '#ff8d00'
+                color: '#ff8d00',
+                title: 'Совсем жарко'
             },
             {
                 id: 6,
@@ -64,7 +70,8 @@ export class Levels {
                 speed: 200,
                 size: 13,
                 barrier: 7,
-                color: '#ff0000'
+                color: '#ff0000',
+                title: 'Тлен'
             }
         ]
     }

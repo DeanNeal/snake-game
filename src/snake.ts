@@ -15,7 +15,8 @@ class Game {
     private root: HTMLElement;
     private state: IState;
     private container: HTMLElement;
-    private scoreBoard: HTMLElement;
+    private topPanel: HTMLElement;
+    private scorePanel: HTMLElement;
     private grid: HTMLElement;
     private infoWindow: HTMLElement;
     private cells: Cell[] = [];
@@ -37,19 +38,26 @@ class Game {
             ...new Levels()
         };
         this.container = document.createElement('div');
-        this.scoreBoard = document.createElement('div');
+        this.topPanel = document.createElement('div');
+        this.scorePanel = document.createElement('div');
         this.grid = document.createElement('div');
         this.infoWindow = document.createElement('div');
 
+        this.drawScoreBoard();
+
+      
+
         this.container.classList.add('container');
         this.root.appendChild(this.container);
+
+        this.container.appendChild(this.scorePanel);
 
         this.showTooltip('Готовы?', 'Начать', () => {
             this.startGame();
         });
 
         this.startCoords = this.generateRandomPosition();
-        this.drawScoreBoard();
+
         this.init();
 
         this.addEventListeners();
@@ -162,24 +170,29 @@ class Game {
     }
 
     drawScoreBoard() {
-        this.scoreBoard.classList.add('top-panel');
-        this.container.appendChild(this.scoreBoard);
+        this.topPanel.classList.add('top-panel');
+        this.root.appendChild(this.topPanel);
     }
 
+    // <div style="width: ${(this.state.levels[this.state.levels.length - 1].speed) / this.getCurrentLevel.speed * 100 + '%'}; background: ${this.getCurrentLevel.color};">
+             
+    // </div>
+    // <div class="top-panel__level">Level: ${this.getCurrentLevel.id} of ${this.state.levels.length}</div>
     updateScores() {
         this.container.setAttribute('level', this.getCurrentLevel.id.toString());
-        this.scoreBoard.innerHTML = `
-        <div class="top-panel__level">Level: ${this.getCurrentLevel.id} of ${this.state.levels.length}</div>
-        <div class="top-panel__scores">
-            Mice: ${this.getCurrentLevel.scores} of ${this.getCurrentLevel.maxScores}
+        this.topPanel.innerHTML = `
+        
+        <div class="top-panel__progress"> 
+            <div class="top-panel__progress--bar" style="width: ${(this.getCurrentLevel.scores) / this.getCurrentLevel.maxScores * 100 + '%'};"></div>
+            <div class="top-panel__progress--value">${this.getCurrentLevel.scores} of ${this.getCurrentLevel.maxScores}</div>
         </div>
-        <div class="top-panel__speed"> 
-            <div class="speed">
-                <div style="width: ${(this.state.levels[this.state.levels.length - 1].speed) / this.getCurrentLevel.speed * 100 + '%'}; background: ${this.getCurrentLevel.color};">
-                  ${this.getCurrentLevel.speed}ms
-                </div>
-            </div>
-        </div>`;
+     
+
+
+        <div class="top-panel__title">
+        Level: ${this.getCurrentLevel.id}: ${this.getCurrentLevel.title}
+        </div>
+        `;
 
         this.infoWindow.innerHTML = `
         <div class="info-window ${this.pause === true ? 'pause' : ''}"> 
@@ -187,11 +200,16 @@ class Game {
             <button>${this.btnText}</button>
         </div>
         `;
+
+
+
     }
+
+
 
     drawGrid() {
         this.grid.appendChild(this.infoWindow);
-
+        
         this.grid.classList.add('grid');
         this.grid.style.width = this.gridSize + 'px';
         this.grid.style.height = this.gridSize + 'px';

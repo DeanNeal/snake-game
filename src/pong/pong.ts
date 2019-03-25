@@ -82,11 +82,11 @@ class Pong {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        this.ball = new Ball(this.isMobile ? 40 : 60, this.isMobile ? 40 : 60);
+        this.ball = new Ball(this.isMobile ? 20 : 60, this.isMobile ? 20 : 60);
 
         this.players = [
-            new Player(this.isMobile ? 10 : 20, this.isMobile ? 150 : 200, 'You'),
-            new Player(this.isMobile ? 10 : 20, this.isMobile ? 150 : 200, 'AI')
+            new Player(this.isMobile ? 8 : 20, this.isMobile ? 150 : 200, 'You'),
+            new Player(this.isMobile ? 8 : 20, this.isMobile ? 150 : 200, 'AI')
         ];
 
         this.resize();
@@ -151,13 +151,20 @@ class Pong {
         if (player.left < ball.right && player.right > ball.left && player.top < ball.bottom && player.bottom > ball.top) {
             let len = ball.vel.len;
             ball.vel.x = -ball.vel.x;
-            if (ball.vel.y > 0 && Math.abs(player.top - ball.bottom) < player.size.y / 2) {
-                ball.vel.y = -ball.vel.y;//this.startSpeed * (Math.random() - .5);
-            } else if (ball.vel.y < 0 && Math.abs(player.top - ball.bottom) > player.size.y / 2) {
-                ball.vel.y = -ball.vel.y;//-this.startSpeed * (Math.random() - .5);
-            }
-            ball.vel.len = len * 1.04;
+            // if (ball.vel.y > 0 && Math.abs(player.top - ball.bottom) < player.size.y / 2) {
+            //     ball.vel.y = -ball.vel.y * ;//this.startSpeed * (Math.random() - .5);
+            // } else if (ball.vel.y < 0 && Math.abs(player.top - ball.bottom) > player.size.y / 2) {
+            //     ball.vel.y = -ball.vel.y;//-this.startSpeed * (Math.random() - .5);
+            // }
+            ball.vel.y = (Math.random() > .5 ? -1 : 1) * this.startSpeed * Pong.random(0.3, 1.2);
+            console.log(ball.vel.y, Pong.random(0.3, 1.2));
+            ball.vel.len = len * (this.isMobile ? 1.01 : 1.03);
         }
+    }
+
+    static random(min, max): number {
+        // return Math.round(Math.random() * (max - min) + min);
+        return (Math.random() * (max - min) + min);
     }
 
     draw() {
@@ -195,7 +202,7 @@ class Pong {
 
         if (this.ball.left < 0 || this.ball.right > this.canvas.width) {
             const playerId = this.ball.vel.x < 0 ? 1 : 0;
-            this.players[playerId].incScore();
+            this.players[playerId].incScore();debugger
             this.reset();
         }
 

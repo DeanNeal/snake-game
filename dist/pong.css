@@ -40,11 +40,16 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 150px;
+  font-size: 120px;
   color: #fff;
   height: 100%;
   width: 100%;
   top: 0;
   left: 0;
+}
+@media (hover: none) and (pointer: coarse) {
+  .timer-block {
+    font-size: 60px;
+  }
 }
 

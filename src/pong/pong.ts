@@ -145,7 +145,7 @@ class Pong {
     resize() {
         this.players[0].pos.x = this.offset;
         this.players[0].pos.y = this.canvas.height / 2 - this.players[0].size.y / 2;
-        this.players[1].pos.x = this.canvas.width - this.offset;
+        this.players[1].pos.x = this.canvas.width - this.offset - this.players[1].size.x;
         this.players[1].pos.y = this.canvas.height / 2 - this.players[1].size.y / 2;
     }
 
@@ -188,15 +188,11 @@ class Pong {
     collide(player, ball) {
         if (player.left < ball.right && player.right > ball.left && player.top < ball.bottom && player.bottom > ball.top) {
             let len = ball.vel.len;
+            ball.vel.len = len * (isMobile ? 1.01 : 1.03);
+
             ball.vel.x = -ball.vel.x;
-            // if (ball.vel.y > 0 && Math.abs(player.top - ball.bottom) < player.size.y / 2) {
-            //     ball.vel.y = -ball.vel.y * ;//this.startSpeed * (Math.random() - .5);
-            // } else if (ball.vel.y < 0 && Math.abs(player.top - ball.bottom) > player.size.y / 2) {
-            //     ball.vel.y = -ball.vel.y;//-this.startSpeed * (Math.random() - .5);
-            // }
             ball.vel.y = (Math.random() > .5 ? -1 : 1) * this.startSpeed * Pong.random(0.3, 1.2);
 
-            ball.vel.len = len * (isMobile ? 1.01 : 1.03);
 
             if (player.name === 'You') {
                 var audio = new Audio('audio/' + 'pong-1.mp3');
@@ -246,8 +242,6 @@ class Pong {
 
                 this.ball.vel.x = 0;
                 this.ball.vel.y = 0;
-
-
 
                 if (this.players[0].scores >= 2 || this.players[1].scores >= 2) {
                     let msg = this.players[0].scores > this.players[1].scores ? 'Вы победили' : 'Вы проиграли';

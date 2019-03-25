@@ -46,10 +46,12 @@ body {
   width: 100%;
   top: 0;
   left: 0;
+  text-align: center;
 }
 @media (hover: none) and (pointer: coarse) {
   .timer-block {
-    font-size: 60px;
+    font-size: 48px;
+    padding: 0 30px;
   }
 }
 

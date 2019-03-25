@@ -7,6 +7,16 @@ class Vec {
         this.x = x;
         this.y = y;
     }
+
+    get len() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    set len(value) {
+        const fact = value / this.len;
+        this.x *= fact;
+        this.y *= fact;
+    }
 }
 
 class Rect {
@@ -40,29 +50,13 @@ class Ball extends Rect {
         super(width, height);
         this.vel = new Vec;
     }
-
-    start() {
-        this.vel.x = 700;
-        this.vel.y = 700;
-    }
-
-    reset(width, height) {
-        this.vel.x = 0;
-        this.vel.y = 0;
-        this.pos.x = width / 2 - this.size.x / 2;
-        this.pos.y = height / 2 - this.size.y / 2;
-
-        setTimeout(() => {
-            this.start();
-        }, 1000);
-    }
 }
 
 class Player extends Rect {
     private name;
     private scores: number = 0;
-    constructor(name) {
-        super(20, 200);
+    constructor(width, height, name) {
+        super(width, height);
         this.name = name;
     }
     get getScores() {
@@ -79,6 +73,8 @@ class Pong {
     private ball;
     private players: Player[] = [];
     public scoreBoard: HTMLElement;
+    readonly startSpeed: number = this.isMobile ? 300 : 700;
+    readonly offset: number = this.isMobile ? 30 : 50;
     constructor(canvas) {
         this.canvas = canvas;
         this.context = canvas.getContext('2d');
@@ -86,10 +82,12 @@ class Pong {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        this.ball = new Ball(100, 100);
-        this.ball.reset(this.canvas.width, this.canvas.height);
+        this.ball = new Ball(this.isMobile ? 40 : 60, this.isMobile ? 40 : 60);
 
-        this.players = [new Player('You'), new Player('Bot')];
+        this.players = [
+            new Player(this.isMobile ? 10 : 20, this.isMobile ? 150 : 200, 'You'),
+            new Player(this.isMobile ? 10 : 20, this.isMobile ? 150 : 200, 'AI')
+        ];
 
         this.resize();
 
@@ -107,6 +105,7 @@ class Pong {
             canvas.height = window.innerHeight;
             this.resize();
         });
+
         this.canvas.addEventListener('mousemove', (e) => {
             if (e.offsetY <= this.canvas.height - this.players[0].size.y) {
                 this.players[0].pos.y = e.offsetY;
@@ -115,16 +114,29 @@ class Pong {
             }
         }, false);
 
+        this.canvas.addEventListener('touchmove', (e) => {
+            if (e.touches[0].pageY <= this.canvas.height - this.players[0].size.y) {
+                this.players[0].pos.y = e.touches[0].pageY;
+            } else {
+                this.players[0].pos.y = canvas.height - this.players[0].size.y;
+            }
+        }, false);
+
         this.scoreBoard = document.createElement('div');
         this.scoreBoard.classList.add('score-board');
         document.body.appendChild(this.scoreBoard);
-        this.updateScores();
+
+        this.reset();
+    }
+
+    get isMobile() {
+        return ("ontouchstart" in document.documentElement);
     }
 
     resize() {
-        this.players[0].pos.x = 40;
+        this.players[0].pos.x = this.offset;
         this.players[0].pos.y = this.canvas.height / 2 - this.players[0].size.y / 2;
-        this.players[1].pos.x = this.canvas.width - 40;
+        this.players[1].pos.x = this.canvas.width - this.offset;
         this.players[1].pos.y = this.canvas.height / 2 - this.players[1].size.y / 2;
     }
 
@@ -137,7 +149,14 @@ class Pong {
 
     collide(player, ball) {
         if (player.left < ball.right && player.right > ball.left && player.top < ball.bottom && player.bottom > ball.top) {
+            let len = ball.vel.len;
             ball.vel.x = -ball.vel.x;
+            if (ball.vel.y > 0 && Math.abs(player.top - ball.bottom) < player.size.y / 2) {
+                ball.vel.y = -ball.vel.y;//this.startSpeed * (Math.random() - .5);
+            } else if (ball.vel.y < 0 && Math.abs(player.top - ball.bottom) > player.size.y / 2) {
+                ball.vel.y = -ball.vel.y;//-this.startSpeed * (Math.random() - .5);
+            }
+            ball.vel.len = len * 1.04;
         }
     }
 
@@ -153,24 +172,40 @@ class Pong {
         this.context.fillRect(rect.pos.x, rect.pos.y, rect.size.x, rect.size.y);
     }
 
+    reset() {
+        this.ball.vel.x = 0;
+        this.ball.vel.y = 0;
+        this.ball.pos.x = canvas.width / 2 - this.ball.size.x / 2;
+        this.ball.pos.y = canvas.height / 2 - this.ball.size.y / 2;
+
+        setTimeout(() => {
+            this.ball.vel.x = this.startSpeed * (Math.random() > .5 ? -1 : 1);
+            this.ball.vel.y = this.startSpeed * (Math.random() > .5 ? -1 : 1);
+        }, 1000);
+
+        this.updateScores();
+    }
+
     update(dt) {
+        // console.log(this.ball.vel);
         this.ball.pos.x += this.ball.vel.x * dt;
         this.ball.pos.y += this.ball.vel.y * dt;
+
+        this.players.forEach(player => this.collide(player, this.ball));
 
         if (this.ball.left < 0 || this.ball.right > this.canvas.width) {
             const playerId = this.ball.vel.x < 0 ? 1 : 0;
             this.players[playerId].incScore();
-            this.ball.reset(this.canvas.width, this.canvas.height);
-            this.updateScores();
+            this.reset();
         }
 
         if (this.ball.top < 0 || this.ball.bottom > this.canvas.height) {
             this.ball.vel.y = -this.ball.vel.y;
         }
+        // console.log(dt)
+        this.players[1].pos.y = this.ball.pos.y;// > .5 ? -1 : 1) ;
 
-        this.players[1].pos.y = this.ball.pos.y;
 
-        this.players.forEach(player => this.collide(player, this.ball));
 
         this.draw();
     }

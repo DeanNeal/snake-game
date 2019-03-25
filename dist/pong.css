@@ -21,4 +21,18 @@ body {
   justify-content: center;
   flex-wrap: wrap;
 }
+.score-board {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 200px;
+  display: flex;
+  justify-content: space-between;
+}
+.score-board__player {
+  font-size: 20px;
+  color: #fff;
+}
 

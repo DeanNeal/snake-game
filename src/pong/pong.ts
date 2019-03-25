@@ -1,5 +1,7 @@
 import './pong.less';
 
+const isMobile = ("ontouchstart" in document.documentElement);
+
 class Vec {
     public x;
     public y;
@@ -53,17 +55,25 @@ class Ball extends Rect {
 }
 
 class Player extends Rect {
-    private name;
-    private scores: number = 0;
+    private name: string;
+    private _scores: number = 0;
     constructor(width, height, name) {
         super(width, height);
         this.name = name;
     }
-    get getScores() {
-        return `${this.name} - ${this.scores}`
+    get title() {
+        return `${this.name} - ${this._scores}`
     }
+    get scores() {
+        return this._scores;
+    }
+
+    setScores(scores: number) {
+        this._scores = scores;
+    }
+
     incScore() {
-        this.scores++;
+        this._scores++;
     }
 }
 
@@ -73,8 +83,11 @@ class Pong {
     private ball;
     private players: Player[] = [];
     public scoreBoard: HTMLElement;
-    readonly startSpeed: number = this.isMobile ? 300 : 700;
-    readonly offset: number = this.isMobile ? 30 : 50;
+    public timerBlock: HTMLElement;
+    public timerInterval: number;
+    readonly startSpeed: number = isMobile ? 300 : 700;
+    readonly offset: number = isMobile ? 30 : 50;
+    public gameOn = false;
     constructor(canvas) {
         this.canvas = canvas;
         this.context = canvas.getContext('2d');
@@ -82,11 +95,9 @@ class Pong {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        this.ball = new Ball(this.isMobile ? 20 : 60, this.isMobile ? 20 : 60);
-
         this.players = [
-            new Player(this.isMobile ? 8 : 20, this.isMobile ? 150 : 200, 'You'),
-            new Player(this.isMobile ? 8 : 20, this.isMobile ? 150 : 200, 'AI')
+            new Player(isMobile ? 8 : 20, isMobile ? 150 : 200, 'You'),
+            new Player(isMobile ? 8 : 20, isMobile ? 150 : 200, 'AI')
         ];
 
         this.resize();
@@ -126,11 +137,9 @@ class Pong {
         this.scoreBoard.classList.add('score-board');
         document.body.appendChild(this.scoreBoard);
 
-        this.reset();
-    }
-
-    get isMobile() {
-        return ("ontouchstart" in document.documentElement);
+        // this.reset();
+        this.timer();
+        this.updateScores();
     }
 
     resize() {
@@ -140,10 +149,39 @@ class Pong {
         this.players[1].pos.y = this.canvas.height / 2 - this.players[1].size.y / 2;
     }
 
+    timer() {
+        if (this.timerInterval) clearInterval(this.timerInterval);
+
+        let start = 0;
+        this.timerBlock = document.createElement('div');
+        this.timerBlock.classList.add('timer-block');
+        document.body.appendChild(this.timerBlock);
+        this.timerBlock.innerHTML = '3';
+        this.timerInterval = setInterval(() => {
+            start++;
+            if (start < 3) {
+                this.timerBlock.innerHTML = '' + (3 - start);
+            } else {
+                clearInterval(this.timerInterval);
+                this.timerBlock.remove();
+
+                this.gameOn = true;
+
+                this.ball = new Ball(isMobile ? 20 : 60, isMobile ? 20 : 60);
+
+                this.ball.pos.x = this.canvas.width / 2 - this.ball.size.x / 2;
+                this.ball.pos.y = this.canvas.height / 2 - this.ball.size.y / 2;
+
+                this.ball.vel.x = this.startSpeed * (Math.random() > .5 ? -1 : 1);
+                this.ball.vel.y = this.startSpeed * (Math.random() > .5 ? -1 : 1);
+            }
+        }, 1000);
+    }
+
     updateScores() {
         this.scoreBoard.innerHTML = `
-            <div class="score-board__player"> ${this.players[0].getScores}</div>
-            <div class="score-board__player"> ${this.players[1].getScores}</div>
+            <div class="score-board__player"> ${this.players[0].title}</div>
+            <div class="score-board__player"> ${this.players[1].title}</div>
         `;
     }
 
@@ -157,20 +195,31 @@ class Pong {
             //     ball.vel.y = -ball.vel.y;//-this.startSpeed * (Math.random() - .5);
             // }
             ball.vel.y = (Math.random() > .5 ? -1 : 1) * this.startSpeed * Pong.random(0.3, 1.2);
-            console.log(ball.vel.y, Pong.random(0.3, 1.2));
-            ball.vel.len = len * (this.isMobile ? 1.01 : 1.03);
+
+            ball.vel.len = len * (isMobile ? 1.01 : 1.03);
+
+            if (player.name === 'You') {
+                var audio = new Audio('audio/' + 'pong-1.mp3');
+                audio.volume = 0.2;
+                audio.play();
+            } else {
+                var audio = new Audio('audio/' + 'pong-2.mp3');
+                audio.volume = 0.2;
+                audio.play();
+            }
         }
     }
 
     static random(min, max): number {
-        // return Math.round(Math.random() * (max - min) + min);
         return (Math.random() * (max - min) + min);
     }
 
     draw() {
         this.context.fillStyle = '#000';
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        this.drawRect(this.ball);
+        if (this.ball) {
+            this.drawRect(this.ball);
+        }
         this.players.forEach(player => this.drawRect(player));
     }
 
@@ -179,52 +228,64 @@ class Pong {
         this.context.fillRect(rect.pos.x, rect.pos.y, rect.size.x, rect.size.y);
     }
 
-    reset() {
-        this.ball.vel.x = 0;
-        this.ball.vel.y = 0;
-        this.ball.pos.x = canvas.width / 2 - this.ball.size.x / 2;
-        this.ball.pos.y = canvas.height / 2 - this.ball.size.y / 2;
-
-        setTimeout(() => {
-            this.ball.vel.x = this.startSpeed * (Math.random() > .5 ? -1 : 1);
-            this.ball.vel.y = this.startSpeed * (Math.random() > .5 ? -1 : 1);
-        }, 1000);
-
-        this.updateScores();
+    resetUsers() {
+        this.players.forEach(player => player.setScores(0));
     }
 
     update(dt) {
-        // console.log(this.ball.vel);
-        this.ball.pos.x += this.ball.vel.x * dt;
-        this.ball.pos.y += this.ball.vel.y * dt;
+        if (this.ball && this.gameOn) {
+            this.ball.pos.x += this.ball.vel.x * dt;
+            this.ball.pos.y += this.ball.vel.y * dt;
 
-        this.players.forEach(player => this.collide(player, this.ball));
 
-        if (this.ball.left < 0 || this.ball.right > this.canvas.width) {
-            const playerId = this.ball.vel.x < 0 ? 1 : 0;
-            this.players[playerId].incScore();debugger
-            this.reset();
+            if (this.ball.left < 0 || this.ball.right > this.canvas.width) {
+                const playerId = this.ball.vel.x < 0 ? 1 : 0;
+                this.gameOn = false;
+                this.players[playerId].incScore();
+                this.updateScores();
+
+                this.ball.vel.x = 0;
+                this.ball.vel.y = 0;
+
+
+
+                if (this.players[0].scores >= 2 || this.players[1].scores >= 2) {
+                    let msg = this.players[0].scores > this.players[1].scores ? 'Вы победили' : 'Вы проиграли';
+                    this.resetUsers();
+                    this.updateScores();
+                    this.timerBlock.innerHTML = msg;
+                    document.body.appendChild(this.timerBlock);
+                } else {
+                    this.timer();
+                }
+            }
+
+            if (this.ball.top < 0 || this.ball.bottom > this.canvas.height) {
+                this.ball.vel.y = -this.ball.vel.y;
+            }
+
+
+            this.players[1].pos.y = this.ball.pos.y - this.players[1].size.y / 2 + this.ball.size.y / 2;// > .5 ? -1 : 1) ;
+
+            this.players.forEach(player => this.collide(player, this.ball));
         }
-
-        if (this.ball.top < 0 || this.ball.bottom > this.canvas.height) {
-            this.ball.vel.y = -this.ball.vel.y;
-        }
-        // console.log(dt)
-        this.players[1].pos.y = this.ball.pos.y;// > .5 ? -1 : 1) ;
-
-
 
         this.draw();
     }
 }
 
 const canvas = <HTMLCanvasElement>document.getElementById('pong');
-const pong = new Pong(canvas);
 
 
+const array = ['audio/' + 'pong-1.mp3', 'audio/' + 'pong-2.mp3'];
+let index = 0;
+array.forEach(r => {
+    var audio = new Audio(r);
 
-
-
-
-
-// callback();
+    audio.onloadedmetadata = () => {
+        index++;
+        if (index === array.length) {
+            const pong = new Pong(canvas);
+        }
+    }
+});

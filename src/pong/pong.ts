@@ -85,7 +85,7 @@ class Pong {
     public scoreBoard: HTMLElement;
     public timerBlock: HTMLElement;
     public timerInterval: number;
-    readonly startSpeed: number = isMobile ? 300 : 700;
+    readonly startSpeed: number = isMobile ? 200 : 700;
     readonly offset: number = isMobile ? 30 : 50;
     public gameOn = false;
     constructor(canvas) {
@@ -167,7 +167,7 @@ class Pong {
 
                 this.gameOn = true;
 
-                this.ball = new Ball(isMobile ? 20 : 60, isMobile ? 20 : 60);
+                this.ball = new Ball(isMobile ? 15 : 60, isMobile ? 15 : 60);
 
                 this.ball.pos.x = this.canvas.width / 2 - this.ball.size.x / 2;
                 this.ball.pos.y = this.canvas.height / 2 - this.ball.size.y / 2;

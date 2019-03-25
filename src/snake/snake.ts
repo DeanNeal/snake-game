@@ -1,4 +1,4 @@
-import '../less/snake.less';
+import './snake.less';
 import { Levels, ILevel } from './levels';
 import { Cell } from './cell';
 import { AudioController } from './audio';

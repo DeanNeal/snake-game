@@ -2,7 +2,10 @@ const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-  entry: './src/snake.ts',
+  entry: {
+    snake:  './src/snake/snake.ts',
+    pong:  './src/pong/pong.ts'
+  },
   module: {
     rules: [
       {
@@ -22,14 +25,14 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "snake.css"
+      filename: "[name].css"
     })
   ],
   resolve: {
     extensions: [ '.tsx', '.ts', '.js' ]
   },
   output: {
-    filename: 'bundle.js',
+    filename: "[name].js",
     path: path.resolve(__dirname, 'dist')
   }
 };

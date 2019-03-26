@@ -1,7 +1,8 @@
 class AudioController {
-    play(url: string) {
+    play(url: string, volume: number = 0.2, loop = false) {
         var audio = new Audio('audio/' + url);
-        audio.volume = 0.2;
+        audio.loop = loop;
+        audio.volume = volume;
         audio.play();
     }
 }

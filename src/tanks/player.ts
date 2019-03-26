@@ -8,7 +8,9 @@ export class Player extends Rect {
     public canvases = [];
     public ctx;
     public direction: string = 'right';
-    // private _scores: number = 0;
+    public state: string = 'normal';
+    public movementVel: number = 100;
+
     constructor(img, width, height, name) {
         super(width, height);
         this.name = name;
@@ -25,8 +27,8 @@ export class Player extends Rect {
 
     genCanvas() {
         let canvas = document.createElement('canvas');
-        canvas.width = 50;
-        canvas.height = 50;
+        canvas.width = this.size.x;
+        canvas.height = this.size.y;
         return canvas;
     }
 
@@ -43,8 +45,8 @@ export class Player extends Rect {
     leftCanvas() {
         let canvas = this.genCanvas();
         let ctx = canvas.getContext('2d');
-        ctx.translate(0, 50);
-        ctx.rotate(-90*Math.PI/180);
+        ctx.translate(0, this.size.y);
+        ctx.rotate(-90 * Math.PI / 180);
         this.drawCanvas(ctx);
         return canvas;
     }
@@ -52,8 +54,8 @@ export class Player extends Rect {
     rightCanvas() {
         let canvas = this.genCanvas();
         let ctx = canvas.getContext('2d');
-        ctx.translate(50, 0);
-        ctx.rotate(90*Math.PI/180);
+        ctx.translate(this.size.x, 0);
+        ctx.rotate(90 * Math.PI / 180);
         this.drawCanvas(ctx);
         return canvas;
     }
@@ -62,7 +64,7 @@ export class Player extends Rect {
         let canvas = this.genCanvas();
         let ctx = canvas.getContext('2d');
         ctx.translate(0, 0);
-        ctx.rotate(0*Math.PI/180);
+        ctx.rotate(0 * Math.PI / 180);
         this.drawCanvas(ctx);
         return canvas;
     }
@@ -70,8 +72,8 @@ export class Player extends Rect {
     downCanvas() {
         let canvas = this.genCanvas();
         let ctx = canvas.getContext('2d');
-        ctx.translate(50, 50);
-        ctx.rotate(180*Math.PI/180);
+        ctx.translate(this.size.x, this.size.y);
+        ctx.rotate(180 * Math.PI / 180);
         this.drawCanvas(ctx);
         return canvas;
     }
@@ -79,16 +81,16 @@ export class Player extends Rect {
     draw(ctx) {
         let canvas;
 
-        if(this.direction === 'left') {
+        if (this.direction === 'left') {
             canvas = this.canvases[0];
         }
-        if(this.direction === 'right') {
+        if (this.direction === 'right') {
             canvas = this.canvases[1];
         }
-        if(this.direction === 'up') {
+        if (this.direction === 'up') {
             canvas = this.canvases[2];
         }
-        if(this.direction === 'down') {
+        if (this.direction === 'down') {
             canvas = this.canvases[3];
         }
 

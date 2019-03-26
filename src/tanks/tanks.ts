@@ -5,6 +5,7 @@ import { Brick } from './brick';
 import { Bullet } from './bullet';
 import { Player } from './player';
 import AudioController from './audio';
+import Level  from './levels';
 
 const isMobile = ("ontouchstart" in document.documentElement);
 
@@ -18,7 +19,14 @@ class Tanks {
     private isMoving: boolean = false;
     private stacked: boolean = false;
     private bullets: Bullet[] = [];
-    private bricks = [];
+    private bricks: Brick[] = [];
+
+    private isShoting = false;
+    private duration = 200;
+    private start = new Date().getTime();
+
+
+    private pressedKeys = {};
 
     constructor(canvas) {
         this.canvas = canvas;
@@ -26,33 +34,26 @@ class Tanks {
 
         canvas.width = 800;
         canvas.height = 800;
- 
-        var imageBrick = new Image(50, 50);
-        imageBrick.onload = (res)=> {
-            
-            for (var i = 0; i < (10); i++) {
-               this.bricks.push(new Brick(imageBrick, 50, 50, i * 50, 20 + i* 25));
-            }
-            
-        };
 
-        imageBrick.src = 'img/tanks/brick.jpg';
+    
+
+        Level.build('level1').then((bricks: Brick[])=> {
+            this.bricks = bricks;
+        });
 
 
-        let image =  new Image();
-        image.src = 'img/tanks/tank.png';
-        image.onload = (res)=> {
-          this.player = new Player(res.target, 50, 50, 'You');
-          this.player.pos.x = 50;
-          this.player.pos.y = canvas.height - this.player.size.y;
-       
+        let imageTank = new Image();
+        imageTank.src = 'img/tanks/tank.png';
+        imageTank.onload = (res) => {
+            this.player = new Player(imageTank, 40, 40, 'You');
+            this.player.pos.x = 100;
+            this.player.pos.y = canvas.height - this.player.size.y;
 
-          this.startUpdate();
+            this.startUpdate();
         };
 
         window.addEventListener('resize', () => {
-              // canvas.width = window.innerHeight;
-              // canvas.height = window.innerHeight - 100;
+
         });
         this.addEventListeners();
     }
@@ -70,77 +71,101 @@ class Tanks {
     }
 
     addEventListeners() {
-        let vel = 150;
-        window.addEventListener('keydown', (e: KeyboardEvent) => {
-
-            if (this.stacked === false || this.isMoving === false) {
-                if (e.keyCode === 37) { // && this.direction !== 'right') {
-                    this.player.vel.x = -vel;
-                    this.player.vel.y = 0;
-                    this.player.direction = 'left';
-                    this.isMoving = true;
-                }
-                else if (e.keyCode === 38) { // && this.direction !== 'down') {
-                    this.player.vel.x = 0;
-                    this.player.vel.y = -vel;
-                    this.player.direction = 'up';
-                    this.isMoving = true;
-                }
-                else if (e.keyCode === 39) { // && this.direction !== 'left') {
-                    this.player.vel.x = vel;
-                    this.player.vel.y = 0;
-                    this.player.direction = 'right';
-                    this.isMoving = true;
-                }
-                else if (e.keyCode === 40) {// && this.direction !== 'up') {
-                    this.player.vel.x = 0;
-                    this.player.vel.y = vel;
-                    this.player.direction = 'down';
-                    this.isMoving = true;
-                }
-
-                if (e.keyCode === 32) {
-                    this.fire();
-                }
-            }
-        }, false);
-
-        // window.addEventListener('keypress', (e: KeyboardEvent) => {
-        //     this.isMoving = true;
-        // });
-
         window.addEventListener('keyup', (e: KeyboardEvent) => {
-            this.isMoving = false;
-            this.stacked = false;
+            (e.keyCode === 37) && delete this.pressedKeys['k37'];
+            (e.keyCode === 38) && delete this.pressedKeys['k38'];
+            (e.keyCode === 39) && delete this.pressedKeys['k39'];
+            (e.keyCode === 40) && delete this.pressedKeys['k40'];
+            (e.keyCode === 32) && delete this.pressedKeys['k32'];
+
+            if (Object.keys(this.pressedKeys).indexOf('k37') === -1 &&
+                Object.keys(this.pressedKeys).indexOf('k38') === -1 &&
+                Object.keys(this.pressedKeys).indexOf('k39') === -1 &&
+                Object.keys(this.pressedKeys).indexOf('k40') === -1) {
+                this.isMoving = false;
+            }
+
+            if (Object.keys(this.pressedKeys).indexOf('k32') === -1) {
+                this.isShoting = false;
+            }
+        }, true);
+
+        window.addEventListener('keydown', (e: KeyboardEvent) => {
+            this.pressedKeys['k' + e.keyCode] = e.type == 'keydown';
         }, false);
+    }
+
+    movePlayer() {
+        let currentKeyCode = Object.keys(this.pressedKeys)
+            .filter(r => r === 'k37' || r === 'k38' || r === 'k39' || r === 'k40')
+            .pop();
+
+
+        if (String(currentKeyCode) === 'k37') {
+            this.player.vel.x = -this.player.movementVel;
+            this.player.vel.y = 0;
+            this.player.direction = 'left';
+            this.isMoving = true;
+            // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
+        }
+        if (String(currentKeyCode) === 'k38') {
+            this.player.vel.x = 0;
+            this.player.vel.y = -this.player.movementVel;
+            this.player.direction = 'up';
+            this.isMoving = true;
+            // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
+        }
+        if (String(currentKeyCode) === 'k39') {
+            this.player.vel.x = this.player.movementVel;
+            this.player.vel.y = 0;
+            this.player.direction = 'right';
+            this.isMoving = true;
+            // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
+        }
+        if (String(currentKeyCode) === 'k40') {
+            this.player.vel.x = 0;
+            this.player.vel.y = this.player.movementVel;
+            this.player.direction = 'down';
+            this.isMoving = true;
+            // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
+        }
+
+        if (this.pressedKeys['k32']) {
+            if (!this.isShoting) {
+                this.start = new Date().getTime() - this.duration;
+                this.isShoting = true;
+            }
+        }
     }
 
     fire() {
         let bullet = new Bullet(4, 4);
-        if(this.player.direction === 'left') {
+        if (this.player.direction === 'left') {
             bullet.pos.x = this.player.pos.x;
-            bullet.pos.y = this.player.pos.y + this.player.size.y/2 - 2;
+            bullet.pos.y = this.player.pos.y + this.player.size.y / 2 - 2;
 
             bullet.vel.y = 0;
             bullet.vel.x = -500;
-        }  else if(this.player.direction === 'right') { 
+        } else if (this.player.direction === 'right') {
             bullet.pos.x = this.player.right;
-            bullet.pos.y = this.player.pos.y + this.player.size.y/2 - 2;
+            bullet.pos.y = this.player.pos.y + this.player.size.y / 2 - 2;
 
             bullet.vel.y = 0;
             bullet.vel.x = 500;
-        } else if (this.player.direction === 'down'){
-            bullet.pos.x = this.player.pos.x + this.player.size.x/2 - 2;
+        } else if (this.player.direction === 'down') {
+            bullet.pos.x = this.player.pos.x + this.player.size.x / 2 - 2;
             bullet.pos.y = this.player.pos.y + this.player.size.y;
 
             bullet.vel.y = 500;
-        } else if (this.player.direction === 'up'){
-            bullet.pos.x = this.player.pos.x + this.player.size.x/2 - 2;
+        } else if (this.player.direction === 'up') {
+            bullet.pos.x = this.player.pos.x + this.player.size.x / 2 - 2;
             bullet.pos.y = this.player.pos.y;
 
             bullet.vel.y = -500;
         }
-        AudioController.play('tanks/Battle City SFX (6).wav');
+        
+        AudioController.play('tanks/sounds/fire.ogg');
+        // AudioController.play('tanks/Battle City SFX (6).wav');
         this.bullets.push(bullet);
     }
 
@@ -150,22 +175,33 @@ class Tanks {
 
         this.player.draw(this.context);
 
-        this.bullets = this.bullets.filter(r=> !r.markForDeletion);
+        this.bullets = this.bullets.filter(r => !r.markForDeletion);
         this.bullets.forEach(bullet => bullet.draw(this.context));
 
-        this.bricks = this.bricks.filter(r=> !r.markForDeletion);
-        this.bricks.forEach(brick=> brick.draw(this.context));
+        this.bricks = this.bricks.filter(r => !r.markForDeletion);
+        this.bricks.forEach(brick => brick.draw(this.context));
     }
 
     collider() {
         // this.bricks.forEach(brick=> brick.collision(this.player, this));
-        this.bullets.forEach(bullet=> bullet.collision(this.player, this));
+        this.bullets.forEach(bullet => bullet.collision(this.player, this));
     }
 
     update(dt) {
-        if (this.isMoving && this.stacked === false) {
+        // console.log(this.isMoving);
+        this.movePlayer();
+
+        if (this.isMoving) {//&& this.stacked === false) {
             this.player.pos.x += Math.round(this.player.vel.x * dt);
-            this.player.pos.y += Math.round(this.player.vel.y * dt);
+            this.player.pos.y += Math.round(this.player.vel.y * dt); 
+        }
+
+        if (this.isShoting && this.bullets.length <= 0) {
+            let elapsed = new Date().getTime() - this.start;
+            if (elapsed > this.duration) {
+                this.fire();
+                this.start = new Date().getTime();
+            }
         }
 
         this.bullets.forEach(bullet => {

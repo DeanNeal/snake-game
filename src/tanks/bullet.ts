@@ -27,8 +27,11 @@ export class Bullet extends Rect {
                 brick.bottom >= this.top)
             ) {
               this.markForDeletion = true;
-              brick.markForDeletion = true;
-              AudioController.play('tanks/Battle City SFX (5).wav');
+              brick.hits++;
+              if(brick.hits >= brick.hitsToDestroy) {
+                  brick.markForDeletion = true;
+              }
+              AudioController.play('tanks/Battle City SFX (5).wav', 0.4);
             }
         })
 

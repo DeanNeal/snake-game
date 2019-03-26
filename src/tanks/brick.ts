@@ -3,6 +3,8 @@ import { Rect } from './rect';
 export class Brick extends Rect{
     private img;
     public markForDeletion: boolean = false;
+    readonly hitsToDestroy: number = 2;
+    public hits: number = 0;
     constructor(img, width, height, x, y) {
         super(width, height);
          this.img = img;
@@ -16,7 +18,7 @@ export class Brick extends Rect{
             this.pos.x,
             this.pos.y,
             this.size.x,
-            this.size.y
+            this.size.y,
         );
     }
 

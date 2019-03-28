@@ -15,7 +15,7 @@
             <li><a href="./snake.html">Snake</a></li>
             <li><a href="./pong.html">Pong</a></li>
             <li><a href="./tanks.html">Tanks(Development)</a></li>
-            <li><a href="./bounce-ball.html">Bounce Ball(Development)</a></li>
+            <li><a href="./bounce-ball.html" class="inactive" onclick="return false;">Bounce Ball(Development)</a></li>
         </ul>
     </nav>
 
@@ -51,6 +51,10 @@
             color: #000;
             text-decoration: none;
         }
+
+         nav ul li a.inactive {
+             color: #cccccc;
+         }
 
         nav ul li a:hover {
             text-decoration: underline;

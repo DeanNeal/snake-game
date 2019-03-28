@@ -26,9 +26,9 @@ export class Tile extends Rect {
         );
     }
 
-    collision(player) {
+    // collision(player) {
 
-    }
+    // }
 
     overlap(subject, rect) {
         return subject.bottom > rect.top
@@ -37,13 +37,13 @@ export class Tile extends Rect {
             && subject.left < rect.right;
     }
 
-    checkX(player) {
+    // checkX(player) {
   
-    }
+    // }
 
-    checkY(player) {
+    // checkY(player) {
 
-    }
+    // }
 
 }
 

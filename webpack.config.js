@@ -7,7 +7,7 @@ module.exports = {
   entry: {
     snake:  './src/snake/snake.ts',
     pong:  './src/pong/pong.ts',
-    tanks: './src/tanks/tanks.ts'
+    tanks: './src/tanks/game.ts'
   },
   module: {
     rules: [

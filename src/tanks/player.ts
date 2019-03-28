@@ -1,38 +1,51 @@
 import { Vec } from './vec';
 import { Rect } from './rect';
+import { WINDOW_SIZE } from './global';
 
+interface ICanvasProps {
+    deg: number;
+    translate: {
+        x: number;
+        y: number;
+    }
+}
 export class Player extends Rect {
-    private name: string;
     public vel: Vec;
-    public img;
-    public canvases = [];
-    public ctx;
+    public img: HTMLImageElement;
+    public canvases: HTMLCanvasElement[] = [];
+    public ctx: HTMLCanvasElement;
     public direction: string = 'right';
+    // public canMove = {
+    //     left: true,
+    //     right: true,
+    //     up: true,
+    //     down: true
+    // };
+    // public stacked;
     public state: string = 'normal';
-    public movementVel: number = 100;
+    public movementVel: number = WINDOW_SIZE / 7;
 
-    constructor(img, width, height, name) {
+    constructor(img, width, height) {
         super(width, height);
-        this.name = name;
         this.img = img;
         this.vel = new Vec;
-
-        this.canvases = [
-            this.leftCanvas(),
-            this.rightCanvas(),
-            this.upCanvas(),
-            this.downCanvas()
-        ];
+        [
+            { deg: -90, translate: { x: 0, y: this.size.y } },
+            { deg: 90, translate: { x: this.size.x, y: 0 } },
+            { deg: 0, translate: { x: 0, y: 0 } },
+            { deg: 180, translate: { x: this.size.x, y: this.size.y } }
+        ].forEach((r: ICanvasProps) => {
+            this.canvases.push(this.genCanvas(r));
+        })
     }
 
-    genCanvas() {
+    genCanvas(r: ICanvasProps): HTMLCanvasElement {
         let canvas = document.createElement('canvas');
+        let ctx = canvas.getContext('2d');
         canvas.width = this.size.x;
         canvas.height = this.size.y;
-        return canvas;
-    }
-
-    drawCanvas(ctx) {
+        ctx.translate(r.translate.x, r.translate.y);
+        ctx.rotate(r.deg * Math.PI / 180);
         ctx.drawImage(
             this.img,
             0,
@@ -40,60 +53,17 @@ export class Player extends Rect {
             this.size.x,
             this.size.y
         );
-    }
-
-    leftCanvas() {
-        let canvas = this.genCanvas();
-        let ctx = canvas.getContext('2d');
-        ctx.translate(0, this.size.y);
-        ctx.rotate(-90 * Math.PI / 180);
-        this.drawCanvas(ctx);
-        return canvas;
-    }
-
-    rightCanvas() {
-        let canvas = this.genCanvas();
-        let ctx = canvas.getContext('2d');
-        ctx.translate(this.size.x, 0);
-        ctx.rotate(90 * Math.PI / 180);
-        this.drawCanvas(ctx);
-        return canvas;
-    }
-
-    upCanvas() {
-        let canvas = this.genCanvas();
-        let ctx = canvas.getContext('2d');
-        ctx.translate(0, 0);
-        ctx.rotate(0 * Math.PI / 180);
-        this.drawCanvas(ctx);
-        return canvas;
-    }
-
-    downCanvas() {
-        let canvas = this.genCanvas();
-        let ctx = canvas.getContext('2d');
-        ctx.translate(this.size.x, this.size.y);
-        ctx.rotate(180 * Math.PI / 180);
-        this.drawCanvas(ctx);
         return canvas;
     }
 
     draw(ctx) {
         let canvas;
-
-        if (this.direction === 'left') {
-            canvas = this.canvases[0];
+        switch (this.direction) {
+            case 'left': canvas = this.canvases[0]; break;
+            case 'right': canvas = this.canvases[1]; break;
+            case 'up': canvas = this.canvases[2]; break;
+            case 'down': canvas = this.canvases[3]; break;
         }
-        if (this.direction === 'right') {
-            canvas = this.canvases[1];
-        }
-        if (this.direction === 'up') {
-            canvas = this.canvases[2];
-        }
-        if (this.direction === 'down') {
-            canvas = this.canvases[3];
-        }
-
         ctx.drawImage(
             canvas,
             this.pos.x,
@@ -101,5 +71,43 @@ export class Player extends Rect {
             this.size.x,
             this.size.y
         );
+    }
+
+    intersection(obstacles, subject, fn) {
+        obstacles.filter(obstacle => obstacle.overlap(subject, obstacle)).forEach(fn);
+    }
+
+    move(dt, obstacles) {
+        this.pos.x += Math.round(this.vel.x * dt);
+
+        if (this.vel.x > 0) {
+            this.intersection(obstacles, this, rect => {
+                if (this.right > rect.left) {
+                    this.pos.x = rect.left - this.size.x;
+                }
+            });
+        } else if (this.vel.x < 0) {
+            this.intersection(obstacles, this, rect => {
+                if (this.left < rect.right) {
+                    this.pos.x = rect.right;
+                }
+            });
+        }
+
+        this.pos.y += Math.round(this.vel.y * dt);
+
+        if (this.vel.y > 0) {
+            this.intersection(obstacles, this, rect => {
+                if (this.bottom > rect.top) {
+                    this.pos.y = rect.top - this.size.y;
+                }
+            });
+        } else if (this.vel.y < 0) {
+            this.intersection(obstacles, this, rect => {
+                if (this.top < rect.bottom) {
+                    this.pos.y = rect.bottom;
+                }
+            });
+        }
     }
 }

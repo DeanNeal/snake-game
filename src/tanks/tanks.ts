@@ -1,11 +1,11 @@
 import './tanks.less';
-import { Vec } from './vec';
-import { Rect } from './rect';
-import { Brick } from './brick';
+import { Tile } from './tile';
 import { Bullet } from './bullet';
 import { Player } from './player';
 import AudioController from './audio';
-import Level  from './levels';
+import { Level } from './levels';
+import { Eagle } from './eagle';
+import { WINDOW_SIZE, TILE_SIZE, BULLET_SPEED } from './global';
 
 const isMobile = ("ontouchstart" in document.documentElement);
 
@@ -15,11 +15,11 @@ class Tanks {
     private context;
     private player: Player;
     private steps: boolean = false;
-    private direction: string = 'right';
     private isMoving: boolean = false;
     private stacked: boolean = false;
     private bullets: Bullet[] = [];
-    private bricks: Brick[] = [];
+    private tiles: Tile[] = [];
+    private eagle: Eagle;
 
     private isShoting = false;
     private duration = 200;
@@ -32,30 +32,26 @@ class Tanks {
         this.canvas = canvas;
         this.context = canvas.getContext('2d');
 
-        canvas.width = 800;
-        canvas.height = 800;
+        canvas.width = WINDOW_SIZE;
+        canvas.height = WINDOW_SIZE;
 
-    
+        let level = new Level();
 
-        Level.build('level1').then((bricks: Brick[])=> {
-            this.bricks = bricks;
+        level.build('level1').then((tiles: Tile[]) => {
+            this.tiles = tiles;
         });
 
-
-        let imageTank = new Image();
-        imageTank.src = 'img/tanks/tank.png';
-        imageTank.onload = (res) => {
-            this.player = new Player(imageTank, 40, 40, 'You');
+        Level.loadImages(['img/tanks/tank.png', 'img/tanks/eagle.png']).then(images => {
+            this.player = new Player(images[0], TILE_SIZE- 8, TILE_SIZE-8);
             this.player.pos.x = 100;
             this.player.pos.y = canvas.height - this.player.size.y;
 
+            this.eagle = new Eagle(images[1], TILE_SIZE, TILE_SIZE, this.canvas.width / 2 - TILE_SIZE / 2, this.canvas.height - TILE_SIZE);
+
             this.startUpdate();
-        };
 
-        window.addEventListener('resize', () => {
-
-        });
-        this.addEventListeners();
+            this.addEventListeners();
+        })
     }
 
     startUpdate() {
@@ -100,34 +96,38 @@ class Tanks {
             .filter(r => r === 'k37' || r === 'k38' || r === 'k39' || r === 'k40')
             .pop();
 
-
         if (String(currentKeyCode) === 'k37') {
-            this.player.vel.x = -this.player.movementVel;
-            this.player.vel.y = 0;
-            this.player.direction = 'left';
-            this.isMoving = true;
-            // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
+            // if(this.player.canMove.left){
+                this.player.vel.x = -this.player.movementVel;
+                this.player.vel.y = 0;
+                this.player.direction = 'left';
+                this.isMoving = true;
+                // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
         }
         if (String(currentKeyCode) === 'k38') {
-            this.player.vel.x = 0;
-            this.player.vel.y = -this.player.movementVel;
-            this.player.direction = 'up';
-            this.isMoving = true;
-            // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
-        }
+
+            // if(this.player.canMove.up) {
+                this.player.vel.x = 0;
+                this.player.vel.y = -this.player.movementVel;
+                this.player.direction = 'up';
+                this.isMoving = true;
+                // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
+        } 
         if (String(currentKeyCode) === 'k39') {
-            this.player.vel.x = this.player.movementVel;
-            this.player.vel.y = 0;
-            this.player.direction = 'right';
-            this.isMoving = true;
-            // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
-        }
+            // if(this.player.canMove.right) {
+                this.player.vel.x = this.player.movementVel;
+                this.player.vel.y = 0;
+                this.player.direction = 'right';
+                this.isMoving = true;
+                // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
+        } 
         if (String(currentKeyCode) === 'k40') {
-            this.player.vel.x = 0;
-            this.player.vel.y = this.player.movementVel;
-            this.player.direction = 'down';
-            this.isMoving = true;
-            // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
+            // if(this.player.canMove.down) {
+                this.player.vel.x = 0;
+                this.player.vel.y = this.player.movementVel;
+                this.player.direction = 'down';
+                this.isMoving = true;
+                // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
         }
 
         if (this.pressedKeys['k32']) {
@@ -145,25 +145,25 @@ class Tanks {
             bullet.pos.y = this.player.pos.y + this.player.size.y / 2 - 2;
 
             bullet.vel.y = 0;
-            bullet.vel.x = -500;
+            bullet.vel.x = -BULLET_SPEED;
         } else if (this.player.direction === 'right') {
             bullet.pos.x = this.player.right;
             bullet.pos.y = this.player.pos.y + this.player.size.y / 2 - 2;
 
             bullet.vel.y = 0;
-            bullet.vel.x = 500;
+            bullet.vel.x = BULLET_SPEED;
         } else if (this.player.direction === 'down') {
             bullet.pos.x = this.player.pos.x + this.player.size.x / 2 - 2;
             bullet.pos.y = this.player.pos.y + this.player.size.y;
 
-            bullet.vel.y = 500;
+            bullet.vel.y = BULLET_SPEED;
         } else if (this.player.direction === 'up') {
             bullet.pos.x = this.player.pos.x + this.player.size.x / 2 - 2;
             bullet.pos.y = this.player.pos.y;
 
-            bullet.vel.y = -500;
+            bullet.vel.y = -BULLET_SPEED;
         }
-        
+
         AudioController.play('tanks/sounds/fire.ogg');
         // AudioController.play('tanks/Battle City SFX (6).wav');
         this.bullets.push(bullet);
@@ -178,22 +178,21 @@ class Tanks {
         this.bullets = this.bullets.filter(r => !r.markForDeletion);
         this.bullets.forEach(bullet => bullet.draw(this.context));
 
-        this.bricks = this.bricks.filter(r => !r.markForDeletion);
-        this.bricks.forEach(brick => brick.draw(this.context));
+        this.tiles = this.tiles.filter(r => !r.markForDeletion);
+        this.tiles.forEach(brick => brick.draw(this.context));
+
+        this.eagle.draw(this.context);
     }
 
     collider() {
-        // this.bricks.forEach(brick=> brick.collision(this.player, this));
         this.bullets.forEach(bullet => bullet.collision(this.player, this));
     }
 
     update(dt) {
-        // console.log(this.isMoving);
         this.movePlayer();
 
-        if (this.isMoving) {//&& this.stacked === false) {
-            this.player.pos.x += Math.round(this.player.vel.x * dt);
-            this.player.pos.y += Math.round(this.player.vel.y * dt); 
+        if (this.isMoving) {
+            this.player.move(dt, this.tiles);
         }
 
         if (this.isShoting && this.bullets.length <= 0) {
@@ -226,6 +225,8 @@ class Tanks {
 
         this.collider();
 
+
+
         this.draw();
     }
 
@@ -233,3 +234,11 @@ class Tanks {
 }
 const canvas = <HTMLCanvasElement>document.getElementById('tanks');
 new Tanks(canvas);
+
+//TODO
+//PLAYER COLLISIONS WITH TILES
+//MOVE SOUND
+//enemies AI
+//BONUSES
+//SCORES
+//

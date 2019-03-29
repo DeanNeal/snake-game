@@ -16,9 +16,6 @@ export class Bonus extends Rect {
     }
 
     draw(ctx) {
-        // ctx.fillStyle = '#fff';
-        // ctx.fillRect(this.pos.x, this.pos.y, TILE_SIZE, TILE_SIZE);
-
         ctx.drawImage(
             this.img,
             this.pos.x,

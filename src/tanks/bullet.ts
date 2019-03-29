@@ -18,18 +18,19 @@ export class Bullet extends Rect {
         ctx.fillRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
     }
 
+    overlap(object) {
+        return object.top <= this.bottom &&
+            object.left <= this.right &&
+            object.right >= this.left &&
+            object.bottom >= this.top
+    }
 
     collision(player, game) {
 
         //with bricks
         game.tiles.forEach(tile => {
             if (tile.collideWithBullet) {
-                if (
-                    (tile.top <= this.bottom &&
-                        tile.left <= this.right &&
-                        tile.right >= this.left &&
-                        tile.bottom >= this.top)
-                ) {
+                if (this.overlap(tile)) {
                     this.markForDeletion = true;
 
                     if (tile instanceof BrickTile) {
@@ -51,37 +52,16 @@ export class Bullet extends Rect {
         }
 
         //with eagle
-        if (
-            (game.eagle.top <= this.bottom &&
-                game.eagle.left <= this.right &&
-                game.eagle.right >= this.left &&
-                game.eagle.bottom >= this.top)
-        ) {
+        if (this.overlap(game.eagle)) {
             game.eagle.markForDeletion = true;
             this.markForDeletion = true;
             AudioController.play('tanks/eagle.wav', 0.4);
             game.markForGameOver = true;
         }
 
-        //with bonuses
-        // game.bonuses.forEach(bonus=> {
-        //     if (
-        //         (bonus.top <= this.bottom &&
-        //             bonus.left <= this.right &&
-        //             bonus.right >= this.left &&
-        //             bonus.bottom >= this.top)
-        //     ) {
-        //         this.markForDeletion = true;
-        //         bonus.markForDeletion = true;
-        //     }
-        // });
-
-        //width enemies
+        //with player
         if (this.source === 'bot') {
-            if ((player.top <= this.bottom &&
-                player.left <= this.right &&
-                player.right >= this.left &&
-                player.bottom >= this.top)) {
+            if (this.overlap(player)) {
                 this.markForDeletion = true;
                 player.lives--;
                 if (player.lives > 0) {
@@ -93,14 +73,10 @@ export class Bullet extends Rect {
             }
         }
 
+        //width enemies
         if (this.source === 'player') {
             game.enemies.forEach(enemy => {
-                if (
-                    (enemy.top <= this.bottom &&
-                        enemy.left <= this.right &&
-                        enemy.right >= this.left &&
-                        enemy.bottom >= this.top)
-                ) {
+                if (this.overlap(enemy)) {
                     enemy.markForDeletion = true;
                     this.markForDeletion = true;
                     game.currentLevel.scores++;

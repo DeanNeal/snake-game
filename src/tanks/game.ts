@@ -49,14 +49,12 @@ class Game {
     private tiles: Tile[] = [];
     private eagle: Eagle;
 
-    // public markForRestart: boolean = false;
     public markForNextLevel: boolean = false;
     public markForGameOver: boolean = false;
 
     public state: IState = new State();
 
     private gameCallback;
-    private loadLevelTimeout: number;
     private gameTimeouts: number[] = [];
 
     constructor(canvas: HTMLCanvasElement) {
@@ -67,61 +65,64 @@ class Game {
         canvas.height = WINDOW_SIZE;
 
         this.loadLevel();
+
+        document.body.querySelectorAll('.nav-level li').forEach(el => {
+            el.addEventListener('click', (e: any) => {
+                let level = e.currentTarget.getAttribute('data-id');
+                level = parseInt(level);
+                this.cleanScene();
+                this.state = new State();
+                this.state.activeLevel = level;
+                this.loadLevel();
+            });
+        })
     }
 
     get currentLevel() {
         return this.state.levels[this.state.activeLevel];
     }
 
-    loadLevel(): void {
+    async loadLevel() {
         const level = new Level();
 
-        level.build(this.state.activeLevel).then((tiles: Tile[]) => {
-            if (tiles) {
-                this.tiles = tiles;
-            } else {
-                this.context.fillStyle = "blue  ";
-                this.context.font = `bold ${WINDOW_SIZE / 20}px Arial`;
-                this.context.fillText('YOU WIN', (this.canvas.width / 2) - 100, (this.canvas.height / 2));
-            }
-        }).then(res => {
-            if (this.tiles.length) {
-                Level.loadImages(['img/tanks/tank.png', 'img/tanks/eagle.png']).then(images => {
-                    this.player = new Player(images[0], TILE_SIZE - 10, TILE_SIZE - 10);
+        this.tiles = await level.build(this.state.activeLevel);
 
-                    this.eagle = new Eagle(images[1], TILE_SIZE, TILE_SIZE, this.canvas.width / 2 - TILE_SIZE / 2, this.canvas.height - TILE_SIZE);
+        if (this.tiles) {
+            let images = await Level.loadImages(['img/tanks/tank.png', 'img/tanks/eagle.png']);
 
+            this.player = new Player(images[0]);
+            this.eagle = new Eagle(images[1]);
 
-                    for (let i = 0; i < this.currentLevel.startWithBots; i++) {
-                        let timeout = setTimeout(() => {
-                            this.addNewBot();
-                        }, i * 2000);
-                        this.gameTimeouts.push(timeout);
-                    }
-
-                    this.player.addEventListeners();
-
-                    this.startUpdate();
-                });
+            for (let i = 0; i < this.currentLevel.startWithBots; i++) {
+                let timeout = setTimeout(() => {
+                    this.addNewBot();
+                }, i * 2000);
+                this.gameTimeouts.push(timeout);
             }
 
-        })
+            this.player.addEventListeners();
+
+            this.startUpdate();
+        } else {
+            this.context.fillStyle = "blue  ";
+            this.context.font = `bold ${WINDOW_SIZE / 20}px Arial`;
+            this.context.fillText('YOU WIN', (this.canvas.width / 2) - 100, (this.canvas.height / 2));
+        }
+
     }
 
     cleanScene(): void {
+        this.gameCallback = () => { };
         this.gameTimeouts.forEach(timeout => clearTimeout(timeout));
 
         this.bullets = [];
         this.enemies = [];
         this.tiles = [];
-        this.player = null;
-        this.eagle = null;
 
         this.markForNextLevel = false;
         this.markForGameOver = false;
         this.context.fillStyle = '#000';
 
-        this.gameCallback = () => { };
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
@@ -143,10 +144,9 @@ class Game {
         // }, 2000));
     }
 
-    addNewBot(): void {
-        Level.loadImg('img/tanks/tank.png').then(img => {
-            this.enemies.push(new Bot(img, TILE_SIZE - 10, TILE_SIZE - 10));
-        });
+    async addNewBot() {
+        let img = await Level.loadImg('img/tanks/tank.png');
+        this.enemies.push(new Bot(img, TILE_SIZE - 10, TILE_SIZE - 10));
     }
 
     startUpdate(): void {
@@ -167,7 +167,7 @@ class Game {
 
 
         this.tiles = this.tiles.filter(r => !r.markForDeletion);
-        this.tiles.filter(r=> r instanceof GrassTile === false).forEach(brick => brick.draw(this.context));
+        this.tiles.filter(r => r instanceof GrassTile === false).forEach(brick => brick.draw(this.context));
 
         this.bullets = this.bullets.filter(r => !r.markForDeletion);
         this.bullets.forEach(bullet => bullet.draw(this.context));
@@ -177,8 +177,8 @@ class Game {
 
         this.player.draw(this.context);
 
-        this.tiles.filter(r=> r instanceof GrassTile === true).forEach(brick => brick.draw(this.context));
-    
+        this.tiles.filter(r => r instanceof GrassTile === true).forEach(brick => brick.draw(this.context));
+
         this.eagle.draw(this.context);
     }
 
@@ -193,7 +193,7 @@ class Game {
 
         this.context.fillStyle = "blue";
         this.context.font = `bold ${WINDOW_SIZE / 42}px Arial`;
-        this.context.fillText('Lives - ' + this.player.lives, (this.canvas.width) - WINDOW_SIZE / 6, (this.canvas.height) - WINDOW_SIZE / 12.5);
+        this.context.fillText('Lifes - ' + this.player.lives, (this.canvas.width) - WINDOW_SIZE / 6, (this.canvas.height) - WINDOW_SIZE / 12.5);
     }
 
     collider(): void {

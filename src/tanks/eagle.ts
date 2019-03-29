@@ -1,19 +1,16 @@
 import { Rect } from "./rect";
+import { WINDOW_SIZE, TILE_SIZE } from "./global";
 
 export class Eagle extends Rect {
     public img: HTMLImageElement;
     public markForDeletion: boolean = false;
-    constructor(img, w, h, x, y) {
-        super(w, h);
+    constructor(img) {
+        super(TILE_SIZE, TILE_SIZE);
         this.img = img;
-        this.pos.x = x;
-        this.pos.y = y;
+        this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE / 2, 
+        this.pos.y = WINDOW_SIZE - TILE_SIZE;
     }
-
-    collision() {
-        
-    }
-
+    
     draw(ctx) {
         if(this.markForDeletion === false) {
             ctx.drawImage(

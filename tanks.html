@@ -6,15 +6,31 @@
     <title>Tanks</title>
     <link rel="stylesheet" href="dist/tanks.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0, user-scalable=no">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0, user-scalable=no">
 </head>
 
 <body>
     <div class="container">
-    	<img src="" alt="">
-            <canvas id="tanks"></canvas>
+        <ul class="nav-level">
+            <li data-id="0">level 1</li>
+            <li data-id="1">level 2</li>
+            <li data-id="2">level 3</li>
+        </ul>
+        <canvas id="tanks"></canvas>
     </div>
     <script src="dist/tanks.js"></script>
+
+    <style>
+        ul {
+            list-style: none;
+            /* padding: 10px; */
+        }
+        ul li {
+            cursor: pointer;
+            padding: 10px;
+        }
+    </style>
 </body>
 
 </html>

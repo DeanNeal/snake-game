@@ -23,7 +23,7 @@ export abstract class Tank extends Rect {
     public isShoting = false;
     public moveParams = [];
     protected type = 'bot';
-    protected surfaceMoveFactor = 1;
+    private surfaceMoveFactor = 1;
 
     constructor(img, w, h) {
         super(w, h);
@@ -105,7 +105,7 @@ export abstract class Tank extends Rect {
         obstacles
             .filter(obstacle => obstacle.overlap(subject, obstacle)).forEach((tile) => {
                 if (tile instanceof IceTile) {
-                    this.surfaceMoveFactor = 1.3;
+                    this.surfaceMoveFactor = 1.4;
                 } else if (tile instanceof GrassTile) {
                     this.surfaceMoveFactor = 0.6;
                 } else {

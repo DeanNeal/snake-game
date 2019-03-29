@@ -62,7 +62,7 @@ export class Bullet extends Rect {
             AudioController.play('tanks/eagle.wav', 0.4);
             game.markForGameOver = true;
         }
-// console.log(this.source);
+
         //width enemies
         if(this.source === 'bot') return ;
 

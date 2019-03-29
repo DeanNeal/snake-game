@@ -116,7 +116,7 @@ export abstract class Tank extends Rect {
 
     move(dt, obstacles, game) {
         if (this.isMoving) {
-            this.pos.x += Math.round(this.vel.x * dt) * this.surfaceMoveFactor);
+            this.pos.x += Math.round(this.vel.x * dt) * this.surfaceMoveFactor;
 
             if (this.vel.x > 0) {
                 this.intersection(obstacles, this, rect => {

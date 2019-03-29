@@ -15,7 +15,7 @@ export class Player extends Tank {
     readonly type = 'player';
 
     constructor(img) {
-        super(img, TILE_SIZE - 10, TILE_SIZE - 10);
+        super(img, TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
 
         this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
         this.pos.y = WINDOW_SIZE - this.size.y;

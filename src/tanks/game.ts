@@ -146,7 +146,7 @@ class Game {
 
     async addNewBot() {
         let img = await Level.loadImg('img/tanks/tank.png');
-        this.enemies.push(new Bot(img, TILE_SIZE - 10, TILE_SIZE - 10));
+        this.enemies.push(new Bot(img));
     }
 
     startUpdate(): void {

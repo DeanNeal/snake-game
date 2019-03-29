@@ -1,4 +1,4 @@
-import { WINDOW_SIZE } from "./global";
+import { WINDOW_SIZE, TILE_SIZE } from "./global";
 import { Tank } from "./tank";
 
 function random(min, max): number {
@@ -20,9 +20,8 @@ export class Bot extends Tank {
     public markForDeletion;
     readonly type = 'bot';
 
-    constructor(img, w, h) {
-        super(img, w, h);
-
+    constructor(img) {
+        super(img, TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
         this.init();
     }
 

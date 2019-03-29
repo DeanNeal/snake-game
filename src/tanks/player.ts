@@ -1,4 +1,4 @@
-import { WINDOW_SIZE, TILE_SIZE } from './global';
+import { WINDOW_SIZE, TILE_SIZE, BULLET_SPEED } from './global';
 import { Tank } from './tank';
 
 enum TEST {
@@ -13,6 +13,7 @@ export class Player extends Tank {
     private start = new Date().getTime();
     public lives = 2;
     readonly type = 'player';
+    private state: string = 'normal';
 
     constructor(img) {
         super(img, TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
@@ -23,6 +24,32 @@ export class Player extends Tank {
         // this.setStateNormal();
         // this.setStateImproved();
         // this.setStateSuperb();
+    }
+
+    get bulletSpeed() {
+        let factor = 1;
+        switch (this.state) {
+            case 'normal':
+                factor = 1; break;
+            case 'improved':
+                factor = 1.5; break;
+            case 'superb':
+                factor = 2; break;
+        }
+
+        return BULLET_SPEED * factor;
+    }
+
+    setStateNormal() {
+        this.state = 'normal';
+    }
+
+    setStateImproved() {
+        this.state = 'improved';
+    }
+
+    setStateSuperb() {
+        this.state = 'superb';
     }
 
     update(dt, tiles, game) {

@@ -1,4 +1,4 @@
-import { WINDOW_SIZE, TILE_SIZE } from "./global";
+import { WINDOW_SIZE, TILE_SIZE, BULLET_SPEED } from "./global";
 import { Tank } from "./tank";
 
 function random(min, max): number {
@@ -9,8 +9,9 @@ function booleanRandom() {
     return Math.random() > .5 ? 0 : 1;
 }
 
-let derectionArray = ['left', 'up', 'right', 'down'];
-
+const derectionArray = ['left', 'up', 'right', 'down'];
+const modArray = ['simple', 'fast', 'armored'];
+const bonusArray = ['helm', 'star', 'life', 'granate', 'clock'];
 
 export class Bot extends Tank {
     public movementVel: number = WINDOW_SIZE / 10;
@@ -19,6 +20,9 @@ export class Bot extends Tank {
     private moveTimeout;
     public markForDeletion;
     readonly type = 'bot';
+    private mod = 'simple';
+    private bonus = null;
+    private state: string = 'normal';
 
     constructor(img) {
         super(img, TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
@@ -29,6 +33,7 @@ export class Bot extends Tank {
         let randomVal = booleanRandom();
         this.pos.x = randomVal ? 5 : WINDOW_SIZE - this.size.x - 5;
         this.pos.y = 5;
+
 
         if (randomVal) {
             if (booleanRandom()) {
@@ -44,6 +49,36 @@ export class Bot extends Tank {
                 this.moveDown();
             }
         }
+
+        this.generateBonus();
+        this.generateMod();
+    }
+
+    generateBonus() {
+        let chance = Math.round(random(0, 1));
+        if (chance === 1) {
+            let randomIndex = Math.round(random(0, bonusArray.length - 1));
+            this.bonus = bonusArray[randomIndex];
+        }
+    }
+
+    generateMod() {
+        let randomIndex = Math.round(random(0, 2));
+        this.mod = modArray[randomIndex];
+    }
+
+    get bulletSpeed() {
+        let factor = 1;
+        switch (this.state) {
+            case 'normal':
+                factor = 1; break;
+            case 'improved':
+                factor = 1.5; break;
+            case 'superb':
+                factor = 2; break;
+        }
+
+        return BULLET_SPEED * factor;
     }
 
     getRandomDirection() {

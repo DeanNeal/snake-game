@@ -8,6 +8,7 @@ import { Eagle } from './eagle';
 import { Bot } from './bot';
 
 import { WINDOW_SIZE, TILE_SIZE, BULLET_SPEED } from './global';
+import { Bonus } from './bonus';
 
 const isMobile = ("ontouchstart" in document.documentElement);
 
@@ -47,6 +48,7 @@ class Game {
 
     private bullets: Bullet[] = [];
     private tiles: Tile[] = [];
+    private bonuses: Bonus[] = [];
     private eagle: Eagle;
 
     public markForNextLevel: boolean = false;
@@ -93,7 +95,7 @@ class Game {
             this.player = new Player(images[0]);
             this.eagle = new Eagle(images[1]);
 
-            for (let i = 0; i < this.currentLevel.startWithBots; i++) {
+            for (let i = 1; i <= this.currentLevel.startWithBots; i++) {
                 let timeout = setTimeout(() => {
                     this.addNewBot();
                 }, i * 2000);
@@ -118,6 +120,7 @@ class Game {
         this.bullets = [];
         this.enemies = [];
         this.tiles = [];
+        this.bonuses = [];
 
         this.markForNextLevel = false;
         this.markForGameOver = false;
@@ -145,8 +148,30 @@ class Game {
     }
 
     async addNewBot() {
-        let img = await Level.loadImg('img/tanks/tank.png');
+        let img = await Level.loadImg('img/tanks/bot.png');
         this.enemies.push(new Bot(img));
+    }
+
+    async addNewBonus(bonus, x, y) {
+        let images = await Level.loadImages(['img/tanks/clock.png', 'img/tanks/helm.png', 'img/tanks/star.png', 'img/tanks/life.png', 'img/tanks/granate.png']);
+        let img;
+        if (bonus === 'clock') {
+            img = images[0];
+        }
+        if (bonus === 'helm') {
+            img = images[1];
+        }
+        if (bonus === 'star') {
+            img = images[2];
+        }
+        if (bonus === 'life') {
+            img = images[3];
+        }
+        if (bonus === 'granate') {
+            img = images[4];
+        }
+
+        this.bonuses.push(new Bonus(img, bonus, x, y));
     }
 
     startUpdate(): void {
@@ -174,6 +199,9 @@ class Game {
 
         this.enemies = this.enemies.filter(r => !r.markForDeletion);
         this.enemies.forEach(enemy => enemy.draw(this.context));
+
+        this.bonuses = this.bonuses.filter(r => !r.markForDeletion);
+        this.bonuses.forEach(bonus => bonus.draw(this.context));
 
         this.player.draw(this.context);
 
@@ -203,6 +231,7 @@ class Game {
     update(dt): void {
         this.player.update(dt, this.tiles, this);
         this.enemies.forEach(enemy => enemy.update(dt, this.tiles, this));
+        this.bonuses.forEach(bonus => bonus.update());
 
         this.bullets.forEach(bullet => {
             bullet.pos.x += bullet.vel.x * dt;

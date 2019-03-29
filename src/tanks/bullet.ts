@@ -63,6 +63,19 @@ export class Bullet extends Rect {
             game.markForGameOver = true;
         }
 
+        //with bonuses
+        // game.bonuses.forEach(bonus=> {
+        //     if (
+        //         (bonus.top <= this.bottom &&
+        //             bonus.left <= this.right &&
+        //             bonus.right >= this.left &&
+        //             bonus.bottom >= this.top)
+        //     ) {
+        //         this.markForDeletion = true;
+        //         bonus.markForDeletion = true;
+        //     }
+        // });
+
         //width enemies
         if (this.source === 'bot') {
             if ((player.top <= this.bottom &&
@@ -73,7 +86,7 @@ export class Bullet extends Rect {
                 player.lives--;
                 if (player.lives > 0) {
                     player.markForDeletion = true;
-                    AudioController.play('tanks/eagle.wav', 0.4);
+                    AudioController.play('tanks/tanks/sounds/explosion.ogg', 0.4);
                 } else {
                     game.markForGameOver = true;
                 }
@@ -92,7 +105,11 @@ export class Bullet extends Rect {
                     this.markForDeletion = true;
                     game.currentLevel.scores++;
 
-                    AudioController.play('tanks/eagle.wav', 0.4);
+                    if (enemy.bonus) {
+                        game.addNewBonus(enemy.bonus, enemy.pos.x, enemy.pos.y);
+                    }
+
+                    AudioController.play('tanks/sounds/explosion.ogg', 0.4);
                     if (game.currentLevel.scores >= game.currentLevel.maxScores) {
                         game.markForNextLevel = true;
                     } else {

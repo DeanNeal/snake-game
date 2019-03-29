@@ -17,7 +17,7 @@ export abstract class Tank extends Rect {
     public vel: Vec;
     public direction: string = 'right';
     public img: HTMLImageElement;
-    private state: string = 'normal';
+    // private state: string = 'normal';
     public canvases: HTMLCanvasElement[] = [];
     public isMoving = false;
     public isShoting = false;
@@ -40,29 +40,8 @@ export abstract class Tank extends Rect {
         })
     }
 
-    setStateNormal() {
-        this.state = 'normal';
-    }
-
-    setStateImproved() {
-        this.state = 'improved';
-    }
-
-    setStateSuperb() {
-        this.state = 'superb';
-    }
-
     get bulletSpeed() {
         let factor = 1;
-        switch (this.state) {
-            case 'normal':
-                factor = 1; break;
-            case 'improved':
-                factor = 1.5; break;
-            case 'superb':
-                factor = 2; break;
-        }
-
         return BULLET_SPEED * factor;
     }
 

@@ -61,7 +61,7 @@ export class Bot extends Tank {
             this.vel.x = 0;
             this.vel.y = -this.movementVel;
         }
-        console.log(direction);
+        // console.log(direction);
     }
 
     update(dt, tiles, game) {

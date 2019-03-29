@@ -154,7 +154,7 @@ eval("\r\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _argume
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nexports.WINDOW_SIZE = window.innerHeight - 50;\r\nexports.TILE_SIZE = exports.WINDOW_SIZE / 15;\r\nexports.BULLET_SPEED = 400;\r\n\n\n//# sourceURL=webpack:///./src/tanks/global.ts?");
+eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nexports.WINDOW_SIZE = (window.innerHeight < window.innerWidth) ? (window.innerHeight - 50) : (window.innerWidth - 50);\r\nexports.TILE_SIZE = exports.WINDOW_SIZE / 15;\r\nexports.BULLET_SPEED = 400;\r\n\n\n//# sourceURL=webpack:///./src/tanks/global.ts?");
 
 /***/ }),
 

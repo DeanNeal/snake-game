@@ -64,28 +64,37 @@ export class Bullet extends Rect {
         }
 
         //width enemies
-        if(this.source === 'bot') return ;
+        if (this.source === 'bot') {
 
-        game.enemies.forEach(enemy => {
-            if (
-                (enemy.top <= this.bottom &&
-                    enemy.left <= this.right &&
-                    enemy.right >= this.left &&
-                    enemy.bottom >= this.top)
-            ) {
-                enemy.markForDeletion = true;
-                this.markForDeletion = true;
-                game.currentLevel.scores++;
-                
-                AudioController.play('tanks/eagle.wav', 0.4);
-                if (game.currentLevel.scores >= game.currentLevel.maxScores) {
-                    game.markForNextLevel = true;
-                } else {
-                    setTimeout(()=> {
-                        game.addNewBot();
-                    }, 1000);
+        }
+
+        if (this.source === 'player') {
+            game.enemies.forEach(enemy => {
+                if (
+                    (enemy.top <= this.bottom &&
+                        enemy.left <= this.right &&
+                        enemy.right >= this.left &&
+                        enemy.bottom >= this.top)
+                ) {
+                    enemy.markForDeletion = true;
+                    this.markForDeletion = true;
+                    game.currentLevel.scores++;
+
+                    AudioController.play('tanks/eagle.wav', 0.4);
+                    if (game.currentLevel.scores >= game.currentLevel.maxScores) {
+                        game.markForNextLevel = true;
+                    } else {
+                        if (game.currentLevel.maxScores >= game.currentLevel.scores + game.currentLevel.startWithBots) {
+                            setTimeout(() => {
+                                game.addNewBot();
+                            }, 1000);
+                        }
+
+                    }
                 }
-            }
-        });
+            });
+        }
+
+
     }
 }

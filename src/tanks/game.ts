@@ -40,16 +40,16 @@ class Game {
         activeLevel: 0,
         levels: [{
             scores: 0,
-            maxScores: 3,
-            startWithBots: 1
-        }, {
-            scores: 0,
             maxScores: 5,
             startWithBots: 2
         }, {
             scores: 0,
             maxScores: 7,
-            startWithBots: 2
+            startWithBots: 3
+        }, {
+            scores: 0,
+            maxScores: 10,
+            startWithBots: 3
         }]
     };
 
@@ -91,9 +91,9 @@ class Game {
 
 
                     for (let i = 0; i < this.currentLevel.startWithBots; i++) {
-                       setTimeout(()=>{
+                        setTimeout(() => {
                             this.addNewBot();
-                       }, i*1000);
+                        }, i * 2000);
                     }
 
                     this.player.addEventListeners();

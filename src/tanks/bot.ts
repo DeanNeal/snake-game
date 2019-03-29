@@ -9,7 +9,7 @@ function booleanRandom() {
     return Math.random() > .5 ? 0 : 1;
 }
 
-let derection = ['left', 'up', 'right', 'down'];
+let derectionArray = ['left', 'up', 'right', 'down'];
 
 
 export class Bot extends Tank {
@@ -23,45 +23,76 @@ export class Bot extends Tank {
 
     constructor(img, w, h) {
         super(img, w, h);
-        
+
         this.init();
     }
 
     init() {
-        this.pos.x = 5;
+        let randomVal = booleanRandom();
+        this.pos.x = randomVal ? 5 : WINDOW_SIZE - this.size.x - 5;
         this.pos.y = 5;
-        this.setRandomDirection();
+
+        if (randomVal) {
+            if (booleanRandom()) {
+                this.moveRight();
+            } else {
+                this.moveDown();
+            }
+        }
+        else {
+            if (booleanRandom()) {
+                this.moveLeft();
+            } else {
+                this.moveDown();
+            }
+        }
     }
 
     getRandomDirection() {
-        let randomDirection = Math.round(random(0, 3));
-        return derection[randomDirection];
+        let randomDirection = Math.round(random(0, derectionArray.length - 1));
+        return derectionArray[randomDirection];
+    }
+
+    moveLeft() {
+        this.direction = 'left';
+        this.isMoving = true;
+        this.vel.x = -this.movementVel;
+        this.vel.y = 0;
+    }
+
+    moveRight() {
+        this.direction = 'right';
+        this.isMoving = true;
+        this.vel.x = this.movementVel;
+        this.vel.y = 0;
+    }
+
+    moveUp() {
+        this.direction = 'up';
+        this.isMoving = true;
+        this.vel.x = 0;
+        this.vel.y = -this.movementVel;
+    }
+
+    moveDown() {
+        this.direction = 'down';
+        this.isMoving = true;
+        this.vel.x = 0;
+        this.vel.y = this.movementVel;
     }
 
     setRandomDirection() {
-        let direction = this.getRandomDirection();
-        if (direction === 'right') {
-            this.direction ='left';
-            this.isMoving = true;
-            this.vel.x = -this.movementVel;
-            this.vel.y = 0;
-        } else if (direction === 'left') {
-            this.direction = 'right';
-            this.isMoving = true;
-            this.vel.x = this.movementVel;
-            this.vel.y = 0;
-        } else if (direction === 'up') {
-            this.direction = 'down';
-            this.isMoving = true;
-            this.vel.x = 0;
-            this.vel.y = this.movementVel;
-        } else if (direction === 'down') {
-            this.direction = 'up';
-            this.isMoving = true;
-            this.vel.x = 0;
-            this.vel.y = -this.movementVel;
-        }
+        const direction = this.getRandomDirection();
         // console.log(direction);
+        if (direction === 'right') {
+            this.moveLeft();
+        } else if (direction === 'left') {
+            this.moveRight();
+        } else if (direction === 'up') {
+            this.moveDown();
+        } else if (direction === 'down') {
+            this.moveUp();
+        }
     }
 
     update(dt, tiles, game) {
@@ -71,7 +102,7 @@ export class Bot extends Tank {
         if (elapsed > this.fireDelay) {
             this.fire(game);
             this.start = new Date().getTime();
-            this.fireDelay = random(100, 4000);
+            this.fireDelay = random(1000, 4000);
         }
     }
 
@@ -81,6 +112,6 @@ export class Bot extends Tank {
         this.isMoving = false;
         this.moveTimeout = setTimeout(() => {
             this.setRandomDirection();
-        }, 500);
+        }, 300);
     }
 }

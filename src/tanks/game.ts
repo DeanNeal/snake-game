@@ -127,7 +127,7 @@ class Game {
 
     restart(): void {
         this.cleanScene();
-        this.state.activeLevel = 1;
+        this.state.activeLevel = 0;
 
         this.context.fillStyle = "red";
         this.context.font = `bold ${WINDOW_SIZE / 20}px Arial`;

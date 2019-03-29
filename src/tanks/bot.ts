@@ -19,7 +19,6 @@ export class Bot extends Tank {
     private moveTimeout;
     public markForDeletion;
     readonly type = 'bot';
-    // private randomChangeTime = random(1000, 10000);
 
     constructor(img, w, h) {
         super(img, w, h);

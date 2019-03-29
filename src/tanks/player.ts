@@ -1,4 +1,4 @@
-import { WINDOW_SIZE } from './global';
+import { WINDOW_SIZE, TILE_SIZE, BULLET_SPEED } from './global';
 import { Tank } from './tank';
 
 enum TEST {
@@ -6,26 +6,44 @@ enum TEST {
 }
 
 export class Player extends Tank {
-    public movementVel: number = WINDOW_SIZE / 6;
+    public movementVel: number = WINDOW_SIZE / 7;
     private pressedKeys = {};
+    public markForDeletion;
     private duration: number = 200;
     private start = new Date().getTime();
+    public lives = 2;
     readonly type = 'player';
 
     constructor(img, w, h) {
         super(img, w, h);
+
+        this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
+        this.pos.y = WINDOW_SIZE - this.size.y;
+
+        // this.setStateNormal();
+        // this.setStateImproved();
+        // this.setStateSuperb();
     }
 
     update(dt, tiles, game) {
         this.keyboard();
         this.move(dt, tiles, game);
 
-        if (this.isShoting && game.bullets.filter(r=> r.source === 'player').length <= 0) {
+        if (this.isShoting && game.bullets.filter(r => r.source === 'player').length <= 0) {
             let elapsed = new Date().getTime() - this.start;
             if (elapsed > this.duration) {
                 this.fire(game);
                 this.start = new Date().getTime();
             }
+        }
+
+        if (this.markForDeletion) {
+            this.markForDeletion = false;
+            this.isMoving = false;
+            this.vel.x = 0;
+            this.vel.y = 0;
+            this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
+            this.pos.y = WINDOW_SIZE - this.size.y;
         }
     }
 

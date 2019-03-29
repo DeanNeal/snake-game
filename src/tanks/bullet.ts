@@ -65,7 +65,19 @@ export class Bullet extends Rect {
 
         //width enemies
         if (this.source === 'bot') {
-
+            if ((player.top <= this.bottom &&
+                player.left <= this.right &&
+                player.right >= this.left &&
+                player.bottom >= this.top)) {
+                this.markForDeletion = true;
+                player.lives--;
+                if (player.lives > 0) {
+                    player.markForDeletion = true;
+                    AudioController.play('tanks/eagle.wav', 0.4);
+                } else {
+                    game.markForGameOver = true;
+                }
+            }
         }
 
         if (this.source === 'player') {

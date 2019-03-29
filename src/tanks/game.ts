@@ -22,6 +22,23 @@ interface IState {
     levels: ILevel[]
 }
 
+class State {
+    public activeLevel = 0;
+    public levels = [{
+        scores: 0,
+        maxScores: 5,
+        startWithBots: 2
+    }, {
+        scores: 0,
+        maxScores: 7,
+        startWithBots: 3
+    }, {
+        scores: 0,
+        maxScores: 10,
+        startWithBots: 3
+    }];
+}
+
 class Game {
     private canvas: HTMLCanvasElement;
     private context;
@@ -32,26 +49,11 @@ class Game {
     private tiles: Tile[] = [];
     private eagle: Eagle;
 
-    public markForRestart: boolean = false;
+    // public markForRestart: boolean = false;
     public markForNextLevel: boolean = false;
     public markForGameOver: boolean = false;
 
-    public state: IState = {
-        activeLevel: 0,
-        levels: [{
-            scores: 0,
-            maxScores: 5,
-            startWithBots: 2
-        }, {
-            scores: 0,
-            maxScores: 7,
-            startWithBots: 3
-        }, {
-            scores: 0,
-            maxScores: 10,
-            startWithBots: 3
-        }]
-    };
+    public state: IState = new State();
 
     private gameCallback;
 
@@ -84,8 +86,6 @@ class Game {
             if (this.tiles.length) {
                 Level.loadImages(['img/tanks/tank.png', 'img/tanks/eagle.png']).then(images => {
                     this.player = new Player(images[0], TILE_SIZE - 10, TILE_SIZE - 10);
-                    this.player.pos.x = 0;
-                    this.player.pos.y = canvas.height - this.player.size.y;
 
                     this.eagle = new Eagle(images[1], TILE_SIZE, TILE_SIZE, this.canvas.width / 2 - TILE_SIZE / 2, this.canvas.height - TILE_SIZE);
 
@@ -111,10 +111,11 @@ class Game {
         this.tiles = [];
         this.player = null;
         this.eagle = null;
-        this.markForRestart = false;
+
         this.markForNextLevel = false;
         this.markForGameOver = false;
         this.context.fillStyle = '#000';
+        
         this.gameCallback = () => { };
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
@@ -127,7 +128,7 @@ class Game {
 
     restart(): void {
         this.cleanScene();
-        this.state.activeLevel = 0;
+        this.state = new State();
 
         this.context.fillStyle = "red";
         this.context.font = `bold ${WINDOW_SIZE / 20}px Arial`;
@@ -180,7 +181,11 @@ class Game {
 
         this.context.fillStyle = "blue";
         this.context.font = `bold ${WINDOW_SIZE / 42}px Arial`;
-        this.context.fillText('Level - ' + this.state.activeLevel, (this.canvas.width) - WINDOW_SIZE / 6, (this.canvas.height) - WINDOW_SIZE / 16);
+        this.context.fillText('Level - ' + (this.state.activeLevel + 1), (this.canvas.width) - WINDOW_SIZE / 6, (this.canvas.height) - WINDOW_SIZE / 20);
+
+        this.context.fillStyle = "blue";
+        this.context.font = `bold ${WINDOW_SIZE / 42}px Arial`;
+        this.context.fillText('Lives - ' + this.player.lives, (this.canvas.width) - WINDOW_SIZE / 6, (this.canvas.height) - WINDOW_SIZE / 12.5);
     }
 
     collider(): void {
@@ -202,9 +207,9 @@ class Game {
         this.draw();
         this.drawScores();
 
-        if (this.markForRestart) {
-            this.restart();
-        }
+        // if (this.markForRestart) {
+        //     this.restart();
+        // }
 
         if (this.markForNextLevel) {
             this.nextLevel();

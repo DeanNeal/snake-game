@@ -17,7 +17,7 @@ export abstract class Tank extends Rect {
     public vel: Vec;
     public direction: string = 'right';
     public img: HTMLImageElement;
-    public state: string = 'normal';
+    private state: string = 'normal';
     public canvases: HTMLCanvasElement[] = [];
     public isMoving = false;
     public isShoting = false;
@@ -37,6 +37,32 @@ export abstract class Tank extends Rect {
         this.moveParams.forEach((r: ICanvasProps) => {
             this.canvases.push(this.genCanvas(r));
         })
+    }
+
+    setStateNormal() {
+        this.state = 'normal';
+    }
+
+    setStateImproved() {
+        this.state = 'improved';
+    }
+
+    setStateSuperb() {
+        this.state = 'superb';
+    }
+
+    get bulletSpeed() {
+        let factor = 1;
+        switch (this.state) {
+            case 'normal':
+                factor = 1; break;
+            case 'improved':
+                factor = 1.5; break;
+            case 'superb':
+                factor = 2; break;
+        }
+
+        return BULLET_SPEED * factor;
     }
 
     genCanvas(r: ICanvasProps): HTMLCanvasElement {
@@ -155,23 +181,23 @@ export abstract class Tank extends Rect {
             bullet.pos.y = this.pos.y + this.size.y / 2 - 2;
 
             bullet.vel.y = 0;
-            bullet.vel.x = -BULLET_SPEED;
+            bullet.vel.x = -this.bulletSpeed;
         } else if (this.direction === 'right') {
             bullet.pos.x = this.right;
             bullet.pos.y = this.pos.y + this.size.y / 2 - 2;
 
             bullet.vel.y = 0;
-            bullet.vel.x = BULLET_SPEED;
+            bullet.vel.x = this.bulletSpeed;
         } else if (this.direction === 'down') {
             bullet.pos.x = this.pos.x + this.size.x / 2 - 2;
             bullet.pos.y = this.pos.y + this.size.y;
 
-            bullet.vel.y = BULLET_SPEED;
+            bullet.vel.y = this.bulletSpeed;
         } else if (this.direction === 'up') {
             bullet.pos.x = this.pos.x + this.size.x / 2 - 2;
             bullet.pos.y = this.pos.y;
 
-            bullet.vel.y = -BULLET_SPEED;
+            bullet.vel.y = -this.bulletSpeed;
         }
 
         AudioController.play('tanks/sounds/fire.ogg');

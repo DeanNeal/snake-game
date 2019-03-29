@@ -15,10 +15,11 @@ interface ILevel {
     // id: number;
     scores: number;
     maxScores: number;
+    startWithBots: number;
 }
 interface IState {
     activeLevel: number;
-    levels : ILevel[]
+    levels: ILevel[]
 }
 
 class Game {
@@ -34,21 +35,21 @@ class Game {
     public markForRestart: boolean = false;
     public markForNextLevel: boolean = false;
     public markForGameOver: boolean = false;
-    
+
     public state: IState = {
         activeLevel: 0,
         levels: [{
-            // id: 0,
             scores: 0,
-            maxScores: 1
-        },{
-            // id: 1,
-            scores: 0,
-            maxScores: 1
+            maxScores: 3,
+            startWithBots: 1
         }, {
-            // id: 1,
             scores: 0,
-            maxScores: 1
+            maxScores: 5,
+            startWithBots: 2
+        }, {
+            scores: 0,
+            maxScores: 7,
+            startWithBots: 2
         }]
     };
 
@@ -76,19 +77,24 @@ class Game {
                 this.tiles = tiles;
             } else {
                 this.context.fillStyle = "blue  ";
-                this.context.font = `bold ${WINDOW_SIZE/20}px Arial`;
-                this.context.fillText('YOU WIN', (this.canvas.width/2 ) - 100, (this.canvas.height/2 ));
+                this.context.font = `bold ${WINDOW_SIZE / 20}px Arial`;
+                this.context.fillText('YOU WIN', (this.canvas.width / 2) - 100, (this.canvas.height / 2));
             }
         }).then(res => {
             if (this.tiles.length) {
                 Level.loadImages(['img/tanks/tank.png', 'img/tanks/eagle.png']).then(images => {
-                    this.player = new Player(images[0], TILE_SIZE - 8, TILE_SIZE - 8);
+                    this.player = new Player(images[0], TILE_SIZE - 10, TILE_SIZE - 10);
                     this.player.pos.x = 0;
                     this.player.pos.y = canvas.height - this.player.size.y;
 
                     this.eagle = new Eagle(images[1], TILE_SIZE, TILE_SIZE, this.canvas.width / 2 - TILE_SIZE / 2, this.canvas.height - TILE_SIZE);
 
-                    this.addNewBot();
+
+                    for (let i = 0; i < this.currentLevel.startWithBots; i++) {
+                       setTimeout(()=>{
+                            this.addNewBot();
+                       }, i*1000);
+                    }
 
                     this.player.addEventListeners();
 
@@ -122,18 +128,18 @@ class Game {
     restart(): void {
         this.cleanScene();
         this.state.activeLevel = 1;
-        
+
         this.context.fillStyle = "red";
-        this.context.font = `bold ${WINDOW_SIZE/20}px Arial`;
-        this.context.fillText('GAME OVER', (this.canvas.width/2 ) - 100, (this.canvas.height/2 ));
-        setTimeout(()=>{
+        this.context.font = `bold ${WINDOW_SIZE / 20}px Arial`;
+        this.context.fillText('GAME OVER', (this.canvas.width / 2) - 140, (this.canvas.height / 2));
+        setTimeout(() => {
             this.loadLevel();
         }, 2000);
     }
 
     addNewBot(): void {
-        Level.loadImg('img/tanks/tank.png').then(img=> {
-            this.enemies.push(new Bot(img, TILE_SIZE - 8, TILE_SIZE - 8, this));
+        Level.loadImg('img/tanks/tank.png').then(img => {
+            this.enemies.push(new Bot(img, TILE_SIZE - 10, TILE_SIZE - 10));
         });
     }
 
@@ -162,19 +168,19 @@ class Game {
         this.tiles = this.tiles.filter(r => !r.markForDeletion);
         this.tiles.forEach(brick => brick.draw(this.context));
 
-        this.enemies = this.enemies.filter(r=> !r.markForDeletion);
+        this.enemies = this.enemies.filter(r => !r.markForDeletion);
 
         this.eagle.draw(this.context);
     }
 
     drawScores() {
         this.context.fillStyle = "blue";
-        this.context.font = `bold ${WINDOW_SIZE/42}px Arial`;
-        this.context.fillText('Destroyed - ' + this.currentLevel.scores, (this.canvas.width ) - WINDOW_SIZE/6, (this.canvas.height ) - WINDOW_SIZE/50);
+        this.context.font = `bold ${WINDOW_SIZE / 42}px Arial`;
+        this.context.fillText('Destroyed - ' + this.currentLevel.scores, (this.canvas.width) - WINDOW_SIZE / 6, (this.canvas.height) - WINDOW_SIZE / 50);
 
         this.context.fillStyle = "blue";
-        this.context.font = `bold ${WINDOW_SIZE/42}px Arial`;
-        this.context.fillText('Level - ' + this.state.activeLevel, (this.canvas.width ) - WINDOW_SIZE/6, (this.canvas.height ) - WINDOW_SIZE/16);
+        this.context.font = `bold ${WINDOW_SIZE / 42}px Arial`;
+        this.context.fillText('Level - ' + this.state.activeLevel, (this.canvas.width) - WINDOW_SIZE / 6, (this.canvas.height) - WINDOW_SIZE / 16);
     }
 
     collider(): void {
@@ -204,7 +210,7 @@ class Game {
             this.nextLevel();
         }
 
-        if(this.markForGameOver) {
+        if (this.markForGameOver) {
             this.restart();
         }
     }

@@ -6,9 +6,11 @@ import { Brick, Сoncrete } from './tile';
 export class Bullet extends Rect {
     public vel: Vec;
     public markForDeletion: boolean = false;
-    constructor(width, height) {
+    public source;
+    constructor(source, width, height) {
         super(width, height);
         this.vel = new Vec;
+        this.source = source;
     }
 
     draw(ctx) {
@@ -77,7 +79,9 @@ export class Bullet extends Rect {
                 if (game.currentLevel.scores >= game.currentLevel.maxScores) {
                     game.markForNextLevel = true;
                 } else {
-                    game.addNewBot();
+                    setTimeout(()=> {
+                        game.addNewBot();
+                    }, 1000);
                 }
             }
         });

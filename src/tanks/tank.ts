@@ -21,6 +21,8 @@ export abstract class Tank extends Rect {
     public isMoving = false;
     public isShoting = false;
     public moveParams = [];
+    protected type = 'bot';
+
     constructor(img, w, h) {
         super(w, h);
         this.img = img;
@@ -142,7 +144,7 @@ export abstract class Tank extends Rect {
     }
 
     fire(game) {
-        let bullet = new Bullet(4, 4);
+        let bullet = new Bullet(this.type, 4, 4);
         if (this.direction === 'left') {
             bullet.pos.x = this.pos.x;
             bullet.pos.y = this.pos.y + this.size.y / 2 - 2;

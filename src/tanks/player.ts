@@ -6,10 +6,11 @@ enum TEST {
 }
 
 export class Player extends Tank {
-    public movementVel: number = WINDOW_SIZE / 2;//7;
+    public movementVel: number = WINDOW_SIZE / 6;
     private pressedKeys = {};
     private duration: number = 200;
     private start = new Date().getTime();
+    readonly type = 'player';
 
     constructor(img, w, h) {
         super(img, w, h);
@@ -19,7 +20,7 @@ export class Player extends Tank {
         this.keyboard();
         this.move(dt, tiles, game);
 
-        if (this.isShoting && game.bullets.length <= 0) {
+        if (this.isShoting && game.bullets.filter(r=> r.source === 'player').length <= 0) {
             let elapsed = new Date().getTime() - this.start;
             if (elapsed > this.duration) {
                 this.fire(game);

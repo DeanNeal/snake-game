@@ -1,7 +1,7 @@
 import { Vec } from './vec';
 import { Rect } from './rect';
 import AudioController from './audio';
-import { Brick, Сoncrete } from './tile';
+import { BrickTile, СoncreteTile } from './tile';
 
 export class Bullet extends Rect {
     public vel: Vec;
@@ -32,13 +32,13 @@ export class Bullet extends Rect {
                 ) {
                     this.markForDeletion = true;
 
-                    if (tile instanceof Brick) {
+                    if (tile instanceof BrickTile) {
                         tile.hits++;
                         if (tile.hits >= tile.hitsToDestroy) {
                             tile.markForDeletion = true;
                         }
                         AudioController.play('tanks/brick.wav', 0.4);
-                    } else if (tile instanceof Сoncrete) {
+                    } else if (tile instanceof СoncreteTile) {
                         AudioController.play('tanks/concrete.wav', 0.4);
                     }
                 }

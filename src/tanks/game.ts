@@ -1,5 +1,5 @@
 import './tanks.less';
-import { Tile } from './tile';
+import { Tile, GrassTile } from './tile';
 import { Bullet } from './bullet';
 import { Player } from './player';
 import AudioController from './audio';
@@ -56,6 +56,8 @@ class Game {
     public state: IState = new State();
 
     private gameCallback;
+    private loadLevelTimeout: number;
+    private gameTimeouts: number[] = [];
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
@@ -91,9 +93,10 @@ class Game {
 
 
                     for (let i = 0; i < this.currentLevel.startWithBots; i++) {
-                        setTimeout(() => {
+                        let timeout = setTimeout(() => {
                             this.addNewBot();
                         }, i * 2000);
+                        this.gameTimeouts.push(timeout);
                     }
 
                     this.player.addEventListeners();
@@ -106,6 +109,8 @@ class Game {
     }
 
     cleanScene(): void {
+        this.gameTimeouts.forEach(timeout => clearTimeout(timeout));
+
         this.bullets = [];
         this.enemies = [];
         this.tiles = [];
@@ -115,7 +120,7 @@ class Game {
         this.markForNextLevel = false;
         this.markForGameOver = false;
         this.context.fillStyle = '#000';
-        
+
         this.gameCallback = () => { };
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
@@ -133,9 +138,9 @@ class Game {
         this.context.fillStyle = "red";
         this.context.font = `bold ${WINDOW_SIZE / 20}px Arial`;
         this.context.fillText('GAME OVER', (this.canvas.width / 2) - 140, (this.canvas.height / 2));
-        setTimeout(() => {
-            this.loadLevel();
-        }, 2000);
+        // this.gameTimeouts.push(setTimeout(() => {
+        //     this.loadLevel();
+        // }, 2000));
     }
 
     addNewBot(): void {
@@ -160,17 +165,20 @@ class Game {
         this.context.fillStyle = '#000';
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.player.draw(this.context);
-        this.enemies.forEach(enemy => enemy.draw(this.context))
+
+        this.tiles = this.tiles.filter(r => !r.markForDeletion);
+        this.tiles.filter(r=> r instanceof GrassTile === false).forEach(brick => brick.draw(this.context));
 
         this.bullets = this.bullets.filter(r => !r.markForDeletion);
         this.bullets.forEach(bullet => bullet.draw(this.context));
 
-        this.tiles = this.tiles.filter(r => !r.markForDeletion);
-        this.tiles.forEach(brick => brick.draw(this.context));
-
         this.enemies = this.enemies.filter(r => !r.markForDeletion);
+        this.enemies.forEach(enemy => enemy.draw(this.context));
 
+        this.player.draw(this.context);
+
+        this.tiles.filter(r=> r instanceof GrassTile === true).forEach(brick => brick.draw(this.context));
+    
         this.eagle.draw(this.context);
     }
 
@@ -207,10 +215,6 @@ class Game {
         this.draw();
         this.drawScores();
 
-        // if (this.markForRestart) {
-        //     this.restart();
-        // }
-
         if (this.markForNextLevel) {
             this.nextLevel();
         }
@@ -226,7 +230,4 @@ new Game(canvas);
 
 //TODO
 //MOVE SOUND
-//enemies AI
 //BONUSES
-//SCORES
-//

@@ -1,4 +1,4 @@
-import { Brick, Grass, Сoncrete } from "./tile";
+import { BrickTile, GrassTile, СoncreteTile, IceTile, WaterTile } from "./tile";
 import { TILE_SIZE } from './global';
 
 export class Level {
@@ -7,25 +7,29 @@ export class Level {
         return new Promise((resolve, reject) => {
             let tiles = [];
 
-            Level.loadImages(['img/tanks/brick.jpg', 'img/tanks/grass.jpg', 'img/tanks/concrete.png', 'img/tanks/water.jpg']).then(images => {
-                if(levels[level]) {
+            Level.loadImages(['img/tanks/brick.jpg', 'img/tanks/grass.png', 'img/tanks/concrete.png', 'img/tanks/ice.jpg', 'img/tanks/water.jpg']).then(images => {
+                if (levels[level]) {
                     levels[level].forEach((row, rowIndex) => {
                         row.forEach((col, colIndex) => {
-                            //brick
                             if (col === 1) {
-                                tiles.push(new Brick(images[0], TILE_SIZE, TILE_SIZE, colIndex * TILE_SIZE, TILE_SIZE * rowIndex));
+                                tiles.push(new BrickTile(images[0], TILE_SIZE, TILE_SIZE, colIndex * TILE_SIZE, TILE_SIZE * rowIndex));
                             }
                             if (col === 2) {
-                                tiles.push(new Grass(images[1], TILE_SIZE, TILE_SIZE, colIndex * TILE_SIZE, TILE_SIZE * rowIndex));
+                                tiles.push(new GrassTile(images[1], TILE_SIZE, TILE_SIZE, colIndex * TILE_SIZE, TILE_SIZE * rowIndex));
                             }
-                            if(col === 3) {
-                                tiles.push(new Сoncrete(images[2], TILE_SIZE, TILE_SIZE, colIndex * TILE_SIZE, TILE_SIZE * rowIndex));
+                            if (col === 3) {
+                                tiles.push(new СoncreteTile(images[2], TILE_SIZE, TILE_SIZE, colIndex * TILE_SIZE, TILE_SIZE * rowIndex));
+                            }
+                            if (col === 4) {
+                                tiles.push(new IceTile(images[3], TILE_SIZE, TILE_SIZE, colIndex * TILE_SIZE, TILE_SIZE * rowIndex));
+                            }
+                            if (col === 5) {
+                                tiles.push(new WaterTile(images[4], TILE_SIZE, TILE_SIZE, colIndex * TILE_SIZE, TILE_SIZE * rowIndex));
                             }
                         });
                     });
                     resolve(tiles);
                 } else {
-                    // alert('YOU WIN');
                     resolve(null);
                 }
             });
@@ -59,10 +63,10 @@ const level1 = [
     [0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0],
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 3],
     [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-    [0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0],
-    [0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0],
-    [0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0],
-    [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
+    [4, 1, 2, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0],
+    [4, 1, 2, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0],
+    [4, 1, 2, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0],
+    [4, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
     [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0]
 ];

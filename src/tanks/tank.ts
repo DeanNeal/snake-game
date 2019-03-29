@@ -3,7 +3,7 @@ import { Vec } from "./vec";
 import { BULLET_SPEED } from "./global";
 import AudioController from './audio';
 import { Bullet } from "./bullet";
-import { Grass } from "./tile";
+import { GrassTile, IceTile, WaterTile } from "./tile";
 
 interface ICanvasProps {
     deg: number;
@@ -23,6 +23,7 @@ export abstract class Tank extends Rect {
     public isShoting = false;
     public moveParams = [];
     protected type = 'bot';
+    protected surfaceMoveFactor = 1;
 
     constructor(img, w, h) {
         super(w, h);
@@ -100,16 +101,22 @@ export abstract class Tank extends Rect {
     }
 
     intersection(obstacles, subject, fn) {
+        this.surfaceMoveFactor = 1;
         obstacles
-            .filter(obstacle => {
-                return obstacle instanceof Grass === false; // exclude grass from detection
-            })
-            .filter(obstacle => obstacle.overlap(subject, obstacle)).forEach(fn);
+            .filter(obstacle => obstacle.overlap(subject, obstacle)).forEach((tile) => {
+                if (tile instanceof IceTile) {
+                    this.surfaceMoveFactor = 1.3;
+                } else if (tile instanceof GrassTile) {
+                    this.surfaceMoveFactor = 0.6;
+                } else {
+                    fn(tile);
+                }
+            });
     }
 
     move(dt, obstacles, game) {
         if (this.isMoving) {
-            this.pos.x += Math.round(this.vel.x * dt);
+            this.pos.x += Math.round(this.vel.x * dt) * this.surfaceMoveFactor);
 
             if (this.vel.x > 0) {
                 this.intersection(obstacles, this, rect => {
@@ -127,7 +134,7 @@ export abstract class Tank extends Rect {
                 });
             }
 
-            this.pos.y += Math.round(this.vel.y * dt);
+            this.pos.y += Math.round(this.vel.y * dt) * this.surfaceMoveFactor;
 
             if (this.vel.y > 0) {
                 this.intersection(obstacles, this, rect => {

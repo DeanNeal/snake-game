@@ -1,4 +1,4 @@
-import { WINDOW_SIZE, TILE_SIZE, BULLET_SPEED } from './global';
+import { WINDOW_SIZE, TILE_SIZE } from './global';
 import { Tank } from './tank';
 
 enum TEST {

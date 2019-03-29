@@ -5,7 +5,7 @@ export class Tile extends Rect {
     public hits: number = 0;
     public markForDeletion: boolean = false;
     readonly hitsToDestroy: number = 2;
-    readonly collisionDetection: boolean = true;
+    readonly collideWithBullet: boolean = true;
     readonly canBeDestroyed: boolean = true;
 
     public collideWithUser:boolean = false;
@@ -52,7 +52,7 @@ export class Brick extends Tile {
 }
 
 export class Grass extends Tile {
-    readonly collisionDetection: boolean = false;
+    readonly collideWithBullet: boolean = false;
     readonly canBeDestroyed: boolean = false;
 }
 

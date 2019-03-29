@@ -23,7 +23,7 @@ export class Bullet extends Rect {
 
         //with bricks
         game.tiles.forEach(tile => {
-            if (tile.collisionDetection) {
+            if (tile.collideWithBullet) {
                 if (
                     (tile.top <= this.bottom &&
                         tile.left <= this.right &&

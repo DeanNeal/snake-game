@@ -37,7 +37,7 @@ class Game {
     public markForGameOver: boolean = false;
 
     public state: IState = {
-        activeLevel: 0,
+        activeLevel: 1,
         levels: [{
             scores: 0,
             maxScores: 3,

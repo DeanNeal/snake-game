@@ -3,6 +3,7 @@ import { Vec } from "./vec";
 import { BULLET_SPEED } from "./global";
 import AudioController from './audio';
 import { Bullet } from "./bullet";
+import { Grass } from "./tile";
 
 interface ICanvasProps {
     deg: number;
@@ -73,7 +74,11 @@ export abstract class Tank extends Rect {
     }
 
     intersection(obstacles, subject, fn) {
-        obstacles.filter(obstacle => obstacle.overlap(subject, obstacle)).forEach(fn);
+        obstacles
+            .filter(obstacle => {
+                return obstacle instanceof Grass === false; // exclude grass from detection
+            })
+            .filter(obstacle => obstacle.overlap(subject, obstacle)).forEach(fn);
     }
 
     move(dt, obstacles, game) {

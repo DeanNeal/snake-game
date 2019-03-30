@@ -12,9 +12,9 @@ export class Player extends Tank {
     public markForDeletion;
     private duration: number = 200;
     private start = new Date().getTime();
-    public lives = 2;
+    public lifes = 2;
     readonly type = 'player';
-    private state: string = 'normal';
+    protected state: string = 'normal';
 
     constructor(img) {
         super(img, TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
@@ -23,17 +23,17 @@ export class Player extends Tank {
         this.pos.y = WINDOW_SIZE - this.size.y;
     }
 
-    setStateNormal() {
-        this.state = 'normal';
-    }
+    // setStateNormal() {
+    //     this.state = 'normal';
+    // }
 
-    setStateImproved() {
-        this.state = 'improved';
-    }
+    // setStateImproved() {
+    //     this.state = 'improved';
+    // }
 
-    setStateSuperb() {
-        this.state = 'superb';
-    }
+    // setStateSuperb() {
+    //     this.state = 'superb';
+    // }
 
     update(dt, game) {
         if (dt) {

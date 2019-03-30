@@ -27,7 +27,7 @@ export class Bot extends Tank {
     private hitsToDestroy: number = 1;
     private mod = 'simple';
     private bonus = null;
-    private state: string = 'normal';
+    protected state: string = 'normal';
 
     constructor(img, mod, bonus) {
         super(img, TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);

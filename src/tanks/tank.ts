@@ -27,6 +27,7 @@ export abstract class Tank extends Rect {
     private surfaceMoveFactor = 1;
     protected modMoveFactor = 1;
     protected bulletSpeedFactor = 1;
+    protected state: string = 'normal';
 
     constructor(img, w, h) {
         super(w, h);
@@ -144,6 +145,8 @@ export abstract class Tank extends Rect {
 
                     bonus.markForDeletion = true;
                     AudioController.play('tanks/sounds/bonus.ogg');
+                    this.state = 'improved';
+                    this.bulletSpeedFactor = 2;
                 }
             })
         }

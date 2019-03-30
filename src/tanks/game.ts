@@ -68,6 +68,7 @@ export class Game {
         canvas.width = WINDOW_SIZE;
         canvas.height = WINDOW_SIZE;
 
+        // AudioController.play('tanks/sounds/gameover.ogg');
         this.loadLevel();
 
         document.body.querySelectorAll('.nav-level li').forEach(el => {
@@ -114,6 +115,7 @@ export class Game {
         this.tiles = await this.level.build(this.state.activeLevel);
 
         if (this.tiles) {
+            // AudioController.play('tanks/sounds/gamestart.ogg');
             let images = await Level.loadImages(['img/tanks/tank.png', 'img/tanks/eagle.png']);
 
             this.player = new Player(images[0]);
@@ -148,9 +150,9 @@ export class Game {
 
         this.markForNextLevel = false;
         this.markForGameOver = false;
-        this.context.fillStyle = '#000';
+        // this.context.fillStyle = '#000';
 
-        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        // this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
     nextLevel(): void {
@@ -162,6 +164,10 @@ export class Game {
     restart(): void {
         this.cleanScene();
         this.state = new State();
+
+
+        this.context.fillStyle = "rgba(0, 0, 0, 0.8)";
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.context.fillStyle = "red";
         this.context.font = `bold ${WINDOW_SIZE / 20}px Arial`;
@@ -266,7 +272,7 @@ export class Game {
 
         this.context.fillStyle = "blue";
         this.context.font = `bold ${WINDOW_SIZE / 42}px Arial`;
-        this.context.fillText('Lifes - ' + this.player.lives, (this.canvas.width) - WINDOW_SIZE / 6, (this.canvas.height) - WINDOW_SIZE / 12.5);
+        this.context.fillText('Lifes - ' + this.player.lifes, (this.canvas.width) - WINDOW_SIZE / 6, (this.canvas.height) - WINDOW_SIZE / 12.5);
     }
 
     collider(): void {

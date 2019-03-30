@@ -63,6 +63,7 @@ export class Bullet extends Rect {
             game.eagle.markForDeletion = true;
             this.markForDeletion = true;
             AudioController.play('tanks/eagle.wav', 0.4);
+            // AudioController.play('tanks/sounds/gameover.ogg');
             game.markForGameOver = true;
         }
 
@@ -70,8 +71,8 @@ export class Bullet extends Rect {
         if (this.source === 'bot') {
             if (this.overlap(player)) {
                 this.markForDeletion = true;
-                player.lives--;
-                if (player.lives > 0) {
+                player.lifes--;
+                if (player.lifes > 0) {
                     player.markForDeletion = true;
                     AudioController.play('tanks/sounds/explosion.ogg', 0.4);
                 } else {

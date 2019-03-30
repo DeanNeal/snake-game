@@ -20,12 +20,16 @@ export class Bot extends Tank {
     private moveTimeout;
     public markForDeletion;
     readonly type = 'bot';
+    public hits: number = 0;
+    private hitsToDestroy: number = 1;
     private mod = 'simple';
     private bonus = null;
     private state: string = 'normal';
 
-    constructor(img) {
+    constructor(img, mod, bonus) {
         super(img, TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
+        this.mod = mod;
+        this.bonus = bonus;
         this.init();
     }
 
@@ -50,33 +54,43 @@ export class Bot extends Tank {
             }
         }
 
-        this.generateBonus();
-        this.generateMod();
-    }
-
-    generateBonus() {
-        let chance = Math.round(random(0, 1));
-        if (chance === 1) {
-            let randomIndex = Math.round(random(0, bonusArray.length - 1));
-            this.bonus = bonusArray[randomIndex];
+        if (this.mod === 'simple') {
+            this.hitsToDestroy = 1;
+            this.modMoveFactor = 1;
         }
+        if (this.mod === 'fast') {
+            this.hitsToDestroy = 1;
+            this.modMoveFactor = 1.6;
+        }
+        if (this.mod === 'armored') {
+            this.hitsToDestroy = 3;
+            this.modMoveFactor = 0.8;
+        }
+
     }
 
-    generateMod() {
+    static generateBonus() {
+        let chance = Math.round(random(0, 0));
+        let randomIndex = Math.round(random(0, bonusArray.length - 1));
+        return chance === 0 ? bonusArray[randomIndex] : null;
+    }
+
+    static generateMod() {
         let randomIndex = Math.round(random(0, 2));
-        this.mod = modArray[randomIndex];
+        let mod = modArray[randomIndex];
+        return mod;
     }
 
     get bulletSpeed() {
         let factor = 1;
-        switch (this.state) {
-            case 'normal':
-                factor = 1; break;
-            case 'improved':
-                factor = 1.5; break;
-            case 'superb':
-                factor = 2; break;
-        }
+        // switch (this.state) {
+        //     case 'normal':
+        //         factor = 1; break;
+        //     case 'improved':
+        //         factor = 1.5; break;
+        //     case 'superb':
+        //         factor = 2; break;
+        // }
 
         return BULLET_SPEED * factor;
     }
@@ -116,7 +130,7 @@ export class Bot extends Tank {
 
     setRandomDirection() {
         const direction = this.getRandomDirection();
-        // console.log(direction);
+
         if (direction === 'right') {
             this.moveLeft();
         } else if (direction === 'left') {

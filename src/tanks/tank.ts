@@ -24,6 +24,7 @@ export abstract class Tank extends Rect {
     public moveParams = [];
     protected type = 'bot';
     private surfaceMoveFactor = 1;
+    protected modMoveFactor = 1;
 
     constructor(img, w, h) {
         super(w, h);
@@ -95,7 +96,7 @@ export abstract class Tank extends Rect {
 
     move(dt, obstacles, game) {
         if (this.isMoving) {
-            this.pos.x += Math.round(this.vel.x * dt) * this.surfaceMoveFactor;
+            this.pos.x += Math.round(this.vel.x * dt) * this.surfaceMoveFactor * this.modMoveFactor;
 
             if (this.vel.x > 0) {
                 this.intersection(obstacles, this, rect => {
@@ -113,7 +114,7 @@ export abstract class Tank extends Rect {
                 });
             }
 
-            this.pos.y += Math.round(this.vel.y * dt) * this.surfaceMoveFactor;
+            this.pos.y += Math.round(this.vel.y * dt) * this.surfaceMoveFactor * this.modMoveFactor;
 
             if (this.vel.y > 0) {
                 this.intersection(obstacles, this, rect => {

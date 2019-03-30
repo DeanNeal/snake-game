@@ -27,15 +27,15 @@ class State {
     public activeLevel = 0;
     public levels = [{
         scores: 0,
-        maxScores: 5,
+        maxScores: 10,
         startWithBots: 2
     }, {
         scores: 0,
-        maxScores: 7,
+        maxScores: 12,
         startWithBots: 3
     }, {
         scores: 0,
-        maxScores: 10,
+        maxScores: 15,
         startWithBots: 3
     }];
 }
@@ -43,6 +43,7 @@ class State {
 class Game {
     private canvas: HTMLCanvasElement;
     private context;
+    private level: Level;
     private player: Player;
     private enemies: Bot[] = [];
 
@@ -85,9 +86,9 @@ class Game {
     }
 
     async loadLevel() {
-        const level = new Level();
+        this.level = new Level();
 
-        this.tiles = await level.build(this.state.activeLevel);
+        this.tiles = await this.level.build(this.state.activeLevel);
 
         if (this.tiles) {
             let images = await Level.loadImages(['img/tanks/tank.png', 'img/tanks/eagle.png']);
@@ -148,11 +149,23 @@ class Game {
     }
 
     async addNewBot() {
-        let img = await Level.loadImg('img/tanks/bot.png');
-        this.enemies.push(new Bot(img));
+        let images = await Level.loadImages(['img/tanks/bot-simple.png', 'img/tanks/bot-fast.png', 'img/tanks/bot-armored.png']);
+        const mod = Bot.generateMod();
+        const bonus = Bot.generateBonus();
+        let img;
+        if (mod === 'simple') {
+            img = images[0];
+        }
+        if (mod === 'fast') {
+            img = images[1];
+        }
+        if (mod === 'armored') {
+            img = images[2];
+        }
+        this.enemies.push(new Bot(img, mod, bonus));
     }
 
-    async addNewBonus(bonus, x, y) {
+    async addNewBonus(bonus, x1, y1, x2, y2) {
         let images = await Level.loadImages(['img/tanks/clock.png', 'img/tanks/helm.png', 'img/tanks/star.png', 'img/tanks/life.png', 'img/tanks/granate.png']);
         let img;
         if (bonus === 'clock') {
@@ -171,7 +184,10 @@ class Game {
             img = images[4];
         }
 
-        this.bonuses.push(new Bonus(img, bonus, x, y));
+        let item = this.level.matrix.searchByRange(x1, y1, x2, y2);
+// debugger
+console.log(item);
+        this.bonuses.push(new Bonus(img, bonus, item[0], item[1]));
     }
 
     startUpdate(): void {

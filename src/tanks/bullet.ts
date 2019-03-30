@@ -66,7 +66,7 @@ export class Bullet extends Rect {
                 player.lives--;
                 if (player.lives > 0) {
                     player.markForDeletion = true;
-                    AudioController.play('tanks/tanks/sounds/explosion.ogg', 0.4);
+                    AudioController.play('tanks/sounds/explosion.ogg', 0.4);
                 } else {
                     game.markForGameOver = true;
                 }
@@ -77,24 +77,30 @@ export class Bullet extends Rect {
         if (this.source === 'player') {
             game.enemies.forEach(enemy => {
                 if (this.overlap(enemy)) {
-                    enemy.markForDeletion = true;
                     this.markForDeletion = true;
-                    game.currentLevel.scores++;
+                    enemy.hits++;
 
-                    if (enemy.bonus) {
-                        game.addNewBonus(enemy.bonus, enemy.pos.x, enemy.pos.y);
-                    }
-
-                    AudioController.play('tanks/sounds/explosion.ogg', 0.4);
-                    if (game.currentLevel.scores >= game.currentLevel.maxScores) {
-                        game.markForNextLevel = true;
+                    if (enemy.hitsToDestroy > enemy.hits) {
+                        AudioController.play('tanks/concrete.wav', 0.4);
                     } else {
-                        if (game.currentLevel.maxScores >= game.currentLevel.scores + game.currentLevel.startWithBots) {
-                            setTimeout(() => {
-                                game.addNewBot();
-                            }, 1000);
-                        }
+                        enemy.markForDeletion = true;
+                        game.currentLevel.scores++;
+        
+                        AudioController.play('tanks/sounds/explosion.ogg', 0.4);
+                        if (game.currentLevel.scores >= game.currentLevel.maxScores) {
+                            game.markForNextLevel = true;
+                        } else {
 
+                            if (enemy.bonus) {
+                                game.addNewBonus(enemy.bonus, enemy.left, enemy.top, enemy.right, enemy.bottom);
+                            }
+
+                            if (game.currentLevel.maxScores >= game.currentLevel.scores + game.currentLevel.startWithBots) {
+                                setTimeout(() => {
+                                    game.addNewBot();
+                                }, 1000);
+                            }
+                        }
                     }
                 }
             });

@@ -9,6 +9,11 @@ export class Bonus extends Rect {
         this.img = img;
         this.pos.x = x;
         this.pos.y = y;
+
+
+        setTimeout(() => {
+            this.markForDeletion = true;
+        }, 5000);
     }
 
     update() {

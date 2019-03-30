@@ -4,7 +4,7 @@ import { Bullet } from './bullet';
 import { Player } from './player';
 import AudioController from './audio';
 import { Level } from './levels';
-import { Eagle } from './eagle';
+// import { Eagle } from './eagle';
 import { Bot } from './bot';
 
 import { WINDOW_SIZE, TILE_SIZE, BULLET_SPEED } from './global';
@@ -50,7 +50,7 @@ export class Game {
     private bullets: Bullet[] = [];
     private tiles: Tile[] = [];
     private bonuses: Bonus[] = [];
-    private eagle: Eagle;
+    // private eagle: Eagle;
 
     public markForNextLevel: boolean = false;
     public markForGameOver: boolean = false;
@@ -116,10 +116,10 @@ export class Game {
 
         if (this.tiles) {
             // AudioController.play('tanks/sounds/gamestart.ogg');
-            let images = await Level.loadImages(['img/tanks/tank.png', 'img/tanks/eagle.png']);
+            let images = await Level.loadImages(['img/tanks/tank.png']);
 
             this.player = new Player(images[0]);
-            this.eagle = new Eagle(images[1]);
+            // this.eagle = new Eagle(images[1]);
 
             for (let i = 1; i <= this.currentLevel.startWithBots; i++) {
                 let timeout = setTimeout(() => {
@@ -258,7 +258,7 @@ export class Game {
 
         this.tiles.filter(r => r instanceof GrassTile === true).forEach(brick => brick.draw(this.context));
 
-        this.eagle.draw(this.context);
+        // this.eagle.draw(this.context);
     }
 
     drawScores() {

@@ -56,3 +56,7 @@ export class WaterTile extends Tile {
     readonly collideWithBullet: boolean = false;
     readonly canBeDestroyed: boolean = false;
 }
+
+export class EagleTile extends Tile {
+    
+}

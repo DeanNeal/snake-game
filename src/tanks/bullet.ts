@@ -1,7 +1,7 @@
 import { Vec } from './vec';
 import { Rect } from './rect';
 import AudioController from './audio';
-import { BrickTile, СoncreteTile } from './tile';
+import { BrickTile, СoncreteTile, EagleTile } from './tile';
 
 export class Bullet extends Rect {
     public vel: Vec;
@@ -48,6 +48,12 @@ export class Bullet extends Rect {
                         AudioController.play('tanks/brick.wav', 0.4);
                     } else if (tile instanceof СoncreteTile) {
                         AudioController.play('tanks/concrete.wav', 0.4);
+                    } else if (tile instanceof EagleTile) {
+                        // game.eagle.markForDeletion = true;
+                        this.markForDeletion = true;
+                        AudioController.play('tanks/eagle.wav', 0.4);
+                        // AudioController.play('tanks/sounds/gameover.ogg');
+                        game.markForGameOver = true;
                     }
                 }
             }
@@ -59,13 +65,13 @@ export class Bullet extends Rect {
         }
 
         //with eagle
-        if (this.overlap(game.eagle)) {
-            game.eagle.markForDeletion = true;
-            this.markForDeletion = true;
-            AudioController.play('tanks/eagle.wav', 0.4);
-            // AudioController.play('tanks/sounds/gameover.ogg');
-            game.markForGameOver = true;
-        }
+        // if (this.overlap(game.eagle)) {
+        //     game.eagle.markForDeletion = true;
+        //     this.markForDeletion = true;
+        //     AudioController.play('tanks/eagle.wav', 0.4);
+        //     // AudioController.play('tanks/sounds/gameover.ogg');
+        //     game.markForGameOver = true;
+        // }
 
         //with player
         if (this.source === 'bot') {

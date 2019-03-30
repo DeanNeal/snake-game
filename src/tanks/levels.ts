@@ -1,4 +1,4 @@
-import { BrickTile, GrassTile, СoncreteTile, IceTile, WaterTile } from "./tile";
+import { BrickTile, GrassTile, СoncreteTile, IceTile, WaterTile, EagleTile } from "./tile";
 import { TILE_SIZE } from './global';
 
 
@@ -29,7 +29,9 @@ export class Level {
     public matrix = new Matrix();
     async build(level: number) {
         const tiles = [];
-        const images = await Level.loadImages(['img/tanks/brick.jpg', 'img/tanks/grass.png', 'img/tanks/concrete.png', 'img/tanks/ice.jpg', 'img/tanks/water.jpg']);
+        const images = await Level.loadImages([
+            'img/tanks/brick.jpg', 'img/tanks/grass.png', 'img/tanks/concrete.png', 'img/tanks/ice.jpg', 'img/tanks/water.jpg', 'img/tanks/eagle.png'
+        ]);
         if (levels[level]) {
             let index = 0;
             levels[level].forEach((row, rowIndex) => {
@@ -54,6 +56,9 @@ export class Level {
                     }
                     if (col === 5) {
                         tiles.push(new WaterTile(images[4], TILE_SIZE, TILE_SIZE, x, y));
+                    }
+                    if (col === 6) {
+                        tiles.push(new EagleTile(images[5], TILE_SIZE, TILE_SIZE, x, y));
                     }
                 });
             });
@@ -97,7 +102,7 @@ const level1 = [
     [0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0],
     [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
     [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 1, 6, 1, 0, 0, 0, 0, 0, 0]
 ];
 
 const level2 = [
@@ -115,7 +120,7 @@ const level2 = [
     [0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 2, 1, 0],
     [0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0],
-    [0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0]
+    [0, 0, 1, 0, 1, 0, 1, 6, 1, 0, 0, 1, 1, 1, 0]
 ];
 
 const level3 = [
@@ -133,7 +138,7 @@ const level3 = [
     [0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 1, 6, 1, 0, 0, 0, 0, 0, 0]
 ];
 
 const levels = [level1, level2, level3];

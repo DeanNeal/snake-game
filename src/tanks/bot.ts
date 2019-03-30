@@ -1,5 +1,7 @@
 import { WINDOW_SIZE, TILE_SIZE, BULLET_SPEED } from "./global";
 import { Tank } from "./tank";
+import { Game } from "./game";
+import { Tile } from "./tile";
 
 function random(min, max): number {
     return (Math.random() * (max - min) + min);
@@ -10,12 +12,13 @@ function booleanRandom() {
 }
 
 const derectionArray = ['left', 'up', 'right', 'down'];
-const modArray = ['simple', 'fast', 'armored'];
+const modArray = ['simple', 'fast', 'heavy', 'armored'];
 const bonusArray = ['armor', 'star', 'life', 'granate', 'clock'];
 
 export class Bot extends Tank {
     public movementVel: number = WINDOW_SIZE / 7;
     private start = new Date().getTime();
+    private elapsedCache: number = 0;
     private fireDelay = 1000;
     private moveTimeout;
     public markForDeletion;
@@ -54,19 +57,28 @@ export class Bot extends Tank {
             }
         }
 
-        if (this.mod === 'simple') {
-            this.hitsToDestroy = 1;
-            this.modMoveFactor = 1;
+        switch (this.mod) {
+            case 'simple':
+                this.hitsToDestroy = 1;
+                this.modMoveFactor = 1;
+                this.bulletSpeedFactor = 1;
+                break;
+            case 'fast':
+                this.hitsToDestroy = 1;
+                this.modMoveFactor = 1.8;
+                this.bulletSpeedFactor = 1;
+                break
+            case 'heavy':
+                this.hitsToDestroy = 1;
+                this.modMoveFactor = 1.2;
+                this.bulletSpeedFactor = 1.8;
+                break;
+            case 'armored':
+                this.hitsToDestroy = 3;
+                this.modMoveFactor = 0.8;
+                this.bulletSpeedFactor = 1;
+                break;
         }
-        if (this.mod === 'fast') {
-            this.hitsToDestroy = 1;
-            this.modMoveFactor = 1.6;
-        }
-        if (this.mod === 'armored') {
-            this.hitsToDestroy = 3;
-            this.modMoveFactor = 0.8;
-        }
-
     }
 
     static generateBonus() {
@@ -76,26 +88,12 @@ export class Bot extends Tank {
     }
 
     static generateMod() {
-        let randomIndex = Math.round(random(0, 2));
+        let randomIndex = Math.round(random(0, modArray.length - 1));
         let mod = modArray[randomIndex];
         return mod;
     }
 
-    get bulletSpeed() {
-        let factor = 1;
-        // switch (this.state) {
-        //     case 'normal':
-        //         factor = 1; break;
-        //     case 'improved':
-        //         factor = 1.5; break;
-        //     case 'superb':
-        //         factor = 2; break;
-        // }
-
-        return BULLET_SPEED * factor;
-    }
-
-    getRandomDirection() {
+    static getRandomDirection(): string {
         let randomDirection = Math.round(random(0, derectionArray.length - 1));
         return derectionArray[randomDirection];
     }
@@ -129,7 +127,7 @@ export class Bot extends Tank {
     }
 
     setRandomDirection() {
-        const direction = this.getRandomDirection();
+        const direction = Bot.getRandomDirection();
 
         if (direction === 'right') {
             this.moveLeft();
@@ -142,14 +140,24 @@ export class Bot extends Tank {
         }
     }
 
-    update(dt, tiles, game) {
-        this.move(dt, tiles, game);
+    update(dt: number, tiles: Tile[], game: Game) {
+        if (dt) {
+            this.move(dt, tiles, game);
+            
+            let time = new Date().getTime()
+            if (this.elapsedCache) {
+                this.start = time - this.elapsedCache;
+                this.elapsedCache = 0;
+            }
+            let elapsed = (time - this.start);
 
-        let elapsed = new Date().getTime() - this.start;
-        if (elapsed > this.fireDelay) {
-            this.fire(game);
-            this.start = new Date().getTime();
-            this.fireDelay = random(1000, 4000);
+            if (elapsed > this.fireDelay) {
+                this.fire(game);
+                this.start = time;
+                this.fireDelay = random(3000, 6000);
+            }
+        } else {
+            this.elapsedCache = new Date().getTime() - this.start;
         }
     }
 

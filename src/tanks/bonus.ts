@@ -16,8 +16,10 @@ export class Bonus extends Rect {
         }, 7000);
     }
 
-    update() {
+    update(dt) {
+        if (dt) {
 
+        }
     }
 
     draw(ctx) {

@@ -40,7 +40,7 @@ class State {
     }];
 }
 
-class Game {
+export class Game {
     private canvas: HTMLCanvasElement;
     private context;
     private level: Level;
@@ -56,6 +56,7 @@ class Game {
     public markForGameOver: boolean = false;
 
     public state: IState = new State();
+    private paused: boolean = false;
 
     private gameCallback;
     private gameTimeouts: number[] = [];
@@ -79,6 +80,28 @@ class Game {
                 this.loadLevel();
             });
         })
+
+        document.addEventListener('keydown', (e) => {
+            if (e.keyCode === 80) {
+                this.pause();
+            }
+        });
+    }
+
+    pause() {
+        this.paused = !this.paused;
+        if (this.paused === false) {
+            this.startUpdate();
+        } else {
+            this.update(null);
+            this.context.fillStyle = "#000";
+            this.context.fillStyle = "rgba(0, 0, 0, 0.8)";
+            this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+            this.context.fillStyle = "blue";
+            this.context.font = `bold ${WINDOW_SIZE / 20}px Arial`;
+            this.context.fillText('Pause', this.canvas.width / 2 - TILE_SIZE, this.canvas.height / 2);
+        }
     }
 
     get currentLevel() {
@@ -149,7 +172,7 @@ class Game {
     }
 
     async addNewBot() {
-        let images = await Level.loadImages(['img/tanks/bot-simple.png', 'img/tanks/bot-fast.png', 'img/tanks/bot-armored.png']);
+        let images = await Level.loadImages(['img/tanks/bot-simple.png', 'img/tanks/bot-fast.png', 'img/tanks/bot-heavy.png', 'img/tanks/bot-armored.png']);
         const mod = Bot.generateMod();
         const bonus = Bot.generateBonus();
         let img;
@@ -159,8 +182,11 @@ class Game {
         if (mod === 'fast') {
             img = images[1];
         }
-        if (mod === 'armored') {
+        if (mod === 'heavy') {
             img = images[2];
+        }
+        if (mod === 'armored') {
+            img = images[3];
         }
         this.enemies.push(new Bot(img, mod, bonus));
     }
@@ -185,19 +211,22 @@ class Game {
         }
 
         let item = this.level.matrix.searchByRange(x1, y1, x2, y2);
-// debugger
-console.log(item);
+        // debugger
+        console.log(item);
         this.bonuses.push(new Bonus(img, bonus, item[0], item[1]));
     }
 
     startUpdate(): void {
         let lastTime;
         this.gameCallback = (ms?: number) => {
-            if (lastTime) {
-                this.update((ms - lastTime) / 1000);
+            if (this.paused === false) {
+                if (lastTime) {
+                    this.update((ms - lastTime) / 1000);
+                }
+                lastTime = ms;
+                requestAnimationFrame(this.gameCallback);
             }
-            lastTime = ms;
-            requestAnimationFrame(this.gameCallback);
+
         }
         this.gameCallback();
     }
@@ -247,26 +276,30 @@ console.log(item);
     update(dt): void {
         this.player.update(dt, this.tiles, this);
         this.enemies.forEach(enemy => enemy.update(dt, this.tiles, this));
-        this.bonuses.forEach(bonus => bonus.update());
-
-        this.bullets.forEach(bullet => {
-            bullet.pos.x += bullet.vel.x * dt;
-            bullet.pos.y += bullet.vel.y * dt;
-        });
+        this.bonuses.forEach(bonus => bonus.update(dt));
 
 
-        this.collider();
+        this.context.globalAlpha = 1;
+        if (dt) {
+            this.bullets.forEach(bullet => {
+                bullet.pos.x += bullet.vel.x * dt;
+                bullet.pos.y += bullet.vel.y * dt;
+            });
 
-        this.draw();
-        this.drawScores();
+            this.collider();
 
-        if (this.markForNextLevel) {
-            this.nextLevel();
+            this.draw();
+            this.drawScores();
+
+            if (this.markForNextLevel) {
+                this.nextLevel();
+            }
+
+            if (this.markForGameOver) {
+                this.restart();
+            }
         }
 
-        if (this.markForGameOver) {
-            this.restart();
-        }
     }
 
 }

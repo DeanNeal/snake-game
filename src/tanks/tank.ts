@@ -25,6 +25,7 @@ export abstract class Tank extends Rect {
     protected type = 'bot';
     private surfaceMoveFactor = 1;
     protected modMoveFactor = 1;
+    protected bulletSpeedFactor = 1;
 
     constructor(img, w, h) {
         super(w, h);
@@ -39,11 +40,6 @@ export abstract class Tank extends Rect {
         this.moveParams.forEach((r: ICanvasProps) => {
             this.canvases.push(this.genCanvas(r));
         })
-    }
-
-    get bulletSpeed() {
-        let factor = 1;
-        return BULLET_SPEED * factor;
     }
 
     genCanvas(r: ICanvasProps): HTMLCanvasElement {
@@ -168,23 +164,23 @@ export abstract class Tank extends Rect {
             bullet.pos.y = this.pos.y + this.size.y / 2 - bullet.size.x / 2;
 
             bullet.vel.y = 0;
-            bullet.vel.x = -this.bulletSpeed;
+            bullet.vel.x = -(BULLET_SPEED * this.bulletSpeedFactor);
         } else if (this.direction === 'right') {
             bullet.pos.x = this.right;
             bullet.pos.y = this.pos.y + this.size.y / 2 - bullet.size.x / 2;
 
             bullet.vel.y = 0;
-            bullet.vel.x = this.bulletSpeed;
+            bullet.vel.x = (BULLET_SPEED * this.bulletSpeedFactor);
         } else if (this.direction === 'down') {
             bullet.pos.x = this.pos.x + this.size.x / 2 - bullet.size.y / 2;
             bullet.pos.y = this.pos.y + this.size.y;
 
-            bullet.vel.y = this.bulletSpeed;
+            bullet.vel.y = (BULLET_SPEED * this.bulletSpeedFactor);
         } else if (this.direction === 'up') {
             bullet.pos.x = this.pos.x + this.size.x / 2 - bullet.size.y / 2;
             bullet.pos.y = this.pos.y;
 
-            bullet.vel.y = -this.bulletSpeed;
+            bullet.vel.y = -(BULLET_SPEED * this.bulletSpeedFactor);
         }
 
         AudioController.play('tanks/sounds/fire.ogg');

@@ -22,20 +22,6 @@ export class Player extends Tank {
         this.pos.y = WINDOW_SIZE - this.size.y;
     }
 
-    get bulletSpeed() {
-        let factor = 1;
-        switch (this.state) {
-            case 'normal':
-                factor = 1; break;
-            case 'improved':
-                factor = 1.5; break;
-            case 'superb':
-                factor = 2; break;
-        }
-
-        return BULLET_SPEED * factor;
-    }
-
     setStateNormal() {
         this.state = 'normal';
     }
@@ -49,24 +35,26 @@ export class Player extends Tank {
     }
 
     update(dt, tiles, game) {
-        this.keyboard();
-        this.move(dt, tiles, game);
+        if (dt) {
+            this.keyboard();
+            this.move(dt, tiles, game);
 
-        if (this.isShoting && game.bullets.filter(r => r.source === 'player').length <= 0) {
-            let elapsed = new Date().getTime() - this.start;
-            if (elapsed > this.duration) {
-                this.fire(game);
-                this.start = new Date().getTime();
+            if (this.isShoting && game.bullets.filter(r => r.source === 'player').length <= 0) {
+                let elapsed = new Date().getTime() - this.start;
+                if (elapsed > this.duration) {
+                    this.fire(game);
+                    this.start = new Date().getTime();
+                }
             }
-        }
 
-        if (this.markForDeletion) {
-            this.markForDeletion = false;
-            this.isMoving = false;
-            this.vel.x = 0;
-            this.vel.y = 0;
-            this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
-            this.pos.y = WINDOW_SIZE - this.size.y;
+            if (this.markForDeletion) {
+                this.markForDeletion = false;
+                this.isMoving = false;
+                this.vel.x = 0;
+                this.vel.y = 0;
+                this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
+                this.pos.y = WINDOW_SIZE - this.size.y;
+            }
         }
     }
 

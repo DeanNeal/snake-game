@@ -165,23 +165,23 @@ export abstract class Tank extends Rect {
         let bullet = new Bullet(this.type, 6, 6);
         if (this.direction === 'left') {
             bullet.pos.x = this.pos.x;
-            bullet.pos.y = this.pos.y + this.size.y / 2 - 2;
+            bullet.pos.y = this.pos.y + this.size.y / 2 - bullet.size.x / 2;
 
             bullet.vel.y = 0;
             bullet.vel.x = -this.bulletSpeed;
         } else if (this.direction === 'right') {
             bullet.pos.x = this.right;
-            bullet.pos.y = this.pos.y + this.size.y / 2 - 2;
+            bullet.pos.y = this.pos.y + this.size.y / 2 - bullet.size.x / 2;
 
             bullet.vel.y = 0;
             bullet.vel.x = this.bulletSpeed;
         } else if (this.direction === 'down') {
-            bullet.pos.x = this.pos.x + this.size.x / 2 - 2;
+            bullet.pos.x = this.pos.x + this.size.x / 2 - bullet.size.y / 2;
             bullet.pos.y = this.pos.y + this.size.y;
 
             bullet.vel.y = this.bulletSpeed;
         } else if (this.direction === 'up') {
-            bullet.pos.x = this.pos.x + this.size.x / 2 - 2;
+            bullet.pos.x = this.pos.x + this.size.x / 2 - bullet.size.y / 2;
             bullet.pos.y = this.pos.y;
 
             bullet.vel.y = -this.bulletSpeed;

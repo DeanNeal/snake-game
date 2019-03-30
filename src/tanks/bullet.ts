@@ -88,7 +88,7 @@ export class Bullet extends Rect {
                     enemy.hits++;
 
                     if (enemy.hitsToDestroy > enemy.hits) {
-                        AudioController.play('tanks/concrete.wav', 0.4);
+                        AudioController.play('tanks/steel.wav', 0.4);
                     } else {
                         enemy.markForDeletion = true;
                         game.currentLevel.scores++;

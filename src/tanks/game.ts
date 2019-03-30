@@ -98,9 +98,9 @@ export class Game {
             this.context.fillStyle = "rgba(0, 0, 0, 0.8)";
             this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-            this.context.fillStyle = "blue";
+            this.context.fillStyle = "white";
             this.context.font = `bold ${WINDOW_SIZE / 20}px Arial`;
-            this.context.fillText('Pause', this.canvas.width / 2 - TILE_SIZE, this.canvas.height / 2);
+            this.context.fillText('PAUSE', this.canvas.width / 2 - TILE_SIZE*1.2, this.canvas.height / 2);
         }
     }
 

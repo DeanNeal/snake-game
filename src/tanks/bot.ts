@@ -69,7 +69,7 @@ export class Bot extends Tank {
                 this.bulletSpeedFactor = 1;
                 break
             case 'heavy':
-                this.hitsToDestroy = 1;
+                this.hitsToDestroy = 2;
                 this.modMoveFactor = 1.2;
                 this.bulletSpeedFactor = 1.8;
                 break;

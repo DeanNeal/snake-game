@@ -4,6 +4,7 @@ import { BULLET_SPEED } from "./global";
 import AudioController from './audio';
 import { Bullet } from "./bullet";
 import { GrassTile, IceTile, WaterTile } from "./tile";
+import { Player } from "./player";
 
 interface ICanvasProps {
     deg: number;
@@ -76,10 +77,10 @@ export abstract class Tank extends Rect {
         );
     }
 
-    intersection(obstacles, subject, fn) {
+    intersection(tiles, subject, fn) {
         this.surfaceMoveFactor = 1;
-        obstacles
-            .filter(obstacle => obstacle.overlap(subject, obstacle)).forEach((tile) => {
+        tiles
+            .filter(tile => tile.overlap(subject, tile)).forEach((tile) => {
                 if (tile instanceof IceTile) {
                     this.surfaceMoveFactor = 1.4;
                 } else if (tile instanceof GrassTile) {
@@ -90,19 +91,19 @@ export abstract class Tank extends Rect {
             });
     }
 
-    move(dt, obstacles, game) {
+    move(dt, game) {
         if (this.isMoving) {
             this.pos.x += Math.round(this.vel.x * dt) * this.surfaceMoveFactor * this.modMoveFactor;
 
             if (this.vel.x > 0) {
-                this.intersection(obstacles, this, rect => {
+                this.intersection(game.tiles, this, rect => {
                     if (this.right > rect.left) {
                         this.pos.x = rect.left - this.size.x;
                         this.onCollision();
                     }
                 });
             } else if (this.vel.x < 0) {
-                this.intersection(obstacles, this, rect => {
+                this.intersection(game.tiles, this, rect => {
                     if (this.left < rect.right) {
                         this.pos.x = rect.right;
                         this.onCollision();
@@ -113,14 +114,14 @@ export abstract class Tank extends Rect {
             this.pos.y += Math.round(this.vel.y * dt) * this.surfaceMoveFactor * this.modMoveFactor;
 
             if (this.vel.y > 0) {
-                this.intersection(obstacles, this, rect => {
+                this.intersection(game.tiles, this, rect => {
                     if (this.bottom > rect.top) {
                         this.pos.y = rect.top - this.size.y;
                         this.onCollision();
                     }
                 });
             } else if (this.vel.y < 0) {
-                this.intersection(obstacles, this, rect => {
+                this.intersection(game.tiles, this, rect => {
                     if (this.top < rect.bottom) {
                         this.pos.y = rect.bottom;
                         this.onCollision();
@@ -129,6 +130,22 @@ export abstract class Tank extends Rect {
             }
 
             this.wallCollider(game);
+            this.bonusCollider(game);
+        }
+    }
+
+    bonusCollider(game) {
+        if (this instanceof Player) {
+            game.bonuses.forEach(bonus => {
+                if (bonus.bottom > this.top
+                    && bonus.top < this.bottom
+                    && bonus.right > this.left
+                    && bonus.left < this.right) {
+
+                    bonus.markForDeletion = true;
+                    AudioController.play('tanks/sounds/bonus.ogg');
+                }
+            })
         }
     }
 

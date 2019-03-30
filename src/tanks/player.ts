@@ -6,6 +6,7 @@ enum TEST {
 }
 
 export class Player extends Tank {
+    public direction: string = 'up';
     public movementVel: number = WINDOW_SIZE / 7;
     private pressedKeys = {};
     public markForDeletion;
@@ -34,10 +35,10 @@ export class Player extends Tank {
         this.state = 'superb';
     }
 
-    update(dt, tiles, game) {
+    update(dt, game) {
         if (dt) {
             this.keyboard();
-            this.move(dt, tiles, game);
+            this.move(dt, game);
 
             if (this.isShoting && game.bullets.filter(r => r.source === 'player').length <= 0) {
                 let elapsed = new Date().getTime() - this.start;

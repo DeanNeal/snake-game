@@ -212,7 +212,7 @@ export class Game {
 
         let item = this.level.matrix.searchByRange(x1, y1, x2, y2);
         // debugger
-        console.log(item);
+        // console.log(item);
         this.bonuses.push(new Bonus(img, bonus, item[0], item[1]));
     }
 
@@ -274,8 +274,8 @@ export class Game {
     }
 
     update(dt): void {
-        this.player.update(dt, this.tiles, this);
-        this.enemies.forEach(enemy => enemy.update(dt, this.tiles, this));
+        this.player.update(dt, this);
+        this.enemies.forEach(enemy => enemy.update(dt, this));
         this.bonuses.forEach(bonus => bonus.update(dt));
 
 

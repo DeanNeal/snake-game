@@ -1,4 +1,4 @@
-import { WINDOW_SIZE, TILE_SIZE, BULLET_SPEED } from "./global";
+import { WINDOW_SIZE, TILE_SIZE } from "./global";
 import { Tank } from "./tank";
 import { Game } from "./game";
 import { Tile } from "./tile";
@@ -140,9 +140,9 @@ export class Bot extends Tank {
         }
     }
 
-    update(dt: number, tiles: Tile[], game: Game) {
+    update(dt: number, game: Game) {
         if (dt) {
-            this.move(dt, tiles, game);
+            this.move(dt, game);
             
             let time = new Date().getTime()
             if (this.elapsedCache) {
@@ -154,7 +154,7 @@ export class Bot extends Tank {
             if (elapsed > this.fireDelay) {
                 this.fire(game);
                 this.start = time;
-                this.fireDelay = random(3000, 6000);
+                this.fireDelay = random(1500, 4000);
             }
         } else {
             this.elapsedCache = new Date().getTime() - this.start;

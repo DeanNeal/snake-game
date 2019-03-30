@@ -26,6 +26,13 @@ export class Bullet extends Rect {
     }
 
     collision(player, game) {
+        //with bullets
+        game.bullets.forEach(bullet => {
+            if (Object.is(bullet, this) === false && this.overlap(bullet)) {
+                this.markForDeletion = true;
+                bullet.markForDeletion = true;
+            }
+        });
 
         //with bricks
         game.tiles.forEach(tile => {
@@ -85,7 +92,7 @@ export class Bullet extends Rect {
                     } else {
                         enemy.markForDeletion = true;
                         game.currentLevel.scores++;
-        
+
                         AudioController.play('tanks/sounds/explosion.ogg', 0.4);
                         if (game.currentLevel.scores >= game.currentLevel.maxScores) {
                             game.markForNextLevel = true;

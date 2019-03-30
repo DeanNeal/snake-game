@@ -13,7 +13,7 @@ export class Bonus extends Rect {
 
         setTimeout(() => {
             this.markForDeletion = true;
-        }, 5000);
+        }, 7000);
     }
 
     update() {

@@ -20,10 +20,6 @@ export class Player extends Tank {
 
         this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
         this.pos.y = WINDOW_SIZE - this.size.y;
-
-        // this.setStateNormal();
-        // this.setStateImproved();
-        // this.setStateSuperb();
     }
 
     get bulletSpeed() {

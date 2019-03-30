@@ -11,10 +11,10 @@ function booleanRandom() {
 
 const derectionArray = ['left', 'up', 'right', 'down'];
 const modArray = ['simple', 'fast', 'armored'];
-const bonusArray = ['helm', 'star', 'life', 'granate', 'clock'];
+const bonusArray = ['armor', 'star', 'life', 'granate', 'clock'];
 
 export class Bot extends Tank {
-    public movementVel: number = WINDOW_SIZE / 10;
+    public movementVel: number = WINDOW_SIZE / 7;
     private start = new Date().getTime();
     private fireDelay = 1000;
     private moveTimeout;

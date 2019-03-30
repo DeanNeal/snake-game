@@ -166,12 +166,12 @@ class Game {
     }
 
     async addNewBonus(bonus, x1, y1, x2, y2) {
-        let images = await Level.loadImages(['img/tanks/clock.png', 'img/tanks/helm.png', 'img/tanks/star.png', 'img/tanks/life.png', 'img/tanks/granate.png']);
+        let images = await Level.loadImages(['img/tanks/clock.png', 'img/tanks/armor.png', 'img/tanks/star.png', 'img/tanks/life.png', 'img/tanks/granate.png']);
         let img;
         if (bonus === 'clock') {
             img = images[0];
         }
-        if (bonus === 'helm') {
+        if (bonus === 'armor') {
             img = images[1];
         }
         if (bonus === 'star') {

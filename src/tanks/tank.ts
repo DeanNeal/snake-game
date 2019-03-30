@@ -162,7 +162,7 @@ export abstract class Tank extends Rect {
     }
 
     fire(game) {
-        let bullet = new Bullet(this.type, 4, 4);
+        let bullet = new Bullet(this.type, 6, 6);
         if (this.direction === 'left') {
             bullet.pos.x = this.pos.x;
             bullet.pos.y = this.pos.y + this.size.y / 2 - 2;

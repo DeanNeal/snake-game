@@ -11,9 +11,22 @@ function booleanRandom() {
     return Math.random() > .5 ? 0 : 1;
 }
 
+function tripleBooleanRandom() {
+    let res, random = Math.random();
+    if (random < 1 / 3) {
+        res = -1;
+    } else if (random >= 1 / 3 && random < 2 / 3) {
+        res = 0;
+    } else {
+        res = 1;
+    }
+    console.log(res);
+    return res;
+}
+
 const derectionArray = ['left', 'up', 'right', 'down'];
 const modArray = ['simple', 'fast', 'heavy', 'armored'];
-const bonusArray = ['armor', 'star', 'life', /*'granate',*/];// 'clock'];
+const bonusArray = ['armor', 'star', 'life' /*'granate', 'clock'*/];
 
 export class Bot extends Tank {
     public movementVel: number = WINDOW_SIZE / 7;
@@ -37,25 +50,33 @@ export class Bot extends Tank {
     }
 
     init() {
-        let randomVal = booleanRandom();
-        this.pos.x = randomVal ? 5 : WINDOW_SIZE - this.size.x - 5;
-        this.pos.y = 5;
-
-
-        if (randomVal) {
+        let randomVal = tripleBooleanRandom();
+        if (randomVal === -1) {
+            this.pos.x = 5;
             if (booleanRandom()) {
                 this.moveRight();
             } else {
                 this.moveDown();
             }
         }
-        else {
+        if (randomVal === 0) {
+            this.pos.x = WINDOW_SIZE / 2 - this.size.x / 2;
+            if (booleanRandom()) {
+                this.moveLeft();
+            } else {
+                this.moveRight();
+            }
+        }
+        if (randomVal === 1) {
+            this.pos.x = WINDOW_SIZE - this.size.x - 5;
             if (booleanRandom()) {
                 this.moveLeft();
             } else {
                 this.moveDown();
             }
         }
+        this.pos.y = 5;
+
 
         switch (this.mod) {
             case 'simple':
@@ -143,7 +164,7 @@ export class Bot extends Tank {
     update(dt: number, game: Game) {
         if (dt) {
             this.move(dt, game);
-            
+
             let time = new Date().getTime()
             if (this.elapsedCache) {
                 this.start = time - this.elapsedCache;

@@ -4,7 +4,7 @@ import { Tank } from './tank';
 
 export class Player extends Tank {
     public direction: string = 'up';
-    public movementVel: number = WINDOW_SIZE / 7;
+    public movementVel: number = WINDOW_SIZE / 6.5;
     private pressedKeys = {};
     public markForDeletion;
     private duration: number = 200;
@@ -91,7 +91,7 @@ export class Player extends Tank {
                     this.fireCheck(game);
                 }
             }
-console.log(this.state);
+// console.log(this.state);
             if (this.markForDeletion) {
                 this.markForDeletion = false;
                 this.lifes--;

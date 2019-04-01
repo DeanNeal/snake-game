@@ -3,6 +3,7 @@ import { Tank } from "./tank";
 import { Game } from "./game";
 import { Tile } from "./tile";
 
+
 function random(min, max): number {
     return (Math.random() * (max - min) + min);
 }
@@ -20,7 +21,7 @@ function tripleBooleanRandom() {
     } else {
         res = 1;
     }
-    console.log(res);
+
     return res;
 }
 
@@ -102,15 +103,31 @@ export class Bot extends Tank {
         }
     }
 
+    draw(ctx) {
+        super.draw(ctx);
+        if (this.bonus) {
+            ctx.strokeStyle = '#fd68ff';
+            let width = 4;
+            ctx.lineWidth = width / 2;
+            ctx.strokeRect(this.pos.x - width / 2, this.pos.y - width / 2, this.size.x + width, this.size.y + width);
+        }
+    }
+
     static generateBonus() {
-        let chance = Math.round(random(0, 0));
+        let chance = Math.ceil(random(0, 8));
         let randomIndex = Math.round(random(0, bonusArray.length - 1));
-        return chance === 0 ? bonusArray[randomIndex] : null;
+        return chance === 8 ? bonusArray[randomIndex] : null;
     }
 
     static generateMod() {
-        let randomIndex = Math.round(random(0, modArray.length - 1));
-        let mod = modArray[randomIndex];
+        let rand = random(0, 1);
+        let mod;
+     
+        if (rand <= 0.65) mod = modArray[0];
+        else if (rand < 0.85) mod = modArray[1];
+        else if (rand <= 0.97) mod = modArray[2];
+        else mod = modArray[3];
+
         return mod;
     }
 

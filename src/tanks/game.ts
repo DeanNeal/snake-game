@@ -136,7 +136,7 @@ export class Game {
         }
 
     }
-
+//TODO PAUSE 
     generateAvailableBots() {
         for (let i = 1; i <= this.currentLevel.startWithBots; i++) {
             let timeout = setTimeout(() => {

@@ -13,7 +13,7 @@ function booleanRandom() {
 
 const derectionArray = ['left', 'up', 'right', 'down'];
 const modArray = ['simple', 'fast', 'heavy', 'armored'];
-const bonusArray = ['armor', 'star', 'life', /*'granate',*/ 'clock'];
+const bonusArray = ['armor', 'star', 'life', /*'granate',*/];// 'clock'];
 
 export class Bot extends Tank {
     public movementVel: number = WINDOW_SIZE / 7;

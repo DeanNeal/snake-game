@@ -13,12 +13,26 @@ export class Player extends Tank {
     readonly type = 'player';
     protected state: string = 'normal';
     private images = [];
+    public armor: boolean = false;
+    public armorTimeout: number;
 
     constructor(images) {
         super(images[0], TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
         this.images = images;
         this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
         this.pos.y = WINDOW_SIZE - this.size.y;
+    }
+
+    draw(ctx) {
+        super.draw(ctx);
+        if (this.armor) {
+            ctx.strokeStyle = '#fff';
+            let width = 2;
+            ctx.lineWidth = width / 2;
+            // ctx.lineTo();
+
+            ctx.strokeRect(this.pos.x - width / 2, this.pos.y - width / 2, this.size.x + width, this.size.y + width);
+        }
     }
 
     updateState() {
@@ -49,6 +63,10 @@ export class Player extends Tank {
         this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
         this.pos.y = WINDOW_SIZE - this.size.y;
         this.direction = 'up';
+        this.state = 'normal';
+        this.armor = false;
+        this.updateState();
+        if (this.armorTimeout) clearTimeout(this.armorTimeout);
     }
 
     update(dt, game) {
@@ -71,6 +89,7 @@ export class Player extends Tank {
 
             if (this.markForDeletion) {
                 this.markForDeletion = false;
+                this.lifes--;
                 this.reset();
             }
         }

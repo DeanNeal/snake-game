@@ -39,9 +39,18 @@ export abstract class Tank extends Rect {
             { deg: 0, translate: { x: 0, y: 0 } },
             { deg: 180, translate: { x: this.size.x, y: this.size.y } }
         ];
+        this.updateCanvases();
+    }
+
+    updateCanvases() {
+        this.canvases = [];
         this.moveParams.forEach((r: ICanvasProps) => {
             this.canvases.push(this.genCanvas(r));
         })
+    }
+
+    updateState() {
+
     }
 
     genCanvas(r: ICanvasProps): HTMLCanvasElement {
@@ -145,8 +154,37 @@ export abstract class Tank extends Rect {
 
                     bonus.markForDeletion = true;
                     AudioController.play('tanks/sounds/bonus.ogg');
-                    this.state = 'improved';
-                    this.bulletSpeedFactor = 2;
+
+                    if (bonus.type === 'star') {
+                        if (this.state === 'god' || this.state === 'superb') {
+                            this.state = 'god';
+                        } else if (this.state === 'improved') {
+                            this.state = 'superb';
+                        } else {
+                            this.state = 'improved';
+                        }
+                        this.updateState();
+                    }
+
+                    if(bonus.type === 'armor') {
+
+                    }
+
+                    if(bonus.type === 'clock') {
+
+                    }
+
+                    // if (bonus.type === 'granate') {
+                    //     game.enemies.forEach(r => r.markForDeletion = true);
+                    //     //generate new enemies
+                    //     game.generateAvailableBots();
+                    // }
+
+
+                    if (bonus.type === 'life') {
+                        game.player.lifes++;
+                    }
+
                 }
             })
         }

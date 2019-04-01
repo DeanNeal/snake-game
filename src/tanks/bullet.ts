@@ -78,6 +78,8 @@ export class Bullet extends Rect {
             if (this.overlap(player)) {
                 this.markForDeletion = true;
                 player.lifes--;
+                player.state = 'normal';
+                player.updateState();
                 if (player.lifes > 0) {
                     player.markForDeletion = true;
                     AudioController.play('tanks/sounds/explosion.ogg', 0.4);

@@ -13,13 +13,13 @@ function booleanRandom() {
 
 const derectionArray = ['left', 'up', 'right', 'down'];
 const modArray = ['simple', 'fast', 'heavy', 'armored'];
-const bonusArray = ['armor', 'star', 'life', 'granate', 'clock'];
+const bonusArray = ['armor', 'star', 'life', /*'granate',*/ 'clock'];
 
 export class Bot extends Tank {
     public movementVel: number = WINDOW_SIZE / 7;
     private start = new Date().getTime();
     private elapsedCache: number = 0;
-    private fireDelay = 1000;
+    private fireDelay = random(1500, 4000);
     private moveTimeout;
     public markForDeletion;
     readonly type = 'bot';
@@ -71,7 +71,7 @@ export class Bot extends Tank {
             case 'heavy':
                 this.hitsToDestroy = 2;
                 this.modMoveFactor = 1.2;
-                this.bulletSpeedFactor = 1.8;
+                this.bulletSpeedFactor = 1.5;
                 break;
             case 'armored':
                 this.hitsToDestroy = 3;

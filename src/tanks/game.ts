@@ -78,15 +78,25 @@ export class Game {
                 this.cleanScene();
                 this.state = new State();
                 this.state.activeLevel = level;
+                this.markForGameOver = false;
                 this.loadLevel();
             });
         })
 
         document.addEventListener('keydown', (e) => {
-            if (e.keyCode === 80) {
+            if (e.keyCode === 80 && this.markForGameOver === false) {
                 this.pause();
             }
         });
+
+        this.addPlayer();
+    }
+
+    async addPlayer() {
+        let images = await Level.loadImages(['img/tanks/tank.png', 'img/tanks/tank_improved.png', 'img/tanks/tank_superb.png', 'img/tanks/tank_god.png']);
+
+        this.player = new Player(images);
+        this.player.addEventListeners();
     }
 
     pause() {
@@ -101,7 +111,7 @@ export class Game {
 
             this.context.fillStyle = "white";
             this.context.font = `bold ${WINDOW_SIZE / 20}px Arial`;
-            this.context.fillText('PAUSE', this.canvas.width / 2 - TILE_SIZE*1.2, this.canvas.height / 2);
+            this.context.fillText('PAUSE', this.canvas.width / 2 - TILE_SIZE * 1.2, this.canvas.height / 2);
         }
     }
 
@@ -116,19 +126,7 @@ export class Game {
 
         if (this.tiles) {
             // AudioController.play('tanks/sounds/gamestart.ogg');
-            let images = await Level.loadImages(['img/tanks/tank.png']);
-
-            this.player = new Player(images[0]);
-            // this.eagle = new Eagle(images[1]);
-
-            for (let i = 1; i <= this.currentLevel.startWithBots; i++) {
-                let timeout = setTimeout(() => {
-                    this.addNewBot();
-                }, i * 2000);
-                this.gameTimeouts.push(timeout);
-            }
-
-            this.player.addEventListeners();
+            this.generateAvailableBots();
 
             this.startUpdate();
         } else {
@@ -137,6 +135,15 @@ export class Game {
             this.context.fillText('YOU WIN', (this.canvas.width / 2) - 100, (this.canvas.height / 2));
         }
 
+    }
+
+    generateAvailableBots() {
+        for (let i = 1; i <= this.currentLevel.startWithBots; i++) {
+            let timeout = setTimeout(() => {
+                this.addNewBot();
+            }, i * 2000);
+            this.gameTimeouts.push(timeout);
+        }
     }
 
     cleanScene(): void {
@@ -149,10 +156,7 @@ export class Game {
         this.bonuses = [];
 
         this.markForNextLevel = false;
-        this.markForGameOver = false;
-        // this.context.fillStyle = '#000';
-
-        // this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.player.reset();
     }
 
     nextLevel(): void {
@@ -164,7 +168,7 @@ export class Game {
     restart(): void {
         this.cleanScene();
         this.state = new State();
-
+        this.addPlayer();
 
         this.context.fillStyle = "rgba(0, 0, 0, 0.8)";
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -172,9 +176,6 @@ export class Game {
         this.context.fillStyle = "red";
         this.context.font = `bold ${WINDOW_SIZE / 20}px Arial`;
         this.context.fillText('GAME OVER', (this.canvas.width / 2) - 140, (this.canvas.height / 2));
-        // this.gameTimeouts.push(setTimeout(() => {
-        //     this.loadLevel();
-        // }, 2000));
     }
 
     async addNewBot() {
@@ -284,7 +285,7 @@ export class Game {
         this.enemies.forEach(enemy => enemy.update(dt, this));
         this.bonuses.forEach(bonus => bonus.update(dt));
 
-
+        // console.log(this.player['bulletSpeedFactor']);
         this.context.globalAlpha = 1;
         if (dt) {
             this.bullets.forEach(bullet => {

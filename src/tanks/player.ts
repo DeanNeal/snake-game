@@ -1,9 +1,6 @@
 import { WINDOW_SIZE, TILE_SIZE, BULLET_SPEED } from './global';
 import { Tank } from './tank';
 
-enum TEST {
-
-}
 
 export class Player extends Tank {
     public direction: string = 'up';
@@ -15,47 +12,75 @@ export class Player extends Tank {
     public lifes = 2;
     readonly type = 'player';
     protected state: string = 'normal';
+    private images = [];
 
-    constructor(img) {
-        super(img, TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
-
+    constructor(images) {
+        super(images[0], TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
+        this.images = images;
         this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
         this.pos.y = WINDOW_SIZE - this.size.y;
     }
 
-    // setStateNormal() {
-    //     this.state = 'normal';
-    // }
+    updateState() {
+        if (this.state === 'normal') {
+            this.bulletSpeedFactor = 1;
+            this.img = this.images[0];
+        }
+        if (this.state === 'improved') {
+            this.bulletSpeedFactor = 1.3;
+            this.img = this.images[1];
+        }
+        if (this.state === 'superb') {
+            this.bulletSpeedFactor = 1.8;
+            this.img = this.images[2];
+        }
+        if (this.state === 'god') {
+            this.bulletSpeedFactor = 2.2;
+            this.img = this.images[3];
+        }
 
-    // setStateImproved() {
-    //     this.state = 'improved';
-    // }
+        this.updateCanvases();
+    }
 
-    // setStateSuperb() {
-    //     this.state = 'superb';
-    // }
+    reset() {
+        this.isMoving = false;
+        this.vel.x = 0;
+        this.vel.y = 0;
+        this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
+        this.pos.y = WINDOW_SIZE - this.size.y;
+        this.direction = 'up';
+    }
 
     update(dt, game) {
         if (dt) {
             this.keyboard();
             this.move(dt, game);
 
-            if (this.isShoting && game.bullets.filter(r => r.source === 'player').length <= 0) {
-                let elapsed = new Date().getTime() - this.start;
-                if (elapsed > this.duration) {
-                    this.fire(game);
-                    this.start = new Date().getTime();
+            if (this.isShoting) {
+                let bulletCount = game.bullets.filter(r => r.source === 'player').length;
+                if (this.state === 'normal' && bulletCount <= 0) {
+                    this.fireCheck(game);
+                } else if (this.state === 'improved' && bulletCount <= 0) {
+                    this.fireCheck(game);
+                } else if (this.state === 'superb' && bulletCount <= 1) {
+                    this.fireCheck(game);
+                } else if (this.state === 'god' && bulletCount <= 2) {
+                    this.fireCheck(game);
                 }
             }
 
             if (this.markForDeletion) {
                 this.markForDeletion = false;
-                this.isMoving = false;
-                this.vel.x = 0;
-                this.vel.y = 0;
-                this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
-                this.pos.y = WINDOW_SIZE - this.size.y;
+                this.reset();
             }
+        }
+    }
+
+    fireCheck(game) {
+        let elapsed = new Date().getTime() - this.start;
+        if (elapsed > this.duration) {
+            this.fire(game);
+            this.start = new Date().getTime();
         }
     }
 

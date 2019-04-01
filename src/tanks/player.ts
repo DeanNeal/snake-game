@@ -56,13 +56,18 @@ export class Player extends Tank {
         this.updateCanvases();
     }
 
-    reset() {
+    positionReset() {
         this.isMoving = false;
         this.vel.x = 0;
         this.vel.y = 0;
         this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
         this.pos.y = WINDOW_SIZE - this.size.y;
         this.direction = 'up';
+    }
+
+    reset() {
+        this.positionReset();
+  
         this.state = 'normal';
         this.armor = false;
         this.updateState();
@@ -86,7 +91,7 @@ export class Player extends Tank {
                     this.fireCheck(game);
                 }
             }
-
+console.log(this.state);
             if (this.markForDeletion) {
                 this.markForDeletion = false;
                 this.lifes--;

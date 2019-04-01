@@ -156,7 +156,8 @@ export class Game {
         this.bonuses = [];
 
         this.markForNextLevel = false;
-        this.player.reset();
+
+        this.player.positionReset();
     }
 
     nextLevel(): void {

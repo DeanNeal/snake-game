@@ -43,6 +43,9 @@ class State {
 export class Game {
     private canvas: HTMLCanvasElement;
     private context;
+    private sidebar: HTMLCanvasElement = document.createElement('canvas');
+    private sidebarContext;
+    private sidebarImages = [];
     private level: Level;
     private player: Player;
     private enemies: Bot[] = [];
@@ -68,6 +71,10 @@ export class Game {
         canvas.height = WINDOW_SIZE;
 
         // AudioController.play('tanks/sounds/gameover.ogg');
+        Level.loadImages(['tank.png', 'bot-simple.png', 'flag.png']).then(images=> {
+            this.sidebarImages = images;
+        });
+
         this.loadLevel();
 
         document.body.querySelectorAll('.nav-level li').forEach(el => {
@@ -87,6 +94,11 @@ export class Game {
                 this.pause();
             }
         });
+
+        this.sidebarContext = this.sidebar.getContext('2d');
+        this.sidebar.width = 150;
+        this.sidebar.height = WINDOW_SIZE;
+        document.body.querySelector('.container').appendChild(this.sidebar);
 
         this.addPlayer();
     }
@@ -228,17 +240,48 @@ export class Game {
     }
 
     drawScores() {
-        this.context.fillStyle = "blue";
-        this.context.font = `bold ${WINDOW_SIZE / 42}px Arial`;
-        this.context.fillText('Destroyed - ' + this.currentLevel.scores, (this.canvas.width) - WINDOW_SIZE / 6, (this.canvas.height) - WINDOW_SIZE / 50);
+        if(this.sidebarImages.length) {
+            this.sidebarContext.clearRect(0,0, 150, WINDOW_SIZE);
+            this.sidebarContext.fillStyle = "black";
+            this.sidebarContext.font = `normal ${WINDOW_SIZE / 42}px Arial`;
+            this.sidebarContext.fillText((this.currentLevel.maxScores - this.currentLevel.scores), 60, 30);
+    
+            this.sidebarContext.fillStyle = "black";
+            this.sidebarContext.font = `normal ${WINDOW_SIZE / 42}px Arial`;
+            this.sidebarContext.fillText('Lvl - ' + (this.state.activeLevel + 1), 50, WINDOW_SIZE - 20);
+    
+            this.sidebarContext.fillStyle = "black";
+            this.sidebarContext.font = `normal ${WINDOW_SIZE / 42}px Arial`;
+            this.sidebarContext.fillText(this.player.lifes, 60, WINDOW_SIZE/ 2 - 20);
+    
+            this.sidebarContext.drawImage(
+                this.sidebarImages[1],
+                10,
+                0,
+                40,
+                40,
+            );
 
-        this.context.fillStyle = "blue";
-        this.context.font = `bold ${WINDOW_SIZE / 42}px Arial`;
-        this.context.fillText('Level - ' + (this.state.activeLevel + 1), (this.canvas.width) - WINDOW_SIZE / 6, (this.canvas.height) - WINDOW_SIZE / 20);
+    
+            this.sidebarContext.drawImage(
+                this.sidebarImages[0],
+                10,
+                WINDOW_SIZE/ 2  -50,
+                40,
+                40,
+            );
 
-        this.context.fillStyle = "blue";
-        this.context.font = `bold ${WINDOW_SIZE / 42}px Arial`;
-        this.context.fillText('Lifes - ' + this.player.lifes, (this.canvas.width) - WINDOW_SIZE / 6, (this.canvas.height) - WINDOW_SIZE / 12.5);
+                        
+            this.sidebarContext.drawImage(
+                this.sidebarImages[2],
+                10,
+                WINDOW_SIZE - 50,
+                40,
+                40,
+            );
+
+                
+        }
     }
 
     collider(): void {

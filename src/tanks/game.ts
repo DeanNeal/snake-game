@@ -47,10 +47,9 @@ export class Game {
     private player: Player;
     private enemies: Bot[] = [];
 
-    private bullets: Bullet[] = [];
+    public bullets: Bullet[] = [];
     private tiles: Tile[] = [];
     private bonuses: Bonus[] = [];
-    // private eagle: Eagle;
 
     public markForNextLevel: boolean = false;
     public markForGameOver: boolean = false;
@@ -93,7 +92,7 @@ export class Game {
     }
 
     async addPlayer() {
-        let images = await Level.loadImages(['img/tanks/tank.png', 'img/tanks/tank_improved.png', 'img/tanks/tank_superb.png', 'img/tanks/tank_god.png']);
+        let images = await Level.loadImages(['tank.png', 'tank_improved.png', 'tank_superb.png', 'tank_god.png']);
 
         this.player = new Player(images);
         this.player.addEventListeners();
@@ -136,7 +135,7 @@ export class Game {
         }
 
     }
-//TODO PAUSE 
+    //TODO PAUSE 
     generateAvailableBots() {
         for (let i = 1; i <= this.currentLevel.startWithBots; i++) {
             let timeout = setTimeout(() => {
@@ -180,47 +179,14 @@ export class Game {
     }
 
     async addNewBot() {
-        let images = await Level.loadImages(['img/tanks/bot-simple.png', 'img/tanks/bot-fast.png', 'img/tanks/bot-heavy.png', 'img/tanks/bot-armored.png']);
-        const mod = Bot.generateMod();
+        const { mod, img } = await Bot.generateMod();
         const bonus = Bot.generateBonus();
-        let img;
-        if (mod === 'simple') {
-            img = images[0];
-        }
-        if (mod === 'fast') {
-            img = images[1];
-        }
-        if (mod === 'heavy') {
-            img = images[2];
-        }
-        if (mod === 'armored') {
-            img = images[3];
-        }
         this.enemies.push(new Bot(img, mod, bonus));
     }
 
     async addNewBonus(bonus, x1, y1, x2, y2) {
-        let images = await Level.loadImages(['img/tanks/clock.png', 'img/tanks/armor.png', 'img/tanks/star.png', 'img/tanks/life.png', 'img/tanks/granate.png']);
-        let img;
-        if (bonus === 'clock') {
-            img = images[0];
-        }
-        if (bonus === 'armor') {
-            img = images[1];
-        }
-        if (bonus === 'star') {
-            img = images[2];
-        }
-        if (bonus === 'life') {
-            img = images[3];
-        }
-        if (bonus === 'granate') {
-            img = images[4];
-        }
-
+        const img = await Bot.getBonusImage(bonus);
         let item = this.level.matrix.searchByRange(x1, y1, x2, y2);
-        // debugger
-        // console.log(item);
         this.bonuses.push(new Bonus(img, bonus, item[0], item[1]));
     }
 
@@ -259,8 +225,6 @@ export class Game {
         this.player.draw(this.context);
 
         this.tiles.filter(r => r instanceof GrassTile === true).forEach(brick => brick.draw(this.context));
-
-        // this.eagle.draw(this.context);
     }
 
     drawScores() {
@@ -313,7 +277,3 @@ export class Game {
 }
 const canvas = <HTMLCanvasElement>document.getElementById('tanks');
 new Game(canvas);
-
-//TODO
-//MOVE SOUND
-//BONUSES

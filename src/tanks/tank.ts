@@ -5,6 +5,7 @@ import AudioController from './audio';
 import { Bullet } from "./bullet";
 import { GrassTile, IceTile, WaterTile } from "./tile";
 import { Player } from "./player";
+import { Game } from "./game";
 
 interface ICanvasProps {
     deg: number;
@@ -18,18 +19,17 @@ export abstract class Tank extends Rect {
     public vel: Vec;
     public direction: string = 'right';
     public img: HTMLImageElement;
-    // private state: string = 'normal';
     public canvases: HTMLCanvasElement[] = [];
     public isMoving = false;
     public isShoting = false;
-    public moveParams = [];
-    protected type = 'bot';
-    private surfaceMoveFactor = 1;
-    protected modMoveFactor = 1;
-    protected bulletSpeedFactor = 1;
+    public moveParams: ICanvasProps[] = [];
+    protected type: string = 'bot';
+    private surfaceMoveFactor: number = 1;
+    protected modMoveFactor: number = 1;
+    protected bulletSpeedFactor: number = 1;
     protected state: string = 'normal';
 
-    constructor(img, w, h) {
+    constructor(img: HTMLImageElement, w: number, h: number) {
         super(w, h);
         this.img = img;
         this.vel = new Vec;
@@ -220,30 +220,39 @@ export abstract class Tank extends Rect {
 
     }
 
-    fire(game) {
+    fire(game: Game) {
         let bullet = new Bullet(this.type, 6, 6);
-        if (this.direction === 'left') {
-            bullet.pos.x = this.pos.x;
-            bullet.pos.y = this.pos.y + this.size.y / 2 - bullet.size.x / 2;
 
-            bullet.vel.y = 0;
-            bullet.vel.x = -(BULLET_SPEED * this.bulletSpeedFactor);
-        } else if (this.direction === 'right') {
-            bullet.pos.x = this.right;
-            bullet.pos.y = this.pos.y + this.size.y / 2 - bullet.size.x / 2;
+        switch (this.direction) {
+            case 'left':
+                bullet.pos.x = this.left;
+                bullet.pos.y = this.pos.y + this.size.y / 2 - bullet.size.x / 2;
 
-            bullet.vel.y = 0;
-            bullet.vel.x = (BULLET_SPEED * this.bulletSpeedFactor);
-        } else if (this.direction === 'down') {
-            bullet.pos.x = this.pos.x + this.size.x / 2 - bullet.size.y / 2;
-            bullet.pos.y = this.pos.y + this.size.y;
+                bullet.vel.y = 0;
+                bullet.vel.x = -(BULLET_SPEED * this.bulletSpeedFactor);
+                break;
 
-            bullet.vel.y = (BULLET_SPEED * this.bulletSpeedFactor);
-        } else if (this.direction === 'up') {
-            bullet.pos.x = this.pos.x + this.size.x / 2 - bullet.size.y / 2;
-            bullet.pos.y = this.pos.y;
+            case 'right':
+                bullet.pos.x = this.right;
+                bullet.pos.y = this.pos.y + this.size.y / 2 - bullet.size.x / 2;
 
-            bullet.vel.y = -(BULLET_SPEED * this.bulletSpeedFactor);
+                bullet.vel.y = 0;
+                bullet.vel.x = (BULLET_SPEED * this.bulletSpeedFactor);
+                break;
+
+            case 'down':
+                bullet.pos.x = this.pos.x + this.size.x / 2 - bullet.size.y / 2;
+                bullet.pos.y = this.pos.y + this.size.y;
+
+                bullet.vel.y = (BULLET_SPEED * this.bulletSpeedFactor);
+                break;
+
+            case 'up':
+                bullet.pos.x = this.pos.x + this.size.x / 2 - bullet.size.y / 2;
+                bullet.pos.y = this.pos.y;
+
+                bullet.vel.y = -(BULLET_SPEED * this.bulletSpeedFactor);
+                break;
         }
 
         AudioController.play('tanks/sounds/fire.ogg');

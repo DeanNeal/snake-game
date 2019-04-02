@@ -1,7 +1,7 @@
 import { WINDOW_SIZE, TILE_SIZE } from "./global";
 import { Tank } from "./tank";
 import { Game } from "./game";
-import { Tile } from "./tile";
+import { Level } from "./levels";
 
 
 function random(min, max): number {
@@ -119,16 +119,37 @@ export class Bot extends Tank {
         return chance === 8 ? bonusArray[randomIndex] : null;
     }
 
-    static generateMod() {
-        let rand = random(0, 1);
-        let mod;
-     
+    static async getBonusImage(bonus) {
+        let images = await Level.loadImages(['clock.png', 'armor.png', 'star.png', 'life.png', 'granate.png']);
+        let img;
+
+        switch (bonus) {
+            case 'clock': img = images[0]; break;
+            case 'armor': img = images[1]; break;
+            case 'star': img = images[2]; break;
+            case 'life': img = images[3]; break;
+            case 'granate': img = images[4]; break;
+        }
+        return img;
+    }
+
+    static async generateMod() {
+        let images = await Level.loadImages(['bot-simple.png', 'bot-fast.png', 'bot-heavy.png', 'bot-armored.png']);
+        let rand = random(0, 1), mod, img;
+
         if (rand <= 0.65) mod = modArray[0];
         else if (rand < 0.85) mod = modArray[1];
         else if (rand <= 0.97) mod = modArray[2];
         else mod = modArray[3];
 
-        return mod;
+        switch (mod) {
+            case 'simple': img = images[0]; break;
+            case 'fast': img = images[1]; break;
+            case 'heavy': img = images[2]; break;
+            case 'armored': img = images[3]; break;
+        }
+
+        return { mod, img };
     }
 
     static getRandomDirection(): string {
@@ -167,14 +188,11 @@ export class Bot extends Tank {
     setRandomDirection() {
         const direction = Bot.getRandomDirection();
 
-        if (direction === 'right') {
-            this.moveLeft();
-        } else if (direction === 'left') {
-            this.moveRight();
-        } else if (direction === 'up') {
-            this.moveDown();
-        } else if (direction === 'down') {
-            this.moveUp();
+        switch (direction) {
+            case 'right': this.moveLeft(); break;
+            case 'left': this.moveRight(); break;
+            case 'up': this.moveDown(); break;
+            case 'down': this.moveUp(); break;
         }
     }
 

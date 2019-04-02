@@ -30,7 +30,7 @@ export class Level {
     async build(level: number) {
         const tiles = [];
         const images = await Level.loadImages([
-            'img/tanks/brick.jpg', 'img/tanks/grass.png', 'img/tanks/concrete.png', 'img/tanks/ice.jpg', 'img/tanks/water.jpg', 'img/tanks/eagle.png'
+            'brick.jpg', 'concrete.png', 'grass.png', 'ice.jpg', 'water.jpg', 'eagle.png'
         ]);
         if (levels[level]) {
             let index = 0;
@@ -42,23 +42,26 @@ export class Level {
 
                     this.matrix.set(index, x, y);
                     index++;
-                    if (col === 1) {
-                        tiles.push(new BrickTile(images[0], TILE_SIZE, TILE_SIZE, x, y));
-                    }
-                    if (col === 2) {
-                        tiles.push(new СoncreteTile(images[2], TILE_SIZE, TILE_SIZE, x, y));
-                    }
-                    if (col === 3) {
-                        tiles.push(new GrassTile(images[1], TILE_SIZE, TILE_SIZE, x, y));
-                    }
-                    if (col === 4) {
-                        tiles.push(new IceTile(images[3], TILE_SIZE, TILE_SIZE, x, y));
-                    }
-                    if (col === 5) {
-                        tiles.push(new WaterTile(images[4], TILE_SIZE, TILE_SIZE, x, y));
-                    }
-                    if (col === 6) {
-                        tiles.push(new EagleTile(images[5], TILE_SIZE, TILE_SIZE, x, y));
+
+                    switch (col) {
+                        case 1:
+                            tiles.push(new BrickTile(images[0], TILE_SIZE, TILE_SIZE, x, y));
+                            break;
+                        case 2:
+                            tiles.push(new СoncreteTile(images[1], TILE_SIZE, TILE_SIZE, x, y));
+                            break;
+                        case 3:
+                            tiles.push(new GrassTile(images[2], TILE_SIZE, TILE_SIZE, x, y));
+                            break;
+                        case 4:
+                            tiles.push(new IceTile(images[3], TILE_SIZE, TILE_SIZE, x, y));
+                            break;
+                        case 5:
+                            tiles.push(new WaterTile(images[4], TILE_SIZE, TILE_SIZE, x, y));
+                            break;
+                        case 6:
+                            tiles.push(new EagleTile(images[5], TILE_SIZE, TILE_SIZE, x, y));
+                            break;
                     }
                 });
             });
@@ -76,7 +79,7 @@ export class Level {
             imageBrick.onload = () => {
                 resolve(imageBrick);
             };
-            imageBrick.src = src;
+            imageBrick.src = 'img/tanks/' + src;
         });
     }
 

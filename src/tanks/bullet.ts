@@ -37,7 +37,7 @@ export class Bullet extends Rect {
         //with bricks
         game.tiles.forEach(tile => {
             if (tile.collideWithBullet) {
-                if (this.overlap(tile)) {
+                if (this.overlap(tile) && game.tiles.filter(r=> r.markForDeletion).length === 0) {
                     this.markForDeletion = true;
 
                     if (tile instanceof BrickTile) {
@@ -78,7 +78,7 @@ export class Bullet extends Rect {
             if (this.overlap(player)) {
                 if (player.armor === false) {
                     this.markForDeletion = true;
-                    if (player.lifes > 0) {
+                    if (player.lifes > 1) {
                         player.markForDeletion = true;
                         AudioController.play('tanks/sounds/explosion.ogg', 0.4);
                     } else {

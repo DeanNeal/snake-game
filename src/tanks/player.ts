@@ -1,4 +1,4 @@
-import { WINDOW_SIZE, TILE_SIZE, BULLET_SPEED } from './global';
+import { WINDOW_SIZE, TILE_SIZE } from './global';
 import { Tank } from './tank';
 
 
@@ -36,21 +36,23 @@ export class Player extends Tank {
     }
 
     updateState() {
-        if (this.state === 'normal') {
-            this.bulletSpeedFactor = 1;
-            this.img = this.images[0];
-        }
-        if (this.state === 'improved') {
-            this.bulletSpeedFactor = 1.3;
-            this.img = this.images[1];
-        }
-        if (this.state === 'superb') {
-            this.bulletSpeedFactor = 1.8;
-            this.img = this.images[2];
-        }
-        if (this.state === 'god') {
-            this.bulletSpeedFactor = 2.2;
-            this.img = this.images[3];
+        switch (this.state) {
+            case 'normal':
+                this.bulletSpeedFactor = 1;
+                this.img = this.images[0];
+                break;
+            case 'improved':
+                this.bulletSpeedFactor = 1.3;
+                this.img = this.images[1];
+                break;
+            case 'superb':
+                this.bulletSpeedFactor = 1.8;
+                this.img = this.images[2];
+                break;
+            case 'god':
+                this.bulletSpeedFactor = 2.2;
+                this.img = this.images[3];
+                break;
         }
 
         this.updateCanvases();
@@ -67,7 +69,7 @@ export class Player extends Tank {
 
     reset() {
         this.positionReset();
-  
+
         this.state = 'normal';
         this.armor = false;
         this.updateState();
@@ -91,7 +93,7 @@ export class Player extends Tank {
                     this.fireCheck(game);
                 }
             }
-// console.log(this.state);
+            // console.log(this.state);
             if (this.markForDeletion) {
                 this.markForDeletion = false;
                 this.lifes--;
@@ -113,38 +115,42 @@ export class Player extends Tank {
             .filter(r => r === 'k37' || r === 'k38' || r === 'k39' || r === 'k40')
             .pop();
 
-        if (String(currentKeyCode) === 'k37') {
-            this.vel.x = -this.movementVel;
-            this.vel.y = 0;
-            this.direction = 'left';
-            this.isMoving = true;
-            // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
-        }
-        if (String(currentKeyCode) === 'k38') {
-            this.vel.x = 0;
-            this.vel.y = -this.movementVel;
-            this.direction = 'up';
-            this.isMoving = true;
-            // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
-        }
-        if (String(currentKeyCode) === 'k39') {
-            this.vel.x = this.movementVel;
-            this.vel.y = 0;
-            this.direction = 'right';
-            this.isMoving = true;
-            // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
-        }
-        if (String(currentKeyCode) === 'k40') {
-            this.vel.x = 0;
-            this.vel.y = this.movementVel;
-            this.direction = 'down';
-            this.isMoving = true;
-            // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
+        switch (String(currentKeyCode)) {
+            case 'k37':
+                this.vel.x = -this.movementVel;
+                this.vel.y = 0;
+                this.direction = 'left';
+                this.isMoving = true;
+                // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
+                break;
+
+            case 'k38':
+                this.vel.x = 0;
+                this.vel.y = -this.movementVel;
+                this.direction = 'up';
+                this.isMoving = true;
+                // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
+                break;
+
+            case 'k39':
+                this.vel.x = this.movementVel;
+                this.vel.y = 0;
+                this.direction = 'right';
+                this.isMoving = true;
+                // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
+                break;
+
+            case 'k40':
+                this.vel.x = 0;
+                this.vel.y = this.movementVel;
+                this.direction = 'down';
+                this.isMoving = true;
+                // AudioController.play('tanks/sounds/background.ogg', 0.2, true)
+                break;
         }
 
         if (this.pressedKeys['k32']) {
             if (!this.isShoting) {
-                // this.start = new Date().getTime() - this.fireDelay;
                 this.isShoting = true;
             }
         }

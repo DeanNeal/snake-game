@@ -1,10 +1,10 @@
 import { Vec } from './vec';
 
 export class Rect {
-    public pos;
-    public size;
-    constructor(w, h) {
-        this.pos = new Vec;
+    public pos: Vec;
+    public size: Vec;
+    constructor(w: number, h: number) {
+        this.pos = new Vec(0, 0);
         this.size = new Vec(w, h);
     }
 

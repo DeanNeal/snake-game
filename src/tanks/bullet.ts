@@ -2,18 +2,20 @@ import { Vec } from './vec';
 import { Rect } from './rect';
 import AudioController from './audio';
 import { BrickTile, СoncreteTile, EagleTile } from './tile';
+import { Player } from './player';
+import { Game } from './game';
 
 export class Bullet extends Rect {
     public vel: Vec;
     public markForDeletion: boolean = false;
-    public source;
+    public source: string;
     constructor(source, width, height) {
         super(width, height);
         this.vel = new Vec;
         this.source = source;
     }
 
-    draw(ctx) {
+    draw(ctx: CanvasRenderingContext2D) {
         ctx.fillStyle = '#ccc';
         ctx.fillRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
     }
@@ -25,7 +27,7 @@ export class Bullet extends Rect {
             object.bottom >= this.top
     }
 
-    collision(player, game) {
+    collision(player: Player, game: Game) {
         //with bullets
         game.bullets.forEach(bullet => {
             if (Object.is(bullet, this) === false && this.overlap(bullet)) {

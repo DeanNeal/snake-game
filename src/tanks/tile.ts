@@ -1,22 +1,23 @@
 import { Rect } from './rect';
+import { Tank } from './tank';
 
 export class Tile extends Rect {
-    private img;
+    private img: HTMLImageElement;
     public hits: number = 0;
     public markForDeletion: boolean = false;
     readonly hitsToDestroy: number = 2;
     readonly collideWithBullet: boolean = true;
     readonly canBeDestroyed: boolean = true;
 
-    public collideWithUser:boolean = false;
-    constructor(img, w, h, x, y) {
+    public collideWithUser: boolean = false;
+    constructor(img: HTMLImageElement, w: number, h: number, x: number, y: number) {
         super(w, h);
         this.img = img;
         this.pos.x = x;
         this.pos.y = y;
     }
 
-    draw(ctx) {
+    draw(ctx: CanvasRenderingContext2D) {
         ctx.drawImage(
             this.img,
             this.pos.x,
@@ -26,11 +27,11 @@ export class Tile extends Rect {
         );
     }
 
-    overlap(subject, rect) {
-        return subject.bottom > rect.top
-            && subject.top < rect.bottom
-            && subject.right > rect.left
-            && subject.left < rect.right;
+    overlap(subject: Rect, tile: Tile) {
+        return subject.bottom > tile.top
+            && subject.top < tile.bottom
+            && subject.right > tile.left
+            && subject.left < tile.right;
     }
 }
 
@@ -58,5 +59,5 @@ export class WaterTile extends Tile {
 }
 
 export class EagleTile extends Tile {
-    
+
 }

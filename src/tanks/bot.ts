@@ -34,16 +34,16 @@ export class Bot extends Tank {
     private start = new Date().getTime();
     private elapsedCache: number = 0;
     private fireDelay = random(1500, 4000);
-    private moveTimeout;
-    public markForDeletion;
-    readonly type = 'bot';
+    private moveTimeout: number;
+    public markForDeletion: boolean = false;
+    readonly type: string = 'bot';
     public hits: number = 0;
-    private hitsToDestroy: number = 1;
-    private mod = 'simple';
-    private bonus = null;
+    public hitsToDestroy: number = 1;
+    private mod: string = 'simple';
+    public bonus: string = null;
     protected state: string = 'normal';
 
-    constructor(img, mod, bonus) {
+    constructor(img: HTMLImageElement, mod: string, bonus: string) {
         super(img, TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
         this.mod = mod;
         this.bonus = bonus;
@@ -103,7 +103,7 @@ export class Bot extends Tank {
         }
     }
 
-    draw(ctx) {
+    draw(ctx: CanvasRenderingContext2D) {
         super.draw(ctx);
         if (this.bonus) {
             ctx.strokeStyle = '#fd68ff';
@@ -119,7 +119,7 @@ export class Bot extends Tank {
         return chance === 8 ? bonusArray[randomIndex] : null;
     }
 
-    static async getBonusImage(bonus) {
+    static async getBonusImage(bonus: string) {
         let images = await Level.loadImages(['clock.png', 'armor.png', 'star.png', 'life.png', 'granate.png']);
         let img;
 
@@ -133,7 +133,7 @@ export class Bot extends Tank {
         return img;
     }
 
-    static async generateMod() {
+    static async generateMod(): Promise<{ mod: string, img: HTMLImageElement }> {
         let images = await Level.loadImages(['bot-simple.png', 'bot-fast.png', 'bot-heavy.png', 'bot-armored.png']);
         let rand = random(0, 1), mod, img;
 

@@ -1,4 +1,4 @@
-import { BrickTile, GrassTile, СoncreteTile, IceTile, WaterTile, EagleTile } from "./tile";
+import { BrickTile, GrassTile, СoncreteTile, IceTile, WaterTile, EagleTile, Tile } from "./tile";
 import { TILE_SIZE } from './global';
 
 
@@ -8,11 +8,11 @@ export class Matrix {
         this.grid = [];
     }
 
-    set(i, x, y) {
+    set(i: number, x: number, y: number) {
         this.grid[i] = [x, y];
     }
 
-    searchByRange(x1, y1, x2, y2) {
+    searchByRange(x1: number, y1: number, x2: number, y2: number) {
         return this.grid.filter(r => {
             x1 = Math.round(x1 / TILE_SIZE) * TILE_SIZE;
             x2 = Math.round(x2 / TILE_SIZE) * TILE_SIZE;
@@ -28,17 +28,17 @@ export class Level {
     constructor() { }
     public matrix = new Matrix();
     async build(level: number) {
-        const tiles = [];
-        const images = await Level.loadImages([
+        const tiles: Tile[] = [];
+        const images: HTMLImageElement[] = await Level.loadImages([
             'brick.jpg', 'concrete.png', 'grass.png', 'ice.jpg', 'water.jpg', 'eagle.png'
         ]);
         if (levels[level]) {
-            let index = 0;
-            levels[level].forEach((row, rowIndex) => {
-                row.forEach((col, colIndex) => {
+            let index: number = 0;
+            levels[level].forEach((row: number[], rowIndex: number) => {
+                row.forEach((col: number, colIndex: number) => {
 
-                    let x = colIndex * TILE_SIZE;
-                    let y = TILE_SIZE * rowIndex;
+                    let x: number = colIndex * TILE_SIZE;
+                    let y: number = TILE_SIZE * rowIndex;
 
                     this.matrix.set(index, x, y);
                     index++;
@@ -73,24 +73,30 @@ export class Level {
         }
     }
 
-    static loadImg(src) {
+    static loadImg(src: string) {
         return new Promise((resolve, reject) => {
-            let imageBrick = new Image();
-            imageBrick.onload = () => {
-                resolve(imageBrick);
+            let img = new Image();
+            img.onload = () => {
+                resolve(img);
             };
-            imageBrick.src = 'img/tanks/' + src;
+            img.onerror = () => {
+                resolve(null);
+            };
+
+            img.src = 'img/tanks/' + src;
         });
     }
 
-    static loadImages(images) {
+    static loadImages(images: string[]) {
         let promises = [];
         images.forEach(r => promises.push(this.loadImg(r)));
         return Promise.all(promises);
     }
 }
 
-const level1 = [
+type TLevel = number[][];
+
+const level1: TLevel = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0],
     [0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 0, 1, 0],
@@ -108,7 +114,7 @@ const level1 = [
     [0, 0, 0, 0, 0, 0, 1, 6, 1, 0, 0, 0, 0, 0, 0]
 ];
 
-const level2 = [
+const level2: TLevel = [
     [0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
     [0, 1, 0, 0, 2, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0],
     [0, 1, 0, 0, 2, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0],
@@ -126,22 +132,22 @@ const level2 = [
     [0, 0, 1, 0, 1, 0, 1, 6, 1, 0, 0, 1, 1, 1, 0]
 ];
 
-const level3 = [
+const level3: TLevel = [
+    [0, 0, 2, 0, 0, 0, 2, 0, 2, 0, 0, 0, 2, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+    [3, 3, 3, 3, 3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3],
+    [1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0],
-    [0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0],
-    [0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 1, 6, 1, 0, 0, 0, 0, 0, 0]
 ];
 
-const levels = [level1, level2, level3];
+const levels: TLevel[] = [level1, level2, level3];

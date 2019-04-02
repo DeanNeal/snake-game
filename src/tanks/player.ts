@@ -1,29 +1,30 @@
 import { WINDOW_SIZE, TILE_SIZE } from './global';
 import { Tank } from './tank';
+import { Game } from './game';
 
 
 export class Player extends Tank {
     public direction: string = 'up';
     public movementVel: number = WINDOW_SIZE / 6.5;
-    private pressedKeys = {};
-    public markForDeletion;
+    private pressedKeys: { [s: string]: boolean } = {};
+    public markForDeletion: boolean = false;
     private duration: number = 200;
-    private start = new Date().getTime();
-    public lifes = 2;
-    readonly type = 'player';
+    private start: number = new Date().getTime();
+    public lifes: number = 2;
+    readonly type: string = 'player';
     protected state: string = 'normal';
-    private images = [];
+    private images: HTMLImageElement[] = [];
     public armor: boolean = false;
     public armorTimeout: number;
 
-    constructor(images) {
+    constructor(images: HTMLImageElement[]) {
         super(images[0], TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
         this.images = images;
         this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
         this.pos.y = WINDOW_SIZE - this.size.y;
     }
 
-    draw(ctx) {
+    draw(ctx: CanvasRenderingContext2D) {
         super.draw(ctx);
         if (this.armor) {
             ctx.strokeStyle = '#fff';
@@ -76,7 +77,7 @@ export class Player extends Tank {
         if (this.armorTimeout) clearTimeout(this.armorTimeout);
     }
 
-    update(dt, game) {
+    update(dt: number, game: Game) {
         if (dt) {
             this.keyboard();
             this.move(dt, game);
@@ -102,7 +103,7 @@ export class Player extends Tank {
         }
     }
 
-    fireCheck(game) {
+    fireCheck(game: Game) {
         let elapsed = new Date().getTime() - this.start;
         if (elapsed > this.duration) {
             this.fire(game);

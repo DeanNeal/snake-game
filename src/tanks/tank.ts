@@ -3,7 +3,7 @@ import { Vec } from "./vec";
 import { BULLET_SPEED } from "./global";
 import AudioController from './audio';
 import { Bullet } from "./bullet";
-import { GrassTile, IceTile, WaterTile } from "./tile";
+import { GrassTile, IceTile, WaterTile, Tile } from "./tile";
 import { Player } from "./player";
 import { Game } from "./game";
 
@@ -20,8 +20,8 @@ export abstract class Tank extends Rect {
     public direction: string = 'right';
     public img: HTMLImageElement;
     public canvases: HTMLCanvasElement[] = [];
-    public isMoving = false;
-    public isShoting = false;
+    public isMoving: boolean = false;
+    public isShoting: boolean = false;
     public moveParams: ICanvasProps[] = [];
     protected type: string = 'bot';
     private surfaceMoveFactor: number = 1;
@@ -70,7 +70,7 @@ export abstract class Tank extends Rect {
         return canvas;
     }
 
-    draw(ctx) {
+    draw(ctx: CanvasRenderingContext2D) {
         let canvas;
         switch (this.direction) {
             case 'left': canvas = this.canvases[0]; break;
@@ -87,7 +87,7 @@ export abstract class Tank extends Rect {
         );
     }
 
-    intersection(tiles, subject, fn) {
+    intersection(tiles: Tile[], subject, fn: (tile: Tile) => void) {
         this.surfaceMoveFactor = 1;
         tiles
             .filter(tile => tile.overlap(subject, tile)).forEach((tile) => {
@@ -101,7 +101,7 @@ export abstract class Tank extends Rect {
             });
     }
 
-    move(dt, game) {
+    move(dt: number, game: Game) {
         if (this.isMoving) {
             this.pos.x += Math.round(this.vel.x * dt) * this.surfaceMoveFactor * this.modMoveFactor;
 
@@ -144,7 +144,7 @@ export abstract class Tank extends Rect {
         }
     }
 
-    bonusCollider(game) {
+    bonusCollider(game: Game) {
         if (this instanceof Player) {
             game.bonuses.forEach(bonus => {
                 if (bonus.bottom > this.top
@@ -195,7 +195,7 @@ export abstract class Tank extends Rect {
         }
     }
 
-    wallCollider(game) {
+    wallCollider(game: Game) {
         if (this.top <= 0) {
             this.vel.y = 0;
             this.pos.y = 0;

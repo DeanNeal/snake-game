@@ -41,18 +41,18 @@ class State {
 }
 
 export class Game {
-    private canvas: HTMLCanvasElement;
+    public canvas: HTMLCanvasElement;
     private context;
     private sidebar: HTMLCanvasElement = document.createElement('canvas');
     private sidebarContext;
     private sidebarImages = [];
     private level: Level;
-    private player: Player;
-    private enemies: Bot[] = [];
+    public player: Player;
 
+    public enemies: Bot[] = [];
     public bullets: Bullet[] = [];
-    private tiles: Tile[] = [];
-    private bonuses: Bonus[] = [];
+    public tiles: Tile[] = [];
+    public bonuses: Bonus[] = [];
 
     public markForNextLevel: boolean = false;
     public markForGameOver: boolean = false;
@@ -246,13 +246,16 @@ export class Game {
             this.sidebarContext.font = `normal ${WINDOW_SIZE / 42}px Arial`;
             this.sidebarContext.fillText((this.currentLevel.maxScores - this.currentLevel.scores), 60, 30);
     
+
             this.sidebarContext.fillStyle = "black";
             this.sidebarContext.font = `normal ${WINDOW_SIZE / 42}px Arial`;
-            this.sidebarContext.fillText('Lvl - ' + (this.state.activeLevel + 1), 50, WINDOW_SIZE - 20);
+            this.sidebarContext.fillText(this.player.lifes, 60, WINDOW_SIZE/ 2 + 80);
+
+            this.sidebarContext.fillStyle = "black";
+            this.sidebarContext.font = `normal ${WINDOW_SIZE / 42}px Arial`;
+            this.sidebarContext.fillText('Lvl ' + (this.state.activeLevel + 1), 50, WINDOW_SIZE - 20);
     
-            this.sidebarContext.fillStyle = "black";
-            this.sidebarContext.font = `normal ${WINDOW_SIZE / 42}px Arial`;
-            this.sidebarContext.fillText(this.player.lifes, 60, WINDOW_SIZE/ 2 - 20);
+   
     
             this.sidebarContext.drawImage(
                 this.sidebarImages[1],
@@ -266,7 +269,7 @@ export class Game {
             this.sidebarContext.drawImage(
                 this.sidebarImages[0],
                 10,
-                WINDOW_SIZE/ 2  -50,
+                WINDOW_SIZE/ 2  + 50,
                 40,
                 40,
             );

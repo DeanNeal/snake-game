@@ -39,7 +39,7 @@ export class Bullet extends Rect {
         //with bricks
         game.tiles.forEach(tile => {
             if (tile.collideWithBullet) {
-                if (this.overlap(tile) && game.tiles.filter(r=> r.markForDeletion).length === 0) {
+                if (this.overlap(tile) && game.tiles.filter(r => r.markForDeletion).length === 0) {
                     this.markForDeletion = true;
 
                     if (tile instanceof BrickTile) {
@@ -55,7 +55,7 @@ export class Bullet extends Rect {
                         this.markForDeletion = true;
                         AudioController.play('tanks/eagle.wav', 0.4);
                         // AudioController.play('tanks/sounds/gameover.ogg');
-                        game.markForGameOver = true;
+                        game.state.markForGameOver = true;
                     }
                 }
             }
@@ -80,11 +80,12 @@ export class Bullet extends Rect {
             if (this.overlap(player)) {
                 if (player.armor === false) {
                     this.markForDeletion = true;
+                    game.drawExplosion(player.pos.x, player.pos.y);
                     if (player.lifes > 1) {
                         player.markForDeletion = true;
                         AudioController.play('tanks/sounds/explosion.ogg', 0.4);
                     } else {
-                        game.markForGameOver = true;
+                        game.state.markForGameOver = true;
                     }
                 } else {
                     this.markForDeletion = true;
@@ -107,9 +108,10 @@ export class Bullet extends Rect {
 
                         AudioController.play('tanks/sounds/explosion.ogg', 0.4);
                         if (game.currentLevel.scores >= game.currentLevel.maxScores) {
-                            game.markForNextLevel = true;
+                            game.state.markForNextLevel = true;
                         } else {
 
+                            game.drawExplosion(enemy.pos.x, enemy.pos.y);
                             if (enemy.bonus) {
                                 game.addNewBonus(enemy.bonus, enemy.left, enemy.top, enemy.right, enemy.bottom);
                             }

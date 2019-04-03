@@ -9,7 +9,10 @@ import { Bot } from './bot';
 
 import { WINDOW_SIZE, TILE_SIZE, BULLET_SPEED } from './global';
 import { Bonus } from './bonus';
+import { Explosion } from './explosion';
 
+const $ = document.querySelector.bind(document);
+const $$ = document.querySelectorAll.bind(document);
 const isMobile = ("ontouchstart" in document.documentElement);
 
 interface ILevel {
@@ -19,12 +22,18 @@ interface ILevel {
     startWithBots: number;
 }
 interface IState {
+    pause: boolean;
+    markForNextLevel: boolean;
+    markForGameOver: boolean;
     activeLevel: number;
     levels: ILevel[]
 }
 
 class State {
-    public activeLevel = 0;
+    public pause: boolean = false;
+    public markForNextLevel: boolean = false;
+    public markForGameOver: boolean = false;
+    public activeLevel: number = 0;
     public levels = [{
         scores: 0,
         maxScores: 10,
@@ -53,12 +62,10 @@ export class Game {
     public bullets: Bullet[] = [];
     public tiles: Tile[] = [];
     public bonuses: Bonus[] = [];
-
-    public markForNextLevel: boolean = false;
-    public markForGameOver: boolean = false;
+    public explosions: Explosion[] = [];
 
     public state: IState = new State();
-    private paused: boolean = false;
+
 
     private gameCallback;
     private gameTimeouts: number[] = [];
@@ -71,26 +78,26 @@ export class Game {
         canvas.height = WINDOW_SIZE;
 
         // AudioController.play('tanks/sounds/gameover.ogg');
-        Level.loadImages(['tank.png', 'bot-simple.png', 'flag.png']).then(images=> {
+        Level.loadImages(['tank.png', 'bot-simple.png', 'flag.png']).then(images => {
             this.sidebarImages = images;
         });
 
         this.loadLevel();
 
-        document.body.querySelectorAll('.nav-level li').forEach(el => {
+        $$('.nav-level li').forEach(el => {
             el.addEventListener('click', (e: any) => {
                 let level = e.currentTarget.getAttribute('data-id');
                 level = parseInt(level);
                 this.cleanScene();
                 this.state = new State();
                 this.state.activeLevel = level;
-                this.markForGameOver = false;
+                this.state.markForGameOver = false;
                 this.loadLevel();
             });
         })
 
         document.addEventListener('keydown', (e) => {
-            if (e.keyCode === 80 && this.markForGameOver === false) {
+            if (e.keyCode === 80 && this.state.markForGameOver === false) {
                 this.pause();
             }
         });
@@ -98,7 +105,7 @@ export class Game {
         this.sidebarContext = this.sidebar.getContext('2d');
         this.sidebar.width = 150;
         this.sidebar.height = WINDOW_SIZE;
-        document.body.querySelector('.container').appendChild(this.sidebar);
+        $('.container').appendChild(this.sidebar);
 
         this.addPlayer();
     }
@@ -111,8 +118,8 @@ export class Game {
     }
 
     pause() {
-        this.paused = !this.paused;
-        if (this.paused === false) {
+        this.state.pause = !this.state.pause;
+        if (this.state.pause === false) {
             this.startUpdate();
         } else {
             this.update(null);
@@ -147,6 +154,12 @@ export class Game {
         }
 
     }
+
+    async drawExplosion(x, y) {
+        let img = await Level.loadImg('explosion.png');
+        this.explosions.push(new Explosion(img, x, y));
+    }
+
     //TODO PAUSE 
     generateAvailableBots() {
         for (let i = 1; i <= this.currentLevel.startWithBots; i++) {
@@ -165,8 +178,9 @@ export class Game {
         this.enemies = [];
         this.tiles = [];
         this.bonuses = [];
+        this.explosions = [];
 
-        this.markForNextLevel = false;
+        this.state.markForNextLevel = false;
 
         this.player.positionReset();
     }
@@ -205,7 +219,7 @@ export class Game {
     startUpdate(): void {
         let lastTime;
         this.gameCallback = (ms?: number) => {
-            if (this.paused === false) {
+            if (this.state.pause === false) {
                 if (lastTime) {
                     this.update((ms - lastTime) / 1000);
                 }
@@ -237,26 +251,26 @@ export class Game {
         this.player.draw(this.context);
 
         this.tiles.filter(r => r instanceof GrassTile === true).forEach(brick => brick.draw(this.context));
+
+        this.explosions.forEach(exp => exp.draw(this.context, this));
+
     }
 
     drawScores() {
-        if(this.sidebarImages.length) {
-            this.sidebarContext.clearRect(0,0, 150, WINDOW_SIZE);
+        if (this.sidebarImages.length) {
+            this.sidebarContext.clearRect(0, 0, 150, WINDOW_SIZE);
             this.sidebarContext.fillStyle = "black";
             this.sidebarContext.font = `normal ${WINDOW_SIZE / 42}px Arial`;
             this.sidebarContext.fillText((this.currentLevel.maxScores - this.currentLevel.scores), 60, 30);
-    
 
             this.sidebarContext.fillStyle = "black";
             this.sidebarContext.font = `normal ${WINDOW_SIZE / 42}px Arial`;
-            this.sidebarContext.fillText(this.player.lifes, 60, WINDOW_SIZE/ 2 + 80);
+            this.sidebarContext.fillText(this.player.lifes, 60, WINDOW_SIZE / 2 + 80);
 
             this.sidebarContext.fillStyle = "black";
             this.sidebarContext.font = `normal ${WINDOW_SIZE / 42}px Arial`;
             this.sidebarContext.fillText('Lvl ' + (this.state.activeLevel + 1), 50, WINDOW_SIZE - 20);
-    
-   
-    
+
             this.sidebarContext.drawImage(
                 this.sidebarImages[1],
                 10,
@@ -265,16 +279,16 @@ export class Game {
                 40,
             );
 
-    
+
             this.sidebarContext.drawImage(
                 this.sidebarImages[0],
                 10,
-                WINDOW_SIZE/ 2  + 50,
+                WINDOW_SIZE / 2 + 50,
                 40,
                 40,
             );
 
-                        
+
             this.sidebarContext.drawImage(
                 this.sidebarImages[2],
                 10,
@@ -282,8 +296,6 @@ export class Game {
                 40,
                 40,
             );
-
-                
         }
     }
 
@@ -309,11 +321,12 @@ export class Game {
             this.draw();
             this.drawScores();
 
-            if (this.markForNextLevel) {
+
+            if (this.state.markForNextLevel) {
                 this.nextLevel();
             }
 
-            if (this.markForGameOver) {
+            if (this.state.markForGameOver) {
                 this.restart();
             }
         }

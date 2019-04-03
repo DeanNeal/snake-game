@@ -10,7 +10,7 @@ export class Player extends Tank {
     public markForDeletion: boolean = false;
     private duration: number = 200;
     private start: number = new Date().getTime();
-    public lifes: number = 2;
+    public lifes: number = 3;
     readonly type: string = 'player';
     protected state: string = 'normal';
     private images: HTMLImageElement[] = [];

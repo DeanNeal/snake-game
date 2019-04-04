@@ -170,8 +170,11 @@ export abstract class Tank extends Rect {
                         game.player.armor = true;
                     }
 
-                    if (bonus.type === 'clock') {
-
+                    if (bonus.type === 'time') {
+                        game.enemies.forEach(r => {
+                            r.freezed = true;
+                            r.freezeFrames = 0;
+                        });
                     }
 
                     // if (bonus.type === 'granate') {

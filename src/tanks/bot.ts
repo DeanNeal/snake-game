@@ -6,11 +6,10 @@ import { tripleBooleanRandom, booleanRandom, random } from "./utils";
 
 const derectionArray = ['left', 'up', 'right', 'down'];
 const modArray = ['simple', 'fast', 'heavy', 'armored'];
-const bonusArray = ['armor', 'star', 'life' /*'granate', 'clock'*/];
+const bonusArray = ['armor', 'star', 'life', /*'granate', */ 'time'];
 
 export class Bot extends Tank {
     public movementVel: number = WINDOW_SIZE / 7;
-    private start = new Date().getTime();
     private fireDelay = random(100, 220);
     private fireFrames = 0;
     public markForDeletion: boolean = false;
@@ -22,6 +21,8 @@ export class Bot extends Tank {
     protected state: string = 'normal';
     private collisionFrames = 0;
     private collision = false;
+    public freezed: boolean = false;
+    public freezeFrames = 0;
 
     constructor(img: HTMLImageElement, mod: string, bonus: string) {
         super(img, TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
@@ -108,15 +109,15 @@ export class Bot extends Tank {
     static generateBonus() {
         let chance = Math.ceil(random(0, 8));
         let randomIndex = Math.round(random(0, bonusArray.length - 1));
-        return chance === 8 ? bonusArray[randomIndex] : null;
+        return chance < 8 ? bonusArray[3] : null;
     }
 
     static async getBonusImage(bonus: string) {
-        let images = await Level.loadImages(['clock.png', 'armor.png', 'star.png', 'life.png', 'granate.png']);
+        let images = await Level.loadImages(['time.png', 'armor.png', 'star.png', 'life.png', 'granate.png']);
         let img;
 
         switch (bonus) {
-            case 'clock': img = images[0]; break;
+            case 'time': img = images[0]; break;
             case 'armor': img = images[1]; break;
             case 'star': img = images[2]; break;
             case 'life': img = images[3]; break;
@@ -189,14 +190,22 @@ export class Bot extends Tank {
     }
 
     update(dt: number, game: Game) {
-        this.move(dt, game);
+        if (this.freezed === false) {
+            this.move(dt, game);
 
-        this.fireFrames++;
+            this.fireFrames++;
 
-        if (this.fireFrames >= this.fireDelay) {
-            this.fire(game);
-            this.fireFrames = 0;
-            this.fireDelay = random(100, 220);
+            if (this.fireFrames >= this.fireDelay) {
+                this.fire(game);
+                this.fireFrames = 0;
+                this.fireDelay = random(100, 220);
+            }
+        } else {
+            this.freezeFrames++;
+            if (this.freezeFrames >= 600) {
+                this.freezed = false;
+                this.freezeFrames = 0;
+            }
         }
     }
 

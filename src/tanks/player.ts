@@ -5,7 +5,7 @@ import { Game } from './game';
 
 export class Player extends Tank {
     public direction: string = 'up';
-    public movementVel: number = WINDOW_SIZE / 6.5;
+    public movementVel: number = WINDOW_SIZE / 6.2;
     private pressedKeys: { [s: string]: boolean } = {};
     public markForDeletion: boolean = false;
     private duration: number = 200;

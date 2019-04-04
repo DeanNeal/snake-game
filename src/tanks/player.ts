@@ -13,7 +13,7 @@ export class Player extends Tank {
     readonly type: string = 'player';
     protected state: string = 'normal';
     private images: HTMLImageElement[] = [];
-    public armor: boolean = true;
+    private armor: boolean = false;
     private armorFrames = 0;
     private armorWidth = 1;
     private armorWidthInc = true;
@@ -23,6 +23,10 @@ export class Player extends Tank {
         this.images = images;
         this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
         this.pos.y = WINDOW_SIZE - this.size.y;
+    }
+
+    activateArmor() {
+        this.armor = true;
     }
 
     draw(ctx: CanvasRenderingContext2D) {

@@ -3,7 +3,7 @@ export function random(min, max): number {
 }
 
 export function booleanRandom() {
-    return Math.random() > .5 ? 0 : 1;
+    return Math.random() >= .5;
 }
 
 export function tripleBooleanRandom() {

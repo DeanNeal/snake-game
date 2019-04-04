@@ -167,7 +167,7 @@ export abstract class Tank extends Rect {
                     }
 
                     if (bonus.type === 'armor') {
-                        game.player.armor = true;
+                        game.player.activateArmor();
                     }
 
                     if (bonus.type === 'time') {

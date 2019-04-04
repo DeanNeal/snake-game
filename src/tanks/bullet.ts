@@ -20,17 +20,10 @@ export class Bullet extends Rect {
         ctx.fillRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
     }
 
-    overlap(object) {
-        return object.top <= this.bottom &&
-            object.left <= this.right &&
-            object.right >= this.left &&
-            object.bottom >= this.top
-    }
-
     collision(player: Player, game: Game) {
         //with bullets
         game.bullets.forEach(bullet => {
-            if (Object.is(bullet, this) === false && this.overlap(bullet)) {
+            if (Object.is(bullet, this) === false && this.overlap(bullet, this)) {
                 this.markForDeletion = true;
                 bullet.markForDeletion = true;
             }
@@ -39,7 +32,7 @@ export class Bullet extends Rect {
         //with bricks
         game.tiles.forEach(tile => {
             if (tile.collideWithBullet) {
-                if (this.overlap(tile) && game.tiles.filter(r => r.markForDeletion).length === 0) {
+                if (this.overlap(tile, this) && game.tiles.filter(r => r.markForDeletion).length === 0) {
                     this.markForDeletion = true;
 
                     if (tile instanceof BrickTile) {
@@ -51,7 +44,7 @@ export class Bullet extends Rect {
                     } else if (tile instanceof СoncreteTile) {
                         AudioController.play('tanks/concrete.wav', 0.4);
                     } else if (tile instanceof EagleTile) {
-                        // game.eagle.markForDeletion = true;
+                        tile.markForDeletion = true;
                         this.markForDeletion = true;
                         AudioController.play('tanks/eagle.wav', 0.4);
                         // AudioController.play('tanks/sounds/gameover.ogg');
@@ -66,19 +59,10 @@ export class Bullet extends Rect {
             this.markForDeletion = true;
         }
 
-        //with eagle
-        // if (this.overlap(game.eagle)) {
-        //     game.eagle.markForDeletion = true;
-        //     this.markForDeletion = true;
-        //     AudioController.play('tanks/eagle.wav', 0.4);
-        //     // AudioController.play('tanks/sounds/gameover.ogg');
-        //     game.markForGameOver = true;
-        // }
-
         //with player
         if (this.source === 'bot') {
-            if (this.overlap(player)) {
-                if (player.armor === false) {
+            if (player.isDisabled === false && this.overlap(player, this)) {
+                if (player['armor'] === false) {
                     this.markForDeletion = true;
                     game.drawExplosion(player.pos.x, player.pos.y);
                     if (player.lifes > 1) {
@@ -96,7 +80,7 @@ export class Bullet extends Rect {
         //width enemies
         if (this.source === 'player') {
             game.enemies.forEach(enemy => {
-                if (this.overlap(enemy)) {
+                if (this.overlap(enemy, this)) {
                     this.markForDeletion = true;
                     enemy.hits++;
 

@@ -89,10 +89,9 @@ export class Bot extends Tank {
 
         if (this.collision) {
             this.collisionFrames++;
-
         }
 
-        if (this.collisionFrames > 35) {
+        if (this.collisionFrames > 5) {
             this.collisionFrames = 0;
             this.collision = false;
             this.setRandomDirection();

@@ -26,13 +26,6 @@ export class Tile extends Rect {
             this.size.y,
         );
     }
-
-    overlap(subject: Rect, tile: Tile) {
-        return subject.bottom > tile.top
-            && subject.top < tile.bottom
-            && subject.right > tile.left
-            && subject.left < tile.right;
-    }
 }
 
 export class BrickTile extends Tile {

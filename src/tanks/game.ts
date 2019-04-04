@@ -7,13 +7,13 @@ import { Level } from './levels';
 // import { Eagle } from './eagle';
 import { Bot } from './bot';
 
-import { WINDOW_SIZE, TILE_SIZE, BULLET_SPEED } from './global';
+import { WINDOW_SIZE, TILE_SIZE } from './global';
 import { Bonus } from './bonus';
 import { Explosion } from './explosion';
 
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
-const isMobile = ("ontouchstart" in document.documentElement);
+// const isMobile = ("ontouchstart" in document.documentElement);
 
 interface ILevel {
     // id: number;
@@ -37,18 +37,17 @@ class State {
     public levels = [{
         scores: 0,
         maxScores: 10,
-        startWithBots: 2
+        startWithBots: 4
     }, {
         scores: 0,
         maxScores: 12,
-        startWithBots: 3
+        startWithBots: 4
     }, {
         scores: 0,
         maxScores: 15,
-        startWithBots: 3
+        startWithBots: 4
     }];
 }
-
 export class Game {
     public canvas: HTMLCanvasElement;
     private context;
@@ -66,9 +65,12 @@ export class Game {
 
     public state: IState = new State();
 
-
-    private gameCallback;
+    private gameCallback: () => void;
     public gameFrames = 0;
+
+    get currentLevel() {
+        return this.state.levels[this.state.activeLevel];
+    }
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
@@ -82,7 +84,8 @@ export class Game {
             this.sidebarImages = images;
         });
 
-        this.loadLevel();
+
+
 
         $$('.nav-level li').forEach(el => {
             el.addEventListener('click', (e: any) => {
@@ -91,7 +94,6 @@ export class Game {
                 this.cleanScene();
                 this.state = new State();
                 this.state.activeLevel = level;
-                this.state.markForGameOver = false;
                 this.loadLevel();
             });
         })
@@ -107,7 +109,14 @@ export class Game {
         this.sidebar.height = WINDOW_SIZE;
         $('.container').appendChild(this.sidebar);
 
-        this.addPlayer();
+        this.init();
+
+    }
+
+    async init() {
+        await this.loadLevel();
+        await this.addPlayer();
+        this.startUpdate();
     }
 
     async addPlayer() {
@@ -115,6 +124,24 @@ export class Game {
 
         this.player = new Player(images);
         this.player.addEventListeners();
+    }
+
+    async loadLevel() {
+        this.level = new Level();
+
+        this.tiles = await this.level.build(this.state.activeLevel);
+
+        if (!this.tiles) {
+            // AudioController.play('tanks/sounds/gamestart.ogg');
+            this.context.fillStyle = "blue  ";
+            this.context.font = `bold ${WINDOW_SIZE / 20}px Arial`;
+            this.context.fillText('YOU WIN', (this.canvas.width / 2) - 100, (this.canvas.height / 2));
+        }
+    }
+
+    async drawExplosion(x, y) {
+        let img = await Level.loadImg('explosion.png');
+        this.explosions.push(new Explosion(img, x, y));
     }
 
     pause() {
@@ -133,37 +160,7 @@ export class Game {
         }
     }
 
-    get currentLevel() {
-        return this.state.levels[this.state.activeLevel];
-    }
-
-    async loadLevel() {
-        this.level = new Level();
-
-        this.tiles = await this.level.build(this.state.activeLevel);
-
-        if (this.tiles) {
-            // AudioController.play('tanks/sounds/gamestart.ogg');
-            // this.generateAvailableBots();
-
-            this.startUpdate();
-        } else {
-            this.context.fillStyle = "blue  ";
-            this.context.font = `bold ${WINDOW_SIZE / 20}px Arial`;
-            this.context.fillText('YOU WIN', (this.canvas.width / 2) - 100, (this.canvas.height / 2));
-        }
-
-    }
-
-    async drawExplosion(x, y) {
-        let img = await Level.loadImg('explosion.png');
-        this.explosions.push(new Explosion(img, x, y));
-    }
-
-    //TODO PAUSE 
     cleanScene(): void {
-        this.gameCallback = () => { };
-
         this.gameFrames = 0;
         this.bullets = [];
         this.enemies = [];
@@ -174,6 +171,7 @@ export class Game {
         this.state.markForNextLevel = false;
 
         this.player.positionReset();
+        this.player.enable();
     }
 
     nextLevel(): void {
@@ -183,9 +181,7 @@ export class Game {
     }
 
     restart(): void {
-        this.cleanScene();
-        this.state = new State();
-        this.addPlayer();
+        this.player.disable();
 
         this.context.fillStyle = "rgba(0, 0, 0, 0.8)";
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -217,7 +213,6 @@ export class Game {
                 lastTime = ms;
                 requestAnimationFrame(this.gameCallback);
             }
-
         }
         this.gameCallback();
     }
@@ -244,7 +239,6 @@ export class Game {
         this.tiles.filter(r => r instanceof GrassTile === true).forEach(brick => brick.draw(this.context));
 
         this.explosions.forEach(exp => exp.draw(this.context, this));
-
     }
 
     drawScores() {
@@ -310,6 +304,7 @@ export class Game {
 
         this.context.globalAlpha = 1;
 
+        //TODO ADD DRAW method
         this.bullets.forEach(bullet => {
             bullet.pos.x += bullet.vel.x * dt;
             bullet.pos.y += bullet.vel.y * dt;

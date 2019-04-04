@@ -87,10 +87,10 @@ export abstract class Tank extends Rect {
         );
     }
 
-    intersection(tiles: Tile[], subject, fn: (tile: Tile) => void) {
+    intersection(obstacles, subject, fn: (tile: Tile) => void) {
         this.surfaceMoveFactor = 1;
-        tiles
-            .filter(tile => tile.overlap(subject, tile)).forEach((tile) => {
+        obstacles
+            .filter(obstacle => obstacle.overlap(subject, obstacle)).forEach((tile) => {
                 if (tile instanceof IceTile) {
                     this.surfaceMoveFactor = 1.4;
                 } else if (tile instanceof GrassTile) {
@@ -105,15 +105,22 @@ export abstract class Tank extends Rect {
         if (this.isMoving) {
             this.pos.x += Math.round(this.vel.x * dt) * this.surfaceMoveFactor * this.modMoveFactor;
 
+            let enemies = game.enemies
+                .filter(r => Object.is(r, this) === false);
+
+            let obstacles = [...game.tiles, ...enemies];
+            if (Object.is(game.player, this) === false) {
+                (obstacles as any).push(game.player);
+            }
             if (this.vel.x > 0) {
-                this.intersection(game.tiles, this, rect => {
+                this.intersection(obstacles, this, rect => {
                     if (this.right > rect.left) {
                         this.pos.x = rect.left - this.size.x;
                         this.onCollision();
                     }
                 });
             } else if (this.vel.x < 0) {
-                this.intersection(game.tiles, this, rect => {
+                this.intersection(obstacles, this, rect => {
                     if (this.left < rect.right) {
                         this.pos.x = rect.right;
                         this.onCollision();
@@ -124,14 +131,14 @@ export abstract class Tank extends Rect {
             this.pos.y += Math.round(this.vel.y * dt) * this.surfaceMoveFactor * this.modMoveFactor;
 
             if (this.vel.y > 0) {
-                this.intersection(game.tiles, this, rect => {
+                this.intersection(obstacles, this, rect => {
                     if (this.bottom > rect.top) {
                         this.pos.y = rect.top - this.size.y;
                         this.onCollision();
                     }
                 });
             } else if (this.vel.y < 0) {
-                this.intersection(game.tiles, this, rect => {
+                this.intersection(obstacles, this, rect => {
                     if (this.top < rect.bottom) {
                         this.pos.y = rect.bottom;
                         this.onCollision();
@@ -194,22 +201,24 @@ export abstract class Tank extends Rect {
     }
 
     wallCollider(game: Game) {
+        let offset = Object.is(this, game.player) ? 0 : 2;
+
         if (this.top <= 0) {
             this.vel.y = 0;
-            this.pos.y = 0;
+            this.pos.y = offset;
             this.onCollision();
         } if (this.bottom > game.canvas.height) {
             this.vel.y = 0;
-            this.pos.y = game.canvas.height - this.size.y;
+            this.pos.y = game.canvas.height - this.size.y - offset;
             this.onCollision();
         }
         if (this.left <= 0) {
             this.vel.x = 0;
-            this.pos.x = 0;
+            this.pos.x = offset;
             this.onCollision();
         } else if (this.right >= game.canvas.width) {
             this.vel.x = 0;
-            this.pos.x = game.canvas.width - this.size.x;
+            this.pos.x = game.canvas.width - this.size.x  - offset;
             this.onCollision();
         }
     }

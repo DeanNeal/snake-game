@@ -4,7 +4,7 @@ import { Game } from './game';
 
 export class Player extends Tank {
     public direction: string = 'up';
-    public movementVel: number = WINDOW_SIZE / 6.2;
+    public movementVel: number = 140;
     private pressedKeys: { [s: string]: boolean } = {};
     public markForDeletion: boolean = false;
     private duration: number = 200;
@@ -14,15 +14,28 @@ export class Player extends Tank {
     protected state: string = 'normal';
     private images: HTMLImageElement[] = [];
     private armor: boolean = false;
-    private armorFrames = 0;
-    private armorWidth = 1;
-    private armorWidthInc = true;
+    private armorFrames: number = 0;
+    private armorWidth: number = 1;
+    private armorWidthInc: boolean = true;
+    private disabled: boolean = false;
 
     constructor(images: HTMLImageElement[]) {
         super(images[0], TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
         this.images = images;
         this.pos.x = WINDOW_SIZE / 2 - TILE_SIZE * 2 - this.size.x / 2;
         this.pos.y = WINDOW_SIZE - this.size.y;
+    }
+
+    get isDisabled() {
+        return this.disabled;
+    }
+
+    disable() {
+        this.disabled = true;
+    }
+
+    enable() {
+        this.disabled = false;
     }
 
     activateArmor() {
@@ -66,7 +79,6 @@ export class Player extends Tank {
         ctx.lineTo(endX, endY);
         ctx.lineWidth = width;
         ctx.strokeStyle = "#fff";
-        // ctx.fillStyle = grd;
         ctx.stroke();
     }
 
@@ -112,28 +124,29 @@ export class Player extends Tank {
     }
 
     update(dt: number, game: Game) {
-        if (dt) {
-            this.keyboard();
-            this.move(dt, game);
+        if (this.disabled) return;
 
-            if (this.isShoting) {
-                let bulletCount = game.bullets.filter(r => r.source === 'player').length;
-                if (this.state === 'normal' && bulletCount <= 0) {
-                    this.fireCheck(game);
-                } else if (this.state === 'improved' && bulletCount <= 0) {
-                    this.fireCheck(game);
-                } else if (this.state === 'superb' && bulletCount <= 1) {
-                    this.fireCheck(game);
-                } else if (this.state === 'god' && bulletCount <= 2) {
-                    this.fireCheck(game);
-                }
-            }
+        this.keyboard();
 
-            if (this.markForDeletion) {
-                this.markForDeletion = false;
-                this.lifes--;
-                this.reset();
+        this.move(dt, game);
+
+        if (this.isShoting) {
+            let bulletCount = game.bullets.filter(r => r.source === 'player').length;
+            if (this.state === 'normal' && bulletCount <= 0) {
+                this.fireCheck(game);
+            } else if (this.state === 'improved' && bulletCount <= 0) {
+                this.fireCheck(game);
+            } else if (this.state === 'superb' && bulletCount <= 1) {
+                this.fireCheck(game);
+            } else if (this.state === 'god' && bulletCount <= 2) {
+                this.fireCheck(game);
             }
+        }
+
+        if (this.markForDeletion) {
+            this.markForDeletion = false;
+            this.lifes--;
+            this.reset();
         }
     }
 

@@ -109,7 +109,7 @@ export class Bot extends Tank {
     static generateBonus() {
         let chance = Math.ceil(random(0, 8));
         let randomIndex = Math.round(random(0, bonusArray.length - 1));
-        return chance < 8 ? bonusArray[3] : null;
+        return chance === randomIndex ? bonusArray[randomIndex] : null;
     }
 
     static async getBonusImage(bonus: string) {

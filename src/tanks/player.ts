@@ -2,7 +2,6 @@ import { WINDOW_SIZE, TILE_SIZE } from './global';
 import { Tank } from './tank';
 import { Game } from './game';
 
-
 export class Player extends Tank {
     public direction: string = 'up';
     public movementVel: number = WINDOW_SIZE / 6.2;
@@ -14,8 +13,10 @@ export class Player extends Tank {
     readonly type: string = 'player';
     protected state: string = 'normal';
     private images: HTMLImageElement[] = [];
-    public armor: boolean = false;
-    public armorFrames = 0;
+    public armor: boolean = true;
+    private armorFrames = 0;
+    private armorWidth = 1;
+    private armorWidthInc = true;
 
     constructor(images: HTMLImageElement[]) {
         super(images[0], TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
@@ -29,27 +30,37 @@ export class Player extends Tank {
         if (this.armor) {
             this.armorFrames++;
 
+            let width = 1;
             if (this.armorFrames >= 800) {
                 this.armor = false;
             }
 
-            this.drawArmorLine(ctx, this.pos.x, this.pos.y, this.pos.x + this.size.x, this.pos.y);
-            this.drawArmorLine(ctx, this.pos.x + this.size.x, this.pos.y, this.pos.x + this.size.y, this.pos.y + this.size.y);
-            this.drawArmorLine(ctx, this.pos.x + this.size.x, this.pos.y + this.size.y, this.pos.x, this.pos.y + this.size.y);
-            this.drawArmorLine(ctx, this.pos.x, this.pos.y + this.size.y, this.pos.x, this.pos.y);
+            if (this.armorFrames % 9 === 0) {
+                this.armorWidthInc ? this.armorWidth++ : this.armorWidth--;
+            }
 
-            // let width = 2;        
-            // ctx.lineWidth = width / 2;
-            // ctx.strokeStyle = '#fff';
-            // ctx.strokeRect(this.pos.x - width / 2, this.pos.y - width / 2, this.size.x + width, this.size.y + width);
+            if (this.armorWidth > 2) {
+                this.armorWidthInc = false;
+            }
+
+            if (this.armorWidth < 1) {
+                this.armorWidthInc = true;
+            }
+
+            width = this.armorWidth;
+
+            this.drawArmorLine(width, ctx, this.pos.x, this.pos.y, this.pos.x + this.size.x, this.pos.y);
+            this.drawArmorLine(width, ctx, this.pos.x + this.size.x, this.pos.y, this.pos.x + this.size.y, this.pos.y + this.size.y);
+            this.drawArmorLine(width, ctx, this.pos.x + this.size.x, this.pos.y + this.size.y, this.pos.x, this.pos.y + this.size.y);
+            this.drawArmorLine(width, ctx, this.pos.x, this.pos.y + this.size.y, this.pos.x, this.pos.y);
         }
     }
 
-    drawArmorLine(ctx, startX, startY, endX, endY) {
+    drawArmorLine(width, ctx, startX, startY, endX, endY) {
         ctx.beginPath();
         ctx.moveTo(startX, startY);
         ctx.lineTo(endX, endY);
-        ctx.lineWidth = 5;
+        ctx.lineWidth = width;
         ctx.strokeStyle = "#fff";
         // ctx.fillStyle = grd;
         ctx.stroke();

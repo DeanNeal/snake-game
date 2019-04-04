@@ -15,7 +15,7 @@ export class Player extends Tank {
     protected state: string = 'normal';
     private images: HTMLImageElement[] = [];
     public armor: boolean = false;
-    public armorTimeout: number;
+    public armorFrames = 0;
 
     constructor(images: HTMLImageElement[]) {
         super(images[0], TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
@@ -27,13 +27,32 @@ export class Player extends Tank {
     draw(ctx: CanvasRenderingContext2D) {
         super.draw(ctx);
         if (this.armor) {
-            ctx.strokeStyle = '#fff';
-            let width = 2;
-            ctx.lineWidth = width / 2;
-            // ctx.lineTo();
+            this.armorFrames++;
 
-            ctx.strokeRect(this.pos.x - width / 2, this.pos.y - width / 2, this.size.x + width, this.size.y + width);
+            if (this.armorFrames >= 800) {
+                this.armor = false;
+            }
+
+            this.drawArmorLine(ctx, this.pos.x, this.pos.y, this.pos.x + this.size.x, this.pos.y);
+            this.drawArmorLine(ctx, this.pos.x + this.size.x, this.pos.y, this.pos.x + this.size.y, this.pos.y + this.size.y);
+            this.drawArmorLine(ctx, this.pos.x + this.size.x, this.pos.y + this.size.y, this.pos.x, this.pos.y + this.size.y);
+            this.drawArmorLine(ctx, this.pos.x, this.pos.y + this.size.y, this.pos.x, this.pos.y);
+
+            // let width = 2;        
+            // ctx.lineWidth = width / 2;
+            // ctx.strokeStyle = '#fff';
+            // ctx.strokeRect(this.pos.x - width / 2, this.pos.y - width / 2, this.size.x + width, this.size.y + width);
         }
+    }
+
+    drawArmorLine(ctx, startX, startY, endX, endY) {
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "#fff";
+        // ctx.fillStyle = grd;
+        ctx.stroke();
     }
 
     updateState() {
@@ -73,8 +92,8 @@ export class Player extends Tank {
 
         this.state = 'normal';
         this.armor = false;
+        this.armorFrames = 0;
         this.updateState();
-        if (this.armorTimeout) clearTimeout(this.armorTimeout);
     }
 
     update(dt: number, game: Game) {
@@ -94,7 +113,7 @@ export class Player extends Tank {
                     this.fireCheck(game);
                 }
             }
-            // console.log(this.state);
+
             if (this.markForDeletion) {
                 this.markForDeletion = false;
                 this.lifes--;

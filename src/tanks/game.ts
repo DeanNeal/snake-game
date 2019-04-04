@@ -68,7 +68,7 @@ export class Game {
 
 
     private gameCallback;
-    private gameTimeouts: number[] = [];
+    public gameFrames = 0;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
@@ -144,7 +144,7 @@ export class Game {
 
         if (this.tiles) {
             // AudioController.play('tanks/sounds/gamestart.ogg');
-            this.generateAvailableBots();
+            // this.generateAvailableBots();
 
             this.startUpdate();
         } else {
@@ -161,19 +161,10 @@ export class Game {
     }
 
     //TODO PAUSE 
-    generateAvailableBots() {
-        for (let i = 1; i <= this.currentLevel.startWithBots; i++) {
-            let timeout = setTimeout(() => {
-                this.addNewBot();
-            }, i * 2000);
-            this.gameTimeouts.push(timeout);
-        }
-    }
-
     cleanScene(): void {
         this.gameCallback = () => { };
-        this.gameTimeouts.forEach(timeout => clearTimeout(timeout));
 
+        this.gameFrames = 0;
         this.bullets = [];
         this.enemies = [];
         this.tiles = [];
@@ -304,31 +295,38 @@ export class Game {
     }
 
     update(dt): void {
+        this.gameFrames++;
+
+        if (this.gameFrames % 100 === 0 && this.enemies.length < this.currentLevel.startWithBots) {
+            if (this.currentLevel.maxScores >= this.currentLevel.scores + this.currentLevel.startWithBots) {
+                this.addNewBot();
+            }
+        }
+
         this.player.update(dt, this);
         this.enemies.forEach(enemy => enemy.update(dt, this));
         this.bonuses.forEach(bonus => bonus.update(dt));
 
-        // console.log(this.player['bulletSpeedFactor']);
+
         this.context.globalAlpha = 1;
-        if (dt) {
-            this.bullets.forEach(bullet => {
-                bullet.pos.x += bullet.vel.x * dt;
-                bullet.pos.y += bullet.vel.y * dt;
-            });
 
-            this.collider();
+        this.bullets.forEach(bullet => {
+            bullet.pos.x += bullet.vel.x * dt;
+            bullet.pos.y += bullet.vel.y * dt;
+        });
 
-            this.draw();
-            this.drawScores();
+        this.collider();
+
+        this.draw();
+        this.drawScores();
 
 
-            if (this.state.markForNextLevel) {
-                this.nextLevel();
-            }
+        if (this.state.markForNextLevel) {
+            this.nextLevel();
+        }
 
-            if (this.state.markForGameOver) {
-                this.restart();
-            }
+        if (this.state.markForGameOver) {
+            this.restart();
         }
 
     }

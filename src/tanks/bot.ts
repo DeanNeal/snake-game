@@ -2,28 +2,7 @@ import { WINDOW_SIZE, TILE_SIZE } from "./global";
 import { Tank } from "./tank";
 import { Game } from "./game";
 import { Level } from "./levels";
-
-
-function random(min, max): number {
-    return (Math.random() * (max - min) + min);
-}
-
-function booleanRandom() {
-    return Math.random() > .5 ? 0 : 1;
-}
-
-function tripleBooleanRandom() {
-    let res, random = Math.random();
-    if (random < 1 / 3) {
-        res = -1;
-    } else if (random >= 1 / 3 && random < 2 / 3) {
-        res = 0;
-    } else {
-        res = 1;
-    }
-
-    return res;
-}
+import { tripleBooleanRandom, booleanRandom, random } from "./utils";
 
 const derectionArray = ['left', 'up', 'right', 'down'];
 const modArray = ['simple', 'fast', 'heavy', 'armored'];
@@ -32,9 +11,8 @@ const bonusArray = ['armor', 'star', 'life' /*'granate', 'clock'*/];
 export class Bot extends Tank {
     public movementVel: number = WINDOW_SIZE / 7;
     private start = new Date().getTime();
-    private elapsedCache: number = 0;
-    private fireDelay = random(1500, 4000);
-    private moveTimeout: number;
+    private fireDelay = random(100, 220);
+    private fireFrames = 0;
     public markForDeletion: boolean = false;
     readonly type: string = 'bot';
     public hits: number = 0;
@@ -42,6 +20,8 @@ export class Bot extends Tank {
     private mod: string = 'simple';
     public bonus: string = null;
     protected state: string = 'normal';
+    private collisionFrames = 0;
+    private collision = false;
 
     constructor(img: HTMLImageElement, mod: string, bonus: string) {
         super(img, TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
@@ -105,6 +85,18 @@ export class Bot extends Tank {
 
     draw(ctx: CanvasRenderingContext2D) {
         super.draw(ctx);
+
+        if (this.collision) {
+            this.collisionFrames++;
+
+        }
+
+        if (this.collisionFrames > 35) {
+            this.collisionFrames = 0;
+            this.collision = false;
+            this.setRandomDirection();
+        }
+
         if (this.bonus) {
             ctx.strokeStyle = '#fd68ff';
             let width = 4;
@@ -197,32 +189,19 @@ export class Bot extends Tank {
     }
 
     update(dt: number, game: Game) {
-        if (dt) {
-            this.move(dt, game);
+        this.move(dt, game);
 
-            let time = new Date().getTime()
-            if (this.elapsedCache) {
-                this.start = time - this.elapsedCache;
-                this.elapsedCache = 0;
-            }
-            let elapsed = (time - this.start);
+        this.fireFrames++;
 
-            if (elapsed > this.fireDelay) {
-                this.fire(game);
-                this.start = time;
-                this.fireDelay = random(1500, 4000);
-            }
-        } else {
-            this.elapsedCache = new Date().getTime() - this.start;
+        if (this.fireFrames >= this.fireDelay) {
+            this.fire(game);
+            this.fireFrames = 0;
+            this.fireDelay = random(100, 220);
         }
     }
 
     onCollision() {
-        if (this.moveTimeout) clearTimeout(this.moveTimeout);
-
         this.isMoving = false;
-        this.moveTimeout = setTimeout(() => {
-            this.setRandomDirection();
-        }, 300);
+        this.collision = true;
     }
 }

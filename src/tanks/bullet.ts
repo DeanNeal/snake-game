@@ -112,14 +112,9 @@ export class Bullet extends Rect {
                         } else {
 
                             game.drawExplosion(enemy.pos.x, enemy.pos.y);
+                            game.gameFrames = 0;
                             if (enemy.bonus) {
                                 game.addNewBonus(enemy.bonus, enemy.left, enemy.top, enemy.right, enemy.bottom);
-                            }
-
-                            if (game.currentLevel.maxScores >= game.currentLevel.scores + game.currentLevel.startWithBots) {
-                                setTimeout(() => {
-                                    game.addNewBot();
-                                }, 1000);
                             }
                         }
                     }

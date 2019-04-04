@@ -167,12 +167,7 @@ export abstract class Tank extends Rect {
                     }
 
                     if (bonus.type === 'armor') {
-                        if (game.player.armorTimeout) clearTimeout(game.player.armorTimeout);
                         game.player.armor = true;
-                        //TODO PAUSE
-                        game.player.armorTimeout = setTimeout(() => {
-                            game.player.armor = false;
-                        }, 12000);
                     }
 
                     if (bonus.type === 'clock') {

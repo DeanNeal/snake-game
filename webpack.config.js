@@ -2,11 +2,11 @@ const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-
+  
 module.exports = {
   entry: {
-    snake:  './src/snake/snake.ts',
-    pong:  './src/pong/pong.ts',
+    // snake:  './src/snake/snake.ts',
+    // pong:  './src/pong/pong.ts',
     tanks: './src/tanks/game.ts'
   },
   module: {
@@ -30,6 +30,10 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: "[name].css"
     }),
+    new HtmlWebpackPlugin({
+      // filename: 'tanks.html',
+      template: 'tanks.html'
+    })
     // new webpack.HotModuleReplacementPlugin()
   ],
   resolve: {

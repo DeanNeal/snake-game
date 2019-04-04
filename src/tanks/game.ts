@@ -85,8 +85,6 @@ export class Game {
         });
 
 
-
-
         $$('.nav-level li').forEach(el => {
             el.addEventListener('click', (e: any) => {
                 let level = e.currentTarget.getAttribute('data-id');

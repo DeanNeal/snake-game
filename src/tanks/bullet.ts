@@ -90,16 +90,15 @@ export class Bullet extends Rect {
                         enemy.markForDeletion = true;
                         game.currentLevel.scores++;
 
+                        game.drawExplosion(enemy.pos.x, enemy.pos.y);
+                        game.gameFrames = 0;
+                        if (enemy.bonus) {
+                            game.addNewBonus(enemy.bonus, enemy.left, enemy.top, enemy.right, enemy.bottom);
+                        }
+
                         AudioController.play('tanks/sounds/explosion.ogg', 0.4);
                         if (game.currentLevel.scores >= game.currentLevel.maxScores) {
                             game.state.markForNextLevel = true;
-                        } else {
-
-                            game.drawExplosion(enemy.pos.x, enemy.pos.y);
-                            game.gameFrames = 0;
-                            if (enemy.bonus) {
-                                game.addNewBonus(enemy.bonus, enemy.left, enemy.top, enemy.right, enemy.bottom);
-                            }
                         }
                     }
                 }

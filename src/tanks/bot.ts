@@ -25,7 +25,7 @@ export class Bot extends Tank {
     public freezeFrames = 0;
 
     constructor(img: HTMLImageElement, mod: string, bonus: string) {
-        super(img, TILE_SIZE - TILE_SIZE * 0.15, TILE_SIZE - TILE_SIZE * 0.15);
+        super(img, TILE_SIZE - TILE_SIZE * 0.09, TILE_SIZE - TILE_SIZE * 0.09);
         this.mod = mod;
         this.bonus = bonus;
         this.init();

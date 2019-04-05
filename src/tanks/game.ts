@@ -34,7 +34,7 @@ class State {
     public levels = [{
         scores: 0,
         maxScores: 10,
-        startWithBots: 4
+        startWithBots: 3
     }, {
         scores: 0,
         maxScores: 12,
@@ -264,8 +264,17 @@ export class Game {
     update(dt): void {
         this.gameFrames++;
 
-        if (this.gameFrames % 100 === 0 && this.enemies.length < this.currentLevel.startWithBots) {
+        if (this.gameFrames >= 200 && this.state.markForNextLevel) {
+            this.nextLevel();
+        }
+
+        if (this.state.markForGameOver) {
+            this.restart();
+        }
+
+        if (this.gameFrames >= 100 && this.enemies.length < this.currentLevel.startWithBots) {
             if (this.currentLevel.maxScores >= this.currentLevel.scores + this.currentLevel.startWithBots) {
+                this.gameFrames = 0;
                 this.addNewBot();
             }
         }
@@ -287,16 +296,6 @@ export class Game {
 
         this.draw();
         this.drawScores();
-
-
-        if (this.state.markForNextLevel) {
-            this.nextLevel();
-        }
-
-        if (this.state.markForGameOver) {
-            this.restart();
-        }
-
     }
 
 }

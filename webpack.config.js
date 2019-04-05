@@ -32,9 +32,8 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       filename: 'tanks.html',
-      template: 'tanks.html'
+      template: 'tanks_tpl.html'
     })
-    // new webpack.HotModuleReplacementPlugin()
   ],
   resolve: {
     extensions: ['.ts', '.js' ]
@@ -45,9 +44,7 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname, ''),
-    // compress: true,
     port: 8000,
-    // hot: true,
     open: true,
     publicPath: "/"
   }

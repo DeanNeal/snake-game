@@ -31,7 +31,7 @@ module.exports = {
       filename: "[name].css"
     }),
     new HtmlWebpackPlugin({
-      // filename: 'tanks.html',
+      filename: 'tanks.html',
       template: 'tanks.html'
     })
     // new webpack.HotModuleReplacementPlugin()

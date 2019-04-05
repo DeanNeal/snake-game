@@ -1,34 +1,59 @@
+    
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>Tanks</title>
+    <title>Snake</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <meta name="viewport"
         content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0, user-scalable=no">
-<link href="tanks.css" rel="stylesheet"></head>
+</head>
 
 <body>
-    <div class="container">
-        <span>P - pause</span>
-        <ul class="nav-level">
-            <li data-id="0">level 1</li>
-            <li data-id="1">level 2</li>
-            <li data-id="2">level 3</li>
+    <nav>
+        <ul>
+            <!-- <li><a href="./snake.html">Snake</a></li> -->
+            <!-- <li><a href="./pong.html">Pong</a></li> -->
+            <li><a href="./tanks.html">Tanks(Development)</a></li>
+            <!-- <li><a href="./bounce-ball.html" class="inactive" onclick="return false;">Bounce Ball(Development)</a></li> -->
         </ul>
-        <canvas id="tanks"></canvas>
-    </div>
+    </nav>
 
     <style>
-        ul {
-            list-style: none;
-            /* padding: 10px; */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        ul li {
-            cursor: pointer;
-            padding: 10px;
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        nav ul {
+            list-style: none;
+        }
+        nav ul li {
+            font-size: 28px;
+            text-align: center;
+        }
+        nav ul li a {
+            color: #000;
+            text-decoration: none;
+        }
+         nav ul li a.inactive {
+             color: #cccccc;
+         }
+        nav ul li a:hover {
+            text-decoration: underline;
         }
     </style>
-<script type="text/javascript" src="tanks.js"></script></body>
+</body>
 
 </html>

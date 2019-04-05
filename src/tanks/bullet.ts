@@ -32,7 +32,7 @@ export class Bullet extends Rect {
         //with bricks
         game.tiles.forEach(tile => {
             if (tile.collideWithBullet) {
-                if (this.overlap(tile, this) && game.tiles.filter(r => r.markForDeletion).length === 0) {
+                if (this.overlap(tile, this)) { //} && game.tiles.filter(r => r.markForDeletion).length === 0) {
                     this.markForDeletion = true;
 
                     if (tile instanceof BrickTile) {

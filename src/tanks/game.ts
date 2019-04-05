@@ -2,9 +2,7 @@ import './tanks.less';
 import { Tile, GrassTile } from './tile';
 import { Bullet } from './bullet';
 import { Player } from './player';
-import AudioController from './audio';
 import { Level } from './levels';
-// import { Eagle } from './eagle';
 import { Bot } from './bot';
 
 import { WINDOW_SIZE, TILE_SIZE } from './global';
@@ -16,7 +14,6 @@ const $$ = document.querySelectorAll.bind(document);
 // const isMobile = ("ontouchstart" in document.documentElement);
 
 interface ILevel {
-    // id: number;
     scores: number;
     maxScores: number;
     startWithBots: number;
@@ -80,7 +77,7 @@ export class Game {
         canvas.height = WINDOW_SIZE;
 
         // AudioController.play('tanks/sounds/gameover.ogg');
-        Level.loadImages(['tank.png', 'bot-simple.png', 'flag.png']).then(images => {
+        Level.loadImages(['bot-simple.png', 'tank.png', 'flag.png']).then(images => {
             this.sidebarImages = images;
         });
 
@@ -254,31 +251,9 @@ export class Game {
             this.sidebarContext.font = `normal ${WINDOW_SIZE / 42}px Arial`;
             this.sidebarContext.fillText('Lvl ' + (this.state.activeLevel + 1), 50, WINDOW_SIZE - 20);
 
-            this.sidebarContext.drawImage(
-                this.sidebarImages[1],
-                10,
-                0,
-                40,
-                40,
-            );
-
-
-            this.sidebarContext.drawImage(
-                this.sidebarImages[0],
-                10,
-                WINDOW_SIZE / 2 + 50,
-                40,
-                40,
-            );
-
-
-            this.sidebarContext.drawImage(
-                this.sidebarImages[2],
-                10,
-                WINDOW_SIZE - 50,
-                40,
-                40,
-            );
+            this.sidebarContext.drawImage(this.sidebarImages[0], 10, 0, 40, 40);
+            this.sidebarContext.drawImage(this.sidebarImages[1], 10, WINDOW_SIZE / 2 + 50, 40, 40);
+            this.sidebarContext.drawImage(this.sidebarImages[2], 10, WINDOW_SIZE - 50, 40, 40);
         }
     }
 

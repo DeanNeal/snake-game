@@ -104,8 +104,7 @@ export abstract class Tank extends Rect {
 
     calculateObstacles(game) {
         let enemies = game.enemies.filter(r => Object.is(r, this) === false);
-        let tiles = game.tiles.filter(r => r instanceof BrickTile === false);
-        return [...tiles, ...enemies];
+        return [...game.tiles, ...enemies];
     }
 
     move(dt: number, game: Game) {

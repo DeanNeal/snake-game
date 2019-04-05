@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "app": "webpack --watch --progress --mode development",
+        "build": "webpack --progress --mode development",
         "dev": "webpack-dev-server  --progress --mode development"
     },
     "dependencies": {

@@ -201,7 +201,7 @@ export abstract class Tank extends Rect {
     }
 
     wallCollider(game: Game) {
-        let offset = Object.is(this, game.player) ? 0 : 2;
+        let offset = Object.is(this, game.player) ? 0 : 1;
 
         if (this.top <= 0) {
             this.vel.y = 0;

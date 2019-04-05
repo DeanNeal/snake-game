@@ -65,9 +65,9 @@ export class Bullet extends Rect {
                 if (player['armor'] === false) {
                     this.markForDeletion = true;
                     game.drawExplosion(player.pos.x, player.pos.y);
+                    AudioController.play('tanks/sounds/explosion.ogg', 0.4);
                     if (player.lifes > 1) {
                         player.markForDeletion = true;
-                        AudioController.play('tanks/sounds/explosion.ogg', 0.4);
                     } else {
                         game.state.markForGameOver = true;
                     }

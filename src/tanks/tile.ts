@@ -1,15 +1,13 @@
 import { Rect } from './rect';
-import { Tank } from './tank';
 
 export class Tile extends Rect {
-    private img: HTMLImageElement;
+    protected img: HTMLImageElement;
     public hits: number = 0;
     public markForDeletion: boolean = false;
-    readonly hitsToDestroy: number = 2;
+    readonly hitsToDestroy: number = 1;
     readonly collideWithBullet: boolean = true;
     readonly canBeDestroyed: boolean = true;
 
-    public collideWithUser: boolean = false;
     constructor(img: HTMLImageElement, w: number, h: number, x: number, y: number) {
         super(w, h);
         this.img = img;
@@ -29,7 +27,9 @@ export class Tile extends Rect {
 }
 
 export class BrickTile extends Tile {
-
+    draw(ctx) {
+        ctx.drawImage(this.img, 0, 0, this.size.x * 2.45, this.size.y * 2.45, this.pos.x, this.pos.y, this.size.x, this.size.y);
+    }
 }
 
 export class GrassTile extends Tile {

@@ -1,7 +1,6 @@
 import { BrickTile, GrassTile, СoncreteTile, IceTile, WaterTile, EagleTile, Tile } from "./tile";
 import { TILE_SIZE } from './global';
 
-
 export class Matrix {
     public grid = [];
     constructor() {
@@ -22,7 +21,6 @@ export class Matrix {
         })[0];
     }
 }
-
 
 export class Level {
     constructor() { }
@@ -45,7 +43,15 @@ export class Level {
 
                     switch (col) {
                         case 1:
-                            tiles.push(new BrickTile(images[0], TILE_SIZE, TILE_SIZE, x, y));
+                            let SIZE = 4;
+                            let size = (TILE_SIZE / SIZE) * 2;
+
+                            for (let j = 0; j < SIZE / 2; j++) {
+                                for (let i = 0; i < SIZE / 2; i++) {
+                                    tiles.push(new BrickTile(images[0], size, size, x + size * i, y + size * j));
+                                }
+                            }
+
                             break;
                         case 2:
                             tiles.push(new СoncreteTile(images[1], TILE_SIZE, TILE_SIZE, x, y));
@@ -65,7 +71,6 @@ export class Level {
                     }
                 });
             });
-
 
             return tiles;
         } else {

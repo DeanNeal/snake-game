@@ -3,7 +3,7 @@ import { Vec } from "./vec";
 import { BULLET_SPEED } from "./global";
 import AudioController from './audio';
 import { Bullet } from "./bullet";
-import { GrassTile, IceTile, WaterTile, Tile } from "./tile";
+import { GrassTile, IceTile, WaterTile, Tile, BrickTile } from "./tile";
 import { Player } from "./player";
 import { Game } from "./game";
 
@@ -28,6 +28,7 @@ export abstract class Tank extends Rect {
     protected modMoveFactor: number = 1;
     protected bulletSpeedFactor: number = 1;
     protected state: string = 'normal';
+
 
     constructor(img: HTMLImageElement, w: number, h: number) {
         super(w, h);
@@ -101,14 +102,20 @@ export abstract class Tank extends Rect {
             });
     }
 
+    calculateObstacles(game) {
+        let enemies = game.enemies.filter(r => Object.is(r, this) === false);
+        let tiles = game.tiles.filter(r => r instanceof BrickTile === false);
+        return [...tiles, ...enemies];
+    }
+
     move(dt: number, game: Game) {
         if (this.isMoving) {
             this.pos.x += Math.round(this.vel.x * dt) * this.surfaceMoveFactor * this.modMoveFactor;
-
-            let enemies = game.enemies
-                .filter(r => Object.is(r, this) === false);
-
-            let obstacles = [...game.tiles, ...enemies];
+            // var t0 = performance.now();
+            let obstacles = this.calculateObstacles(game);
+            // var t1 = performance.now();
+            // console.log(obstacles);
+            // console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
             if (Object.is(game.player, this) === false) {
                 (obstacles as any).push(game.player);
             }
@@ -218,7 +225,7 @@ export abstract class Tank extends Rect {
             this.onCollision();
         } else if (this.right >= game.canvas.width) {
             this.vel.x = 0;
-            this.pos.x = game.canvas.width - this.size.x  - offset;
+            this.pos.x = game.canvas.width - this.size.x - offset;
             this.onCollision();
         }
     }

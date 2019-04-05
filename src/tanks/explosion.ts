@@ -2,6 +2,7 @@ import { Game } from "./game";
 import { TILE_SIZE } from "./global";
 
 export class Explosion {
+//TODO EXTENDS RECT
     private x = 0;
     private y = 0;
     private frames = 0;

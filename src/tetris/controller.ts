@@ -10,7 +10,7 @@ export class Controller {
       window.addEventListener('keyup', (e: KeyboardEvent) => {
          switch (e.keyCode) {
             case 40:
-               if (!this.game.state.gameOver) {
+               if (!this.game.state.init && !this.game.state.gameOver) {
                   this.play();
                }
                break;

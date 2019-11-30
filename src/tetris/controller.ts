@@ -13,7 +13,6 @@ export class Controller {
                if (!this.game.state.gameOver) {
                   this.play();
                }
-
                break;
          }
       });
@@ -23,7 +22,6 @@ export class Controller {
          if (this.game.state.init || this.game.state.gameOver) {
             if (e.keyCode === 13) {
                
-
                if (this.game.state.gameOver) {
                   this.game.reset();
                }

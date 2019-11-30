@@ -78,6 +78,7 @@ class Game {
       this.context.fillText(`Score: ${this.state.scores}`, GRID_WIDTH + 15, 25);
       this.context.fillText(`Lines: ${this.state.lines}`, GRID_WIDTH + 15, 60);
       this.context.fillText(`Level: ${this.state.level}`, GRID_WIDTH + 15, 95);
+      this.context.fillText(`Next figure: `, GRID_WIDTH + 15, 130);
 
       // this.context.fillStyle = '#000';
       // this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -122,7 +123,7 @@ class Game {
       this.context.fillText('Press ENTER to restart', GRID_WIDTH / 2 + 30, HEIGHT / 2 + 30);
    }
 
-   drawPiece() {
+   drawPieces() {
       const blockWidth = (GRID_WIDTH - 6) / ROWS;
       const blockHeight = (HEIGHT - 2) / COLUMNS;
 
@@ -137,6 +138,18 @@ class Game {
                this.context.strokeRect(column * blockWidth + 5, row * blockWidth + 5, blockWidth, blockHeight);
             }
          })
+      });
+
+      this.activePiece.nextBlocks.forEach((line, row)=> {
+         line.forEach((block, column) => {
+            if(block) {
+               this.context.fillStyle = Game.colors[block];
+               this.context.strokeStyle = 'black';
+               this.context.lineWidth = 2;
+               this.context.fillRect(GRID_WIDTH + column * blockWidth + 20, row * blockWidth + 130, blockWidth, blockHeight);
+               this.context.strokeRect(GRID_WIDTH + column * blockWidth + 20, row * blockWidth + 130, blockWidth, blockHeight);
+            }
+         });
       });
    }
 
@@ -180,16 +193,16 @@ class Game {
 
 
       this.draw();
-      this.drawPiece();
+      this.drawPieces();
    }
 
-   update(dt): void {
-      // this.draw();
+   // update(dt): void {
+   //    // this.draw();
 
-      // this.drawPiece();
+   //    // this.drawPiece();
 
-      // this.keyboard();
-   }
+   //    // this.keyboard();
+   // }
 
    reset() {
       this.state = new State();

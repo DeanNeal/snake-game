@@ -6,15 +6,21 @@ export class Piece {
    public x: number = Math.floor(ROWS / 2) - 1;
    public y: number = -1;
    private _blocks: number[][];
+   private _nextBlocks: number[][];
    private game;
 
    get blocks() {
       return this._blocks;
    }
 
+   get nextBlocks() {
+      return this._nextBlocks;
+   }
+
    constructor(game) {
       this.game = game;
-      this.createPiece();
+      this._blocks = this.createPiece();
+      this._nextBlocks = this.createPiece();
    }
 
    moveLeft() {
@@ -91,7 +97,7 @@ export class Piece {
 
       for (let index of lines) {
          grid.value.splice(index, 1);
-         grid.value.unshift(new Array(COLUMNS).fill(0));
+         grid.value.unshift(new Array(ROWS).fill(0));
       }
 
       this.updateScore(lines.length);
@@ -113,10 +119,11 @@ export class Piece {
    createPiece() {
       const index = Math.floor(Math.random() * 7);
       const type = 'IJLOSTZ'[index];
-      // const piev
+      let piece = [];//{x: Math.floor(ROWS / 2) - 1, y: -1, blocks: []};
+
       switch (type) {
          case 'I':
-            this._blocks = [
+            piece = [
                [0, 0, 0, 0],
                [1, 1, 1, 1],
                [0, 0, 0, 0],
@@ -124,21 +131,21 @@ export class Piece {
             ];
             break;
          case 'J':
-            this._blocks = [
+            piece = [
                [0, 0, 0],
                [2, 2, 2],
                [0, 0, 2]
             ];
             break;
          case 'L':
-            this._blocks = [
+            piece = [
                [0, 0, 0],
                [3, 3, 3],
                [3, 0, 0]
             ];
             break;
          case 'O':
-            this._blocks = [
+            piece = [
                [0, 0, 0, 0],
                [0, 4, 4, 0],
                [0, 4, 4, 0],
@@ -146,21 +153,21 @@ export class Piece {
             ];
             break;
          case 'S':
-            this._blocks = [
+            piece = [
                [0, 0, 0],
                [0, 5, 5],
                [5, 5, 0]
             ];
             break;
          case 'T':
-            this._blocks = [
+            piece = [
                [0, 0, 0],
                [6, 6, 6],
                [0, 6, 0]
             ];
             break;
          case 'Z':
-            this._blocks = [
+            piece = [
                [0, 0, 0],
                [7, 7, 0],
                [0, 7, 7]
@@ -170,10 +177,13 @@ export class Piece {
          default:
             throw new Error('FUCK');
       }
+
+      return piece;
    }
 
    updatePieces() {
-      this.createPiece();
+      this._blocks = this._nextBlocks;
+      this._nextBlocks = this.createPiece();
       this.x = Math.floor(ROWS / 2) - 1;
       this.y = -1;
    }
@@ -207,5 +217,7 @@ export class Piece {
             }
          }
       }
+
+      // console.log(grid.value[0].length);
    }
 }

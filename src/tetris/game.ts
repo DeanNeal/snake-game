@@ -120,7 +120,7 @@ class Game {
       this.context.textBaseline = 'middle';
 
       this.context.fillText('GAMEOVER', GRID_WIDTH / 2, HEIGHT / 2);
-      this.context.fillText('Press ENTER to restart', GRID_WIDTH / 2 + 30, HEIGHT / 2 + 30);
+      this.context.fillText('Press ENTER to restart', GRID_WIDTH / 2, HEIGHT / 2 + 30);
    }
 
    drawPieces() {

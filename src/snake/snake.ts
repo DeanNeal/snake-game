@@ -141,7 +141,7 @@ class Game {
 
         this.pause = false;
         this.updateScores();
-        this.interval = setInterval(() => {
+        this.interval = window.setInterval(() => {
             this.move();
         }, this.getCurrentLevel.speed)
     }

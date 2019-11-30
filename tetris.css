@@ -1,0 +1,56 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+  font-family: "Roboto", sans-serif;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  background: #000;
+}
+.container {
+  position: relative;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-content: center;
+}
+canvas {
+  margin-top: 10px;
+}
+.title {
+  width: 100%;
+  font-size: 42px;
+  text-align: center;
+  letter-spacing: -5px;
+  padding-right: 150px;
+}
+.title span:nth-child(1) {
+  color: red;
+}
+.title span:nth-child(2) {
+  color: orange;
+}
+.title span:nth-child(3) {
+  color: yellow;
+}
+.title span:nth-child(4) {
+  color: green;
+}
+.title span:nth-child(5) {
+  color: cyan;
+}
+.title span:nth-child(6) {
+  color: purple;
+}
+

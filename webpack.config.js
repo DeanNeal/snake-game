@@ -7,7 +7,8 @@ module.exports = {
   entry: {
     // snake:  './src/snake/snake.ts',
     // pong:  './src/pong/pong.ts',
-    tanks: './src/tanks/game.ts'
+    tanks: './src/tanks/game.ts',
+    tetris: './src/tetris/game.ts'
   },
   module: {
     rules: [
@@ -32,7 +33,15 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       filename: 'tanks.html',
-      template: 'tanks_tpl.html'
+      template: 'tanks_tpl.html',
+      // inject: false,
+      chunks: ['tanks'],
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'tetris.html',
+      template: 'tetris_tpl.html',
+      // inject: false,
+      chunks: ['tetris']
     })
   ],
   resolve: {

@@ -157,7 +157,7 @@ class Pong {
         this.timerBlock.classList.add('timer-block');
         document.body.appendChild(this.timerBlock);
         this.timerBlock.innerHTML = '3';
-        this.timerInterval = setInterval(() => {
+        this.timerInterval = window.setInterval(() => {
             start++;
             if (start < 3) {
                 this.timerBlock.innerHTML = '' + (3 - start);

@@ -6,7 +6,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
   entry: {
     // snake:  './src/snake/snake.ts',
-    // pong:  './src/pong/pong.ts',
+    pong:  './src/pong/pong.ts',
     tanks: './src/tanks/game.ts',
     tetris: './src/tetris/game.ts'
   },
@@ -30,6 +30,12 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: "[name].css"
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'pong.html',
+      template: 'pong_tpl.html',
+      // inject: false,
+      chunks: ['pong'],
     }),
     new HtmlWebpackPlugin({
       filename: 'tanks.html',

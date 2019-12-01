@@ -1,0 +1,57 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+  font-family: "Roboto", sans-serif;
+  background: #ccc;
+  background-size: cover;
+  overflow: hidden;
+}
+.container {
+  position: relative;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.score-board {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 200px;
+  display: flex;
+  justify-content: space-between;
+}
+.score-board__player {
+  font-size: 32px;
+  color: #fff;
+}
+.timer-block {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 120px;
+  color: #fff;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  text-align: center;
+}
+@media (hover: none) and (pointer: coarse) {
+  .timer-block {
+    font-size: 48px;
+    padding: 0 30px;
+  }
+}
+

@@ -1,10 +1,12 @@
-export const ROWS = 11;
-export const COLUMNS = 22;
+export const ROWS = 10;
+export const COLUMNS = ROWS * 2;
 
 export class Grid {
    private _value: number[][];
+   private game;
 
-   constructor() {
+   constructor(game) {
+      this.game = game;
       this._value = this.create();
    }
 
@@ -22,6 +24,28 @@ export class Grid {
          }
       }
       
+      return playfield;
+   }
+
+
+   getState() {
+      const playfield = this.game.grid.create();
+
+      for (let y = 0; y < this.game.grid.value.length; y++) {
+         playfield[y] = [];
+         for (let x = 0; x < this.game.grid.value[y].length; x++) {
+            playfield[y][x] = this.game.grid.value[y][x];
+         }
+      }
+
+      for (let y = 0; y < this.game.activePiece.blocks.length; y++) {
+         for (let x = 0; x < this.game.activePiece.blocks[y].length; x++) {
+            if (this.game.activePiece.blocks[y][x]) {
+               playfield[this.game.activePiece.y + y][this.game.activePiece.x + x] = this.game.activePiece.blocks[y][x];
+            }
+         }
+      }
+
       return playfield;
    }
 

@@ -1,4 +1,5 @@
 import { ROWS, COLUMNS } from "./grid";
+import { createPiece } from "./global";
 // import { UpdateScores$ } from "./global";
 
 
@@ -19,8 +20,8 @@ export class Piece {
 
    constructor(game) {
       this.game = game;
-      this._blocks = this.createPiece();
-      this._nextBlocks = this.createPiece();
+      this._blocks = createPiece();
+      this._nextBlocks = createPiece();
    }
 
    moveLeft() {
@@ -116,74 +117,9 @@ export class Piece {
       }
    }
 
-   createPiece() {
-      const index = Math.floor(Math.random() * 7);
-      const type = 'IJLOSTZ'[index];
-      let piece = [];//{x: Math.floor(ROWS / 2) - 1, y: -1, blocks: []};
-
-      switch (type) {
-         case 'I':
-            piece = [
-               [0, 0, 0, 0],
-               [1, 1, 1, 1],
-               [0, 0, 0, 0],
-               [0, 0, 0, 0]
-            ];
-            break;
-         case 'J':
-            piece = [
-               [0, 0, 0],
-               [2, 2, 2],
-               [0, 0, 2]
-            ];
-            break;
-         case 'L':
-            piece = [
-               [0, 0, 0],
-               [3, 3, 3],
-               [3, 0, 0]
-            ];
-            break;
-         case 'O':
-            piece = [
-               [0, 0, 0, 0],
-               [0, 4, 4, 0],
-               [0, 4, 4, 0],
-               [0, 0, 0, 0]
-            ];
-            break;
-         case 'S':
-            piece = [
-               [0, 0, 0],
-               [0, 5, 5],
-               [5, 5, 0]
-            ];
-            break;
-         case 'T':
-            piece = [
-               [0, 0, 0],
-               [6, 6, 6],
-               [0, 6, 0]
-            ];
-            break;
-         case 'Z':
-            piece = [
-               [0, 0, 0],
-               [7, 7, 0],
-               [0, 7, 7]
-            ];
-            break;
-
-         default:
-            throw new Error('FUCK');
-      }
-
-      return piece;
-   }
-
    updatePieces() {
       this._blocks = this._nextBlocks;
-      this._nextBlocks = this.createPiece();
+      this._nextBlocks = createPiece();
       this.x = Math.floor(ROWS / 2) - 1;
       this.y = -1;
    }
@@ -217,7 +153,5 @@ export class Piece {
             }
          }
       }
-
-      // console.log(grid.value[0].length);
    }
 }

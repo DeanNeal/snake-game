@@ -37,7 +37,7 @@ class Game {
    // private gameCallback: () => void;
    public state: IState = new State();
    private activePiece = new Piece(this);
-   private grid = new Grid();
+   private grid = new Grid(this);
    // private pressedKeys: { [s: string]: boolean } = {};
    public controller: Controller = new Controller(this);
 
@@ -48,7 +48,9 @@ class Game {
       4: 'yellow',
       5: 'green',
       6: 'purple',
-      7: 'red'
+      7: 'red',
+      8: 'grey',
+      9: 'fuchsia'
    };
 
    constructor(canvas: HTMLCanvasElement) {
@@ -70,7 +72,7 @@ class Game {
 
       this.context.strokeStyle = 'white';
       this.context.lineWidth = 4;
-      this.context.strokeRect(2, 2, GRID_WIDTH, HEIGHT - 4);
+      this.context.strokeRect(2, 2, GRID_WIDTH + 6, HEIGHT - 4);
 
       this.context.fillStyle = 'white';
       this.context.font = '20px Arial';
@@ -124,25 +126,25 @@ class Game {
    }
 
    drawPieces() {
-      const blockWidth = (GRID_WIDTH - 6) / ROWS;
-      const blockHeight = (HEIGHT - 2) / COLUMNS;
+      const blockWidth = GRID_WIDTH / ROWS;
+      const blockHeight = (HEIGHT - 10) / COLUMNS;
 
-      this.getState().forEach((line, row) => {
+      this.grid.getState().forEach((line, row) => {
          line.forEach((block, column) => {
             if (block) {
 
                this.context.fillStyle = Game.colors[block];
                this.context.strokeStyle = 'black';
                this.context.lineWidth = 2;
-               this.context.fillRect(column * blockWidth + 5, row * blockWidth + 5, blockWidth, blockHeight);
-               this.context.strokeRect(column * blockWidth + 5, row * blockWidth + 5, blockWidth, blockHeight);
+               this.context.fillRect(column * blockWidth + 5, row * blockHeight + 5, blockWidth, blockHeight);
+               this.context.strokeRect(column * blockWidth + 5, row * blockHeight + 5, blockWidth, blockHeight);
             }
          })
       });
 
-      this.activePiece.nextBlocks.forEach((line, row)=> {
+      this.activePiece.nextBlocks.forEach((line, row) => {
          line.forEach((block, column) => {
-            if(block) {
+            if (block) {
                this.context.fillStyle = Game.colors[block];
                this.context.strokeStyle = 'black';
                this.context.lineWidth = 2;
@@ -152,28 +154,6 @@ class Game {
          });
       });
    }
-
-   getState() {
-      const playfield = this.grid.create();
-
-      for (let y = 0; y < this.grid.value.length; y++) {
-         playfield[y] = [];
-         for (let x = 0; x < this.grid.value[y].length; x++) {
-            playfield[y][x] = this.grid.value[y][x];
-         }
-      }
-
-      for (let y = 0; y < this.activePiece.blocks.length; y++) {
-         for (let x = 0; x < this.activePiece.blocks[y].length; x++) {
-            if (this.activePiece.blocks[y][x]) {
-               playfield[this.activePiece.y + y][this.activePiece.x + x] = this.activePiece.blocks[y][x];
-            }
-         }
-      }
-
-      return playfield;
-   }
-
 
    render() {
       if (this.state.init) {
@@ -191,7 +171,6 @@ class Game {
          return;
       }
 
-
       this.draw();
       this.drawPieces();
    }
@@ -206,7 +185,7 @@ class Game {
 
    reset() {
       this.state = new State();
-      this.grid = new Grid();
+      this.grid = new Grid(this);
    }
 }
 

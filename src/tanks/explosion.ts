@@ -1,17 +1,16 @@
 import { Game } from "./game";
 import { TILE_SIZE } from "./global";
+import { Rect } from './rect';
 
-export class Explosion {
-//TODO EXTENDS RECT
-    private x = 0;
-    private y = 0;
+export class Explosion extends Rect {
     private frames = 0;
     private frame = 0;
     private img;
     constructor(img, x, y) {
+        super(TILE_SIZE, TILE_SIZE);
         this.img = img;
-        this.x = x;
-        this.y = y;
+        this.pos.x = x;
+        this.pos.y = y;
     }
 
     draw(ctx: CanvasRenderingContext2D, game: Game) {
@@ -25,6 +24,6 @@ export class Explosion {
             game.explosions.pop();
         }
 
-        ctx.drawImage(this.img, -20 + (100 * this.frame), 0, TILE_SIZE * 1.5, TILE_SIZE * 1.5, this.x, this.y, TILE_SIZE, TILE_SIZE);
+        ctx.drawImage(this.img, -20 + (100 * this.frame), 0, this.size.x * 1.5, this.size.y * 1.5, this.pos.x, this.pos.y, this.size.x, this.size.y);
     }
 }

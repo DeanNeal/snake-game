@@ -52,7 +52,7 @@ export class Bullet extends Rect {
                     }
                 }
             }
-        })
+        });
 
         //width borders
         if (this.pos.x <= 0 || this.pos.x >= game.canvas.width || this.pos.y <= 0 || this.pos.y >= game.canvas.height) {
@@ -106,5 +106,10 @@ export class Bullet extends Rect {
         }
 
 
+    }
+
+    update(dt) {
+        this.pos.x += this.vel.x * dt;
+        this.pos.y += this.vel.y * dt;
     }
 }

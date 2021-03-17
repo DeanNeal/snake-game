@@ -175,7 +175,7 @@ export class Game {
         this.loadLevel();
     }
 
-    restart(): void {
+    gameOverScreen(): void {
         this.player.disable();
 
         this.context.fillStyle = "rgba(0, 0, 0, 0.8)";
@@ -268,10 +268,6 @@ export class Game {
             this.nextLevel();
         }
 
-        if (this.state.markForGameOver) {
-            this.restart();
-        }
-
         if (this.gameFrames >= 100 && this.enemies.length < this.currentLevel.startWithBots) {
             if (this.currentLevel.maxScores >= this.currentLevel.scores + this.currentLevel.startWithBots) {
                 this.gameFrames = 0;
@@ -282,20 +278,18 @@ export class Game {
         this.player.update(dt, this);
         this.enemies.forEach(enemy => enemy.update(dt, this));
         this.bonuses.forEach(bonus => bonus.update(dt));
-
+        this.bullets.forEach(bullet => bullet.update(dt));
 
         this.context.globalAlpha = 1;
-
-        //TODO ADD DRAW method
-        this.bullets.forEach(bullet => {
-            bullet.pos.x += bullet.vel.x * dt;
-            bullet.pos.y += bullet.vel.y * dt;
-        });
 
         this.collider();
 
         this.draw();
         this.drawScores();
+
+        if (this.state.markForGameOver) {
+            this.gameOverScreen();
+        }
     }
 
 }
